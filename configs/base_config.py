@@ -2,11 +2,14 @@ from pathlib import Path
 from typing import List
 import os
 
+DATA_ROOT = Path(os.environ.get("B3PRED_DATA", "data"))
+
+
 class BaseSettings():
     # Update these paths to match your system
-    TRAIN_DATA: Path = Path('data/b3db_tanimoto_train.csv')
-    TEST_DATA: Path = Path('data/b3db_tanimoto_test.csv')
-    VAL_DATA: Path = Path('data/b3db_tanimoto_val.csv')
+    TRAIN_DATA = DATA_ROOT / "b3db_tanimoto_train.csv"
+    TEST_DATA = DATA_ROOT / "b3db_tanimoto_test.csv"
+    VAL_DATA = DATA_ROOT / "b3db_tanimoto_val.csv"
     TARGET_LABEL: str = 'target'
     TEST_LABEL: str = 'target'
     PROJECT_NAME: str = "b3db-graph-models"
