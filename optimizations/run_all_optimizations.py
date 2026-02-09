@@ -59,7 +59,7 @@ class BatchOptimizationRunner:
         # Build command
         if method == 'bayesian':
             cmd = [
-                'python', 'optimizations\\bayesian_optimization.py',
+                'python', 'optimizations/bayesian_optimization.py',
                 '--model', model,
                 '--n_trials', str(self.n_trials),
                 '--study_name', study_name,
@@ -68,7 +68,7 @@ class BatchOptimizationRunner:
             ]
         elif method == 'hyperband':
             cmd = [
-                'python', 'optimizations\\hyperband_optimization.py',
+                'python', 'optimizations/hyperband_optimization.py',
                 '--model', model,
                 '--n_trials', str(self.n_trials),
                 '--max_epochs', '81',
@@ -80,7 +80,7 @@ class BatchOptimizationRunner:
         elif method == 'cmaes':
             n_iterations = max(30, self.n_trials // 2)  # CMA-ES typically needs fewer iterations
             cmd = [
-                'python', 'optimizations\\cmaes_optimization.py',
+                'python', 'optimizations/cmaes_optimization.py',
                 '--model', model,
                 '--n_iterations', str(n_iterations),
                 '--study_name', study_name,
