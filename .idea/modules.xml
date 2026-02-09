@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/B3PP.iml" filepath="$PROJECT_DIR$/.idea/B3PP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/bbb_predictor.iml" filepath="$PROJECT_DIR$/.idea/bbb_predictor.iml" />
     </modules>
   </component>
 </project>

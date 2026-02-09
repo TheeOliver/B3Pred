@@ -1,0 +1,17 @@
+{
+  "experiment_name": "gcn_baseline",
+  "model_name": "GCN",
+  "batch_size": 64,
+  "epochs": 100,
+  "learning_rate": 0.001,
+  "weight_decay": 5e-4,
+  "loss": "crossentropy",
+  "early_stopping_patience": 15,
+  "graph_layers": 3,
+  "graph_hidden_channels": 256,
+  "graph_dropout": 0.3,
+  "use_graph_norm": true,
+  "pred_layers": 3,
+  "pred_hidden_channels": 64,
+  "pred_dropout": 0.3
+}

@@ -1,0 +1,19 @@
+{
+  "experiment_name": "gat_baseline",
+  "model_name": "GAT",
+  "batch_size": 64,
+  "epochs": 100,
+  "learning_rate": 0.001,
+  "weight_decay": 5e-4,
+  "loss": "crossentropy",
+  "early_stopping_patience": 15,
+  "graph_layers": 3,
+  "graph_hidden_channels": 64,
+  "graph_dropout": 0.3,
+  "use_graph_norm": true,
+  "attention_heads": 4,
+  "attention_dropout": 0.3,
+  "pred_layers": 3,
+  "pred_hidden_channels": 64,
+  "pred_dropout": 0.3
+}
