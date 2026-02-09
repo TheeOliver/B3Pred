@@ -1,0 +1,22 @@
+# Include documentation
+include README.md
+include LICENSE
+include FIXES_APPLIED.md
+include OPTIMIZATION_README.md
+include QUICK_START.md
+
+# Include requirements
+include requirements_optimization.txt
+
+# Include config files
+recursive-include configs *.py
+
+# Exclude data and experiments
+recursive-exclude data *
+recursive-exclude experiments *
+
+# Exclude compiled Python files
+global-exclude *.pyc
+global-exclude __pycache__
+global-exclude *.so
+global-exclude *.pyd

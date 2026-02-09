@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs & outputs
+*.log
+logs/
+results/
+outputs/
+
+# ML artifacts
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Experiment tracking
+wandb/
+runs/
+
+# Data (IMPORTANT)
+data/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+
