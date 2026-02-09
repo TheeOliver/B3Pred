@@ -1,61 +1,38 @@
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+*.pyc
+*.pyo
+*.pyd
 
 # Virtual environments
 venv/
-env/
-ENV/
-.venv
+.env/
 
-# IDE
+# IDEs
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
-.DS_Store
 
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# PyTorch
-*.pth
-*.pt
-
-# Experiments (optional - comment out if you want to track experiments)
-experiments/*/
-
-# Data (optional - comment out if data should be tracked)
-# data/
-
-# Logs
+# Logs & outputs
 *.log
+logs/
+results/
+outputs/
+
+# ML artifacts
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Experiment tracking
 wandb/
+runs/
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
+# Data (IMPORTANT)
+data/
 
-# Temporary files
-*.tmp
-*.bak
+# OS junk
+.DS_Store
+Thumbs.db
+
+
