@@ -1,150 +1,216 @@
-#!/usr/bin/env python3
-"""Evaluation script for trained BBB predictor models."""
-import argparse
-import json
+"""
+Model Evaluation Module
+
+Provides functions to evaluate GNN models on test/validation data.
+Computes comprehensive classification metrics.
+"""
+
 import torch
 import pandas as pd
-from pathlib import Path
-from torch_geometric.loader import DataLoader
+import numpy as np
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    confusion_matrix,
+    matthews_corrcoef
+)
+from typing import List, Dict, Any
+import logging
 
-from configs.base_config import BaseConfig
-from src.data.featurizer import MoleculeDataset
-from src.models.predictor import Predictor
-from src.utils.evaluate import evaluate_model, print_metrics
+logger = logging.getLogger(__name__)
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Evaluate trained BBB predictor models",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Evaluate on test set
-  python scripts/evaluate.py --experiment gat_baseline --split test
-  
-  # Evaluate on validation set
-  python scripts/evaluate.py --experiment gcn_exp1 --split val
-  
-  # Evaluate on all splits
-  python scripts/evaluate.py --experiment sage_baseline --split all
-        """
-    )
-    
-    parser.add_argument(
-        '--experiment',
-        type=str,
-        required=True,
-        help='Name of experiment to evaluate'
-    )
-    parser.add_argument(
-        '--split',
-        type=str,
-        default='test',
-        choices=['train', 'val', 'test', 'all'],
-        help='Dataset split to evaluate on'
-    )
-    parser.add_argument(
-        '--device',
-        type=str,
-        default='cuda' if torch.cuda.is_available() else 'cpu',
-        help='Device to use (cuda/cpu)'
-    )
-    parser.add_argument(
-        '--batch_size',
-        type=int,
-        default=32,
-        help='Batch size for evaluation'
-    )
-    
-    args = parser.parse_args()
-    
-    # Setup paths
-    exp_dir = BaseConfig.get_experiment_dir(args.experiment)
-    config_path = BaseConfig.get_config_path(args.experiment)
-    model_path = BaseConfig.get_model_path(args.experiment)
-    
-    # Check if experiment exists
-    if not exp_dir.exists():
-        print(f"Error: Experiment '{args.experiment}' not found")
-        print(f"Expected directory: {exp_dir}")
-        return
-    
-    if not model_path.exists():
-        print(f"Error: Model file not found: {model_path}")
-        return
-    
-    # Load config
-    with open(config_path, 'r') as f:
-        config = json.load(f)
-    
-    device = torch.device(args.device)
-    
-    print("\n" + "="*60)
-    print(f"Evaluating {config['model_name']} - Experiment: {args.experiment}")
-    print("="*60)
-    print(f"Model: {model_path}")
-    print(f"Device: {device}\n")
-    
-    # Determine which splits to evaluate
-    splits_to_eval = []
-    if args.split == 'all':
-        splits_to_eval = ['train', 'val', 'test']
-    else:
-        splits_to_eval = [args.split]
-    
-    # Load model
-    print("Loading model...")
-    
-    # Load a sample to get node dimension
-    sample_df = pd.read_csv(BaseConfig.TRAIN_DATA).head(1)
-    sample_dataset = MoleculeDataset(sample_df)
-    node_dim = sample_dataset[0].x.shape[1]
-    
-    # Create and load model
-    model = Predictor.from_config(config, node_dim)
-    model.load_state_dict(torch.load(model_path, map_location=device))
-    model = model.to(device)
+def test_model(
+        loader,
+        model: torch.nn.Module,
+        target_labels: List[str],
+        hetero: bool = False
+) -> Dict[str, Any]:
+    """
+    Evaluate model on a data loader.
+
+    Computes comprehensive classification metrics including:
+    - Accuracy
+    - Precision, Recall, F1 (weighted)
+    - AUC-ROC
+    - Matthews Correlation Coefficient (MCC)
+    - Specificity
+
+    Args:
+        loader: PyTorch DataLoader
+        model: Trained model
+        target_labels: List of target label names
+        hetero: Whether using heterogeneous graphs (not currently used)
+
+    Returns:
+        Dictionary of evaluation metrics
+    """
     model.eval()
-    
-    print(f"Model loaded successfully\n")
-    
-    # Evaluate on each split
-    all_results = {}
-    
-    for split in splits_to_eval:
-        # Load data
-        if split == 'train':
-            data_path = BaseConfig.TRAIN_DATA
-        elif split == 'val':
-            data_path = BaseConfig.VAL_DATA
-        else:  # test
-            data_path = BaseConfig.TEST_DATA
-        
-        print(f"Loading {split} data from {data_path}...")
-        df = pd.read_csv(data_path)
-        dataset = MoleculeDataset(df)
-        loader = DataLoader(
-            dataset,
-            batch_size=args.batch_size,
-            shuffle=False
-        )
-        
-        print(f"{split.capitalize()} samples: {len(dataset)}")
-        
-        # Evaluate
-        metrics, preds, labels = evaluate_model(model, loader, device)
-        print_metrics(metrics, f"{split.capitalize()}")
-        
-        all_results[split] = metrics
-    
-    # Save results
-    results_path = exp_dir / f"evaluation_{args.split}.json"
-    with open(results_path, 'w') as f:
-        json.dump(all_results, f, indent=2)
-    
-    print(f"\nResults saved to: {results_path}")
-    print("\nEvaluation complete!")
+
+    all_preds = []
+    all_truths = []
+    all_probs = []  # Probability of positive class (class=1)
+
+    with torch.no_grad():
+        for data in loader:
+            # Forward pass
+            out = model(data)  # shape: [num_graphs, num_classes]
+
+            # Get predictions and probabilities
+            probs = torch.softmax(out, dim=1).cpu().numpy()
+            preds = out.argmax(dim=1).cpu().numpy()
+            truths = data.y.cpu().numpy()
+
+            all_preds.extend(preds)
+            all_truths.extend(truths)
+            all_probs.extend(probs[:, 1])  # Positive class (1) probability
+
+    # Convert to DataFrames for consistency
+    pred_df = pd.DataFrame({target_labels[0]: all_preds})
+    gt_df = pd.DataFrame({target_labels[0]: all_truths})
+
+    # Compute metrics
+    results = {}
+    label = target_labels[0]
+
+    # Standard classification metrics
+    results[f'acc_{label}'] = accuracy_score(gt_df[label], pred_df[label])
+    results[f'prec_{label}'] = precision_score(
+        gt_df[label], pred_df[label],
+        average='weighted',
+        zero_division=0
+    )
+    results[f'recall_{label}'] = recall_score(
+        gt_df[label], pred_df[label],
+        average='weighted',
+        zero_division=0
+    )
+    results[f'f1_{label}'] = f1_score(
+        gt_df[label], pred_df[label],
+        average='weighted',
+        zero_division=0
+    )
+    results[f'mcc_{label}'] = matthews_corrcoef(gt_df[label], pred_df[label])
+
+    # Specificity (recall for negative class)
+    results[f'spec_{label}'] = recall_score(
+        gt_df[label], pred_df[label],
+        pos_label=0,
+        average='weighted',
+        zero_division=0
+    )
+
+    # Macro F1 (for compatibility)
+    results['macro_f1'] = results[f'f1_{label}']
+
+    # AUC-ROC (binary classification)
+    try:
+        results[f'auc_{label}'] = roc_auc_score(gt_df[label], all_probs)
+    except ValueError as e:
+        logger.warning(f"Could not compute AUC: {e}")
+        results[f'auc_{label}'] = None
+
+    return results
 
 
-if __name__ == "__main__":
-    main()
+def compute_confusion_matrix(
+        loader,
+        model: torch.nn.Module
+) -> np.ndarray:
+    """
+    Compute confusion matrix for model predictions.
+
+    Args:
+        loader: PyTorch DataLoader
+        model: Trained model
+
+    Returns:
+        Confusion matrix as numpy array
+    """
+    model.eval()
+
+    all_preds = []
+    all_truths = []
+
+    with torch.no_grad():
+        for data in loader:
+            out = model(data)
+            preds = out.argmax(dim=1).cpu().numpy()
+            truths = data.y.cpu().numpy()
+
+            all_preds.extend(preds)
+            all_truths.extend(truths)
+
+    return confusion_matrix(all_truths, all_preds)
+
+
+def evaluate_per_class_metrics(
+        loader,
+        model: torch.nn.Module,
+        class_names: List[str] = None
+) -> Dict[str, Dict[str, float]]:
+    """
+    Compute per-class metrics (precision, recall, F1).
+
+    Useful for imbalanced datasets to see performance on each class.
+
+    Args:
+        loader: PyTorch DataLoader
+        model: Trained model
+        class_names: Optional list of class names
+
+    Returns:
+        Dictionary mapping class names to their metrics
+    """
+    model.eval()
+
+    all_preds = []
+    all_truths = []
+
+    with torch.no_grad():
+        for data in loader:
+            out = model(data)
+            preds = out.argmax(dim=1).cpu().numpy()
+            truths = data.y.cpu().numpy()
+
+            all_preds.extend(preds)
+            all_truths.extend(truths)
+
+    all_preds = np.array(all_preds)
+    all_truths = np.array(all_truths)
+
+    # Get unique classes
+    classes = np.unique(all_truths)
+    if class_names is None:
+        class_names = [f"Class {i}" for i in classes]
+
+    # Compute per-class metrics
+    per_class_results = {}
+
+    for cls, name in zip(classes, class_names):
+        per_class_results[name] = {
+            'precision': precision_score(
+                all_truths, all_preds,
+                labels=[cls],
+                average=None,
+                zero_division=0
+            )[0],
+            'recall': recall_score(
+                all_truths, all_preds,
+                labels=[cls],
+                average=None,
+                zero_division=0
+            )[0],
+            'f1': f1_score(
+                all_truths, all_preds,
+                labels=[cls],
+                average=None,
+                zero_division=0
+            )[0],
+            'support': np.sum(all_truths == cls)
+        }
+
+    return per_class_results
