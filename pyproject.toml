@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "b3pred"
+version = "1.0.0"
+description = "Graph Neural Network models for Blood-Brain Barrier permeability prediction"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+dependencies = [
+    "torch>=1.10.0",
+    "torch-geometric>=2.0.0",
+    "pandas>=1.3.0",
+    "numpy>=1.21.0",
+    "scikit-learn>=1.0.0",
+    "rdkit>=2022.3.0",
+    "optuna>=3.0.0",
+    "cma>=3.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0.0",
+    "black>=21.0",
+    "flake8>=3.9.0",
+    "jupyter>=1.0.0",
+]
+viz = [
+    "matplotlib>=3.4.0",
+    "seaborn>=0.11.0",
+    "plotly>=5.0.0",
+]
+logging = [
+    "wandb>=0.12.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/B3Pred"
+Documentation = "https://github.com/yourusername/B3Pred"
+Repository = "https://github.com/yourusername/B3Pred"
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*", "experiments*", "data*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.md", "*.txt"]
