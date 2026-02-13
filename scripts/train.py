@@ -1,5 +1,11 @@
 import numpy as np
-import wandb
+try:
+    import wandb
+    WANDB_AVAILABLE = True
+except ImportError:
+    WANDB_AVAILABLE = False
+    print("Warning: wandb not available. Logging will be disabled.")
+
 import torch
 from configs.predictor_config import TrainConfig as train_settings
 from scripts.evaluate import test_model
@@ -7,6 +13,10 @@ from scripts.evaluate import test_model
 
 def train_model(model, train_loader, val_loader, epochs, target_labels, loss_type: str = 'crossentropy',
                 learning_rate: float = 0.001, hetero=False, log=False, save_to=None):
+
+    if log and not WANDB_AVAILABLE:
+        print("Warning: wandb logging requested but wandb not installed. Disabling logging.")
+        log = False
 
     print('Starting training')
     criterion = train_settings.loss_function[loss_type]()
@@ -39,7 +49,7 @@ def train_model(model, train_loader, val_loader, epochs, target_labels, loss_typ
         res['epoch_loss'] = epoch_loss
         print(res)
 
-        if log:
+        if log and WANDB_AVAILABLE:
             wandb.log(res)
 
         if save_to is not None:
