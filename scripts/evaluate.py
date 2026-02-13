@@ -24,10 +24,10 @@ logger = logging.getLogger(__name__)
 
 
 def test_model(
-        loader,
-        model: torch.nn.Module,
-        target_labels: List[str],
-        hetero: bool = False
+    loader,
+    model: torch.nn.Module,
+    target_labels: List[str],
+    hetero: bool = False
 ) -> Dict[str, Any]:
     """
     Evaluate model on a data loader.
@@ -68,47 +68,71 @@ def test_model(
             all_truths.extend(truths)
             all_probs.extend(probs[:, 1])  # Positive class (1) probability
 
-    # Convert to DataFrames for consistency
-    pred_df = pd.DataFrame({target_labels[0]: all_preds})
-    gt_df = pd.DataFrame({target_labels[0]: all_truths})
+    # Convert to arrays
+    all_preds = np.array(all_preds)
+    all_truths = np.array(all_truths)
+    all_probs = np.array(all_probs)
 
     # Compute metrics
     results = {}
     label = target_labels[0]
 
     # Standard classification metrics
-    results[f'acc_{label}'] = accuracy_score(gt_df[label], pred_df[label])
+    results[f'acc_{label}'] = accuracy_score(all_truths, all_preds)
     results[f'prec_{label}'] = precision_score(
-        gt_df[label], pred_df[label],
+        all_truths, all_preds,
         average='weighted',
         zero_division=0
     )
     results[f'recall_{label}'] = recall_score(
-        gt_df[label], pred_df[label],
+        all_truths, all_preds,
         average='weighted',
         zero_division=0
     )
     results[f'f1_{label}'] = f1_score(
-        gt_df[label], pred_df[label],
+        all_truths, all_preds,
         average='weighted',
         zero_division=0
     )
-    results[f'mcc_{label}'] = matthews_corrcoef(gt_df[label], pred_df[label])
+    results[f'mcc_{label}'] = matthews_corrcoef(all_truths, all_preds)
 
-    # Specificity (recall for negative class)
-    results[f'spec_{label}'] = recall_score(
-        gt_df[label], pred_df[label],
-        pos_label=0,
-        average='weighted',
-        zero_division=0
-    )
+    # Specificity (correctly computed for binary classification)
+    # Specificity = TN / (TN + FP) = Recall of negative class
+    try:
+        # Get confusion matrix
+        cm = confusion_matrix(all_truths, all_preds)
+        if cm.shape == (2, 2):  # Binary classification
+            tn, fp, fn, tp = cm.ravel()
+            specificity = tn / (tn + fp) if (tn + fp) > 0 else 0.0
+            results[f'spec_{label}'] = specificity
+        else:
+            # For multi-class, compute per-class specificity and average
+            specificities = []
+            for i in range(cm.shape[0]):
+                # True negatives for class i
+                tn = np.sum(cm) - (np.sum(cm[i, :]) + np.sum(cm[:, i]) - cm[i, i])
+                # False positives for class i
+                fp = np.sum(cm[:, i]) - cm[i, i]
+                spec = tn / (tn + fp) if (tn + fp) > 0 else 0.0
+                specificities.append(spec)
+            results[f'spec_{label}'] = np.mean(specificities)
+    except Exception as e:
+        logger.warning(f"Could not compute specificity: {e}")
+        results[f'spec_{label}'] = 0.0
 
     # Macro F1 (for compatibility)
     results['macro_f1'] = results[f'f1_{label}']
 
     # AUC-ROC (binary classification)
     try:
-        results[f'auc_{label}'] = roc_auc_score(gt_df[label], all_probs)
+        if len(np.unique(all_truths)) == 2:  # Binary classification
+            results[f'auc_{label}'] = roc_auc_score(all_truths, all_probs)
+        else:  # Multi-class
+            results[f'auc_{label}'] = roc_auc_score(
+                all_truths,
+                torch.softmax(torch.tensor(all_probs), dim=1).numpy(),
+                multi_class='ovr'
+            )
     except ValueError as e:
         logger.warning(f"Could not compute AUC: {e}")
         results[f'auc_{label}'] = None
@@ -117,8 +141,8 @@ def test_model(
 
 
 def compute_confusion_matrix(
-        loader,
-        model: torch.nn.Module
+    loader,
+    model: torch.nn.Module
 ) -> np.ndarray:
     """
     Compute confusion matrix for model predictions.
@@ -148,9 +172,9 @@ def compute_confusion_matrix(
 
 
 def evaluate_per_class_metrics(
-        loader,
-        model: torch.nn.Module,
-        class_names: List[str] = None
+    loader,
+    model: torch.nn.Module,
+    class_names: List[str] = None
 ) -> Dict[str, Dict[str, float]]:
     """
     Compute per-class metrics (precision, recall, F1).
