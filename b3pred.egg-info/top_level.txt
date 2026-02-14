@@ -1,5 +1,0 @@
-configs
-graph
-model
-optimizations
-scripts
