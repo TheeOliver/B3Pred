@@ -3,8 +3,6 @@ import wandb
 import torch
 from configs.predictor_config import TrainConfig as train_settings
 from scripts.evaluate import test_model
-
-
 def train_model(model, train_loader, val_loader, epochs, target_labels, loss_type: str = 'crossentropy',
                 learning_rate: float = 0.001, hetero=False, log=False, save_to=None):
 

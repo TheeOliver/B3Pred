@@ -1,0 +1,59 @@
+================================================================================
+BAYESIAN OPTIMIZATION RESULTS - GAT
+================================================================================
+
+Optimization Study: GAT_bayesian
+Total Trials: 1
+Timestamp: 20260209_201428
+
+================================================================================
+*** BEST CONFIGURATION (VALIDATION) ***
+================================================================================
+Best Validation F1 Score: 0.8182
+
+Hyperparameters:
+  model_name                    : GAT
+  config_name                   : GAT_bayesian_trial_0
+  graph_layers                  : 3
+  graph_hidden_channels         : 32
+  graph_dropouts                : 0.03485016730091967
+  graph_norm                    : True
+  pred_layers                   : 4
+  pred_hidden_channels          : 64
+  pred_dropouts                 : 0.10909498032426036
+  batch_size                    : 64
+  lr                            : 7.476312062252303e-05
+  epochs                        : 69
+  loss                          : crossentropy
+  subset_size                   : 1.0
+  attention_heads               : 8
+  attention_dropouts            : 0.27364199053022153
+
+================================================================================
+*** TEST SET PERFORMANCE ***
+================================================================================
+  acc_target                    : 0.7477
+  prec_target                   : 0.7466
+  recall_target                 : 0.7477
+  f1_target                     : 0.7384
+  mcc_target                    : 0.4552
+  spec_target                   : 0.7477
+  macro_f1                      : 0.7384
+  auc_target                    : 0.7603
+
+================================================================================
+TOP 10 TRIALS
+================================================================================
+
+Rank 1: Trial 0
+  Validation F1: 0.8182
+  Key hyperparameters:
+    graph_layers: 3
+    graph_hidden_channels: 32
+    learning_rate: 0.000075
+    batch_size: 64
+    attention_heads: 8
+
+================================================================================
+Optimization completed successfully!
+================================================================================

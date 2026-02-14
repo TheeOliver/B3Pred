@@ -1,0 +1,65 @@
+{
+  "model_name": "GraphSAGE",
+  "n_trials": 1,
+  "best_score": 0.8335368335368335,
+  "best_config": {
+    "model_name": "GraphSAGE",
+    "config_name": "GraphSAGE_bayesian_trial_0",
+    "graph_layers": 3,
+    "graph_hidden_channels": 32,
+    "graph_dropouts": 0.03485016730091967,
+    "graph_norm": true,
+    "pred_layers": 4,
+    "pred_hidden_channels": 64,
+    "pred_dropouts": 0.10909498032426036,
+    "batch_size": 64,
+    "lr": 7.476312062252303e-05,
+    "epochs": 69,
+    "loss": "crossentropy",
+    "subset_size": 1.0
+  },
+  "test_results": {
+    "acc_target": 0.7271557271557272,
+    "prec_target": 0.7227805113201201,
+    "recall_target": 0.7271557271557272,
+    "f1_target": 0.7196743270864882,
+    "mcc_target": 0.4105255757346013,
+    "spec_target": 0.7271557271557272,
+    "macro_f1": 0.7196743270864882,
+    "auc_target": 0.7842809597415438
+  },
+  "all_trials": [
+    {
+      "trial": 0,
+      "val_f1": 0.8335368335368335,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_bayesian_trial_0",
+        "graph_layers": 3,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.03485016730091967,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.10909498032426036,
+        "batch_size": 64,
+        "lr": 7.476312062252303e-05,
+        "epochs": 69,
+        "loss": "crossentropy",
+        "subset_size": 1.0
+      },
+      "all_metrics": {
+        "acc_target": 0.8333333333333334,
+        "prec_target": 0.8337523586440237,
+        "recall_target": 0.8333333333333334,
+        "f1_target": 0.8335368335368335,
+        "mcc_target": 0.6031889497617283,
+        "spec_target": 0.8333333333333334,
+        "macro_f1": 0.8335368335368335,
+        "auc_target": 0.8671567896681862,
+        "epoch": 68,
+        "epoch_loss": 0.43001597268240793
+      }
+    }
+  ]
+}

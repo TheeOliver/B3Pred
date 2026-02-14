@@ -1,0 +1,1 @@
+{"model_name": "GAT", "graph_layers": 3, "graph_hidden_channels": 64, "attention_heads": 4, "attention_dropouts": 0.3, "graph_dropouts": 0.3, "graph_norm": true, "config_name": "gat_test1", "batch_size": 64, "epochs": 20, "lr": 0.001, "loss": "crossentropy", "pred_layers": 2, "pred_hidden_channels": 64, "pred_dropouts": 0.3, "subset_size": 1.0}

@@ -1,0 +1,65 @@
+{
+  "model_name": "GIN",
+  "n_trials": 1,
+  "best_score": 0.8716318014742481,
+  "best_config": {
+    "model_name": "GIN",
+    "config_name": "GIN_bayesian_trial_0",
+    "graph_layers": 3,
+    "graph_hidden_channels": 32,
+    "graph_dropouts": 0.03485016730091967,
+    "graph_norm": true,
+    "pred_layers": 4,
+    "pred_hidden_channels": 64,
+    "pred_dropouts": 0.10909498032426036,
+    "batch_size": 64,
+    "lr": 7.476312062252303e-05,
+    "epochs": 69,
+    "loss": "crossentropy",
+    "subset_size": 1.0
+  },
+  "test_results": {
+    "acc_target": 0.7374517374517374,
+    "prec_target": 0.7334982259681055,
+    "recall_target": 0.7374517374517374,
+    "f1_target": 0.731684356651813,
+    "mcc_target": 0.43482855690722033,
+    "spec_target": 0.7374517374517374,
+    "macro_f1": 0.731684356651813,
+    "auc_target": 0.8110038851986464
+  },
+  "all_trials": [
+    {
+      "trial": 0,
+      "val_f1": 0.8716318014742481,
+      "config": {
+        "model_name": "GIN",
+        "config_name": "GIN_bayesian_trial_0",
+        "graph_layers": 3,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.03485016730091967,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.10909498032426036,
+        "batch_size": 64,
+        "lr": 7.476312062252303e-05,
+        "epochs": 69,
+        "loss": "crossentropy",
+        "subset_size": 1.0
+      },
+      "all_metrics": {
+        "acc_target": 0.8705128205128205,
+        "prec_target": 0.8734559724372968,
+        "recall_target": 0.8705128205128205,
+        "f1_target": 0.8716318014742481,
+        "mcc_target": 0.6972555979617364,
+        "spec_target": 0.8705128205128205,
+        "macro_f1": 0.8716318014742481,
+        "auc_target": 0.921726781272803,
+        "epoch": 68,
+        "epoch_loss": 0.36604417282707835
+      }
+    }
+  ]
+}
