@@ -4,24 +4,6 @@ Batch Optimization Runner
 Runs multiple optimization methods on all models and generates comparison report
 """
 
-# # Run all 6 optimization methods on all models
-# python run_all_optimizations.py --n_trials 100
-#
-# # Compare only the new metaheuristic methods
-# python run_all_optimizations.py --methods genetic pso hillclimbing --models GAT GCN
-#
-# # Quick comparison of traditional vs metaheuristic
-# python run_all_optimizations.py --methods bayesian genetic pso --n_trials 50
-#
-# # Generate report from existing results (no re-running)
-# python run_all_optimizations.py --compare_only
-
-# !/usr/bin/env python3
-"""
-Batch Optimization Runner
-Runs multiple optimization methods on all models and generates comparison report
-"""
-
 import argparse
 import subprocess
 import json
@@ -34,11 +16,12 @@ import numpy as np
 class BatchOptimizationRunner:
     """Run multiple optimization methods and compare results"""
 
-    def __init__(self, methods=['bayesian'],
-                 models=['GAT'],
+    def __init__(self, methods=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'abc', 'hillclimbing'],
+                 models=['GAT', 'GCN', 'GraphSAGE', 'GIN', 'GINE'],
                  n_trials=100, evaluate_test=True, results_dir='./optimization_results'):
         """
         Initialize batch runner
+
         Args:
             methods: List of optimization methods to run
             models: List of GNN models to optimize
@@ -60,7 +43,7 @@ class BatchOptimizationRunner:
         Run a single optimization
 
         Args:
-            method: Optimization method ('bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'hillclimbing')
+            method: Optimization method ('bayesian', 'hyperband', or 'cmaes')
             model: GNN model to optimize
             seed: Random seed
 
@@ -105,66 +88,41 @@ class BatchOptimizationRunner:
                 '--seed', str(seed)
             ]
         elif method == 'genetic':
-            # For genetic: n_trials -> population_size * n_generations
-            # e.g., 100 trials = 20 pop * 5 gen
-            population_size = 20
-            n_generations = max(1, self.n_trials // population_size)
             cmd = [
                 'python', 'optimizations/genetic_optimization.py',
                 '--model', model,
-                '--population_size', str(population_size),
-                '--n_generations', str(n_generations),
-                '--mutation_rate', '0.2',
-                '--crossover_rate', '0.8',
+                '--population_size', '20',
+                '--n_generations', str(max(30, self.n_trials // 2)),
                 '--study_name', study_name,
                 '--results_dir', str(self.results_dir / method),
                 '--seed', str(seed)
             ]
         elif method == 'pso':
-            # For PSO: n_trials -> n_particles * n_iterations
-            # e.g., 100 trials = 20 particles * 5 iterations
-            n_particles = 20
-            n_iterations = max(1, self.n_trials // n_particles)
             cmd = [
                 'python', 'optimizations/pso_optimization.py',
                 '--model', model,
-                '--n_particles', str(n_particles),
-                '--n_iterations', str(n_iterations),
-                '--w_start', '0.9',
-                '--w_end', '0.4',
-                '--c1', '2.0',
-                '--c2', '2.0',
-                '--study_name', study_name,
-                '--results_dir', str(self.results_dir / method),
-                '--seed', str(seed)
-            ]
-        elif method == 'hillclimbing':
-            # For hill climbing: n_trials -> n_restarts * n_iterations
-            # e.g., 100 trials = 5 restarts * 20 iterations
-            n_restarts = 5
-            n_iterations = max(1, self.n_trials // n_restarts)
-            cmd = [
-                'python', 'optimizations/hillclimbing_optimization.py',
-                '--model', model,
-                '--n_iterations', str(n_iterations),
-                '--n_restarts', str(n_restarts),
-                '--n_neighbors', '8',
-                '--neighbor_strategy', 'mixed',
+                '--n_particles', '20',
+                '--n_iterations', str(max(30, self.n_trials // 2)),
                 '--study_name', study_name,
                 '--results_dir', str(self.results_dir / method),
                 '--seed', str(seed)
             ]
         elif method == 'abc':
-            # For ABC: n_trials -> colony_size * n_iterations
-            # e.g., 100 trials = 20 colony * 5 iterations
-            colony_size = 20
-            n_iterations = max(1, self.n_trials // colony_size)
             cmd = [
                 'python', 'optimizations/abc_optimization.py',
                 '--model', model,
-                '--colony_size', str(colony_size),
-                '--n_iterations', str(n_iterations),
-                '--limit', '10',
+                '--colony_size', '20',
+                '--n_iterations', str(max(30, self.n_trials // 2)),
+                '--study_name', study_name,
+                '--results_dir', str(self.results_dir / method),
+                '--seed', str(seed)
+            ]
+        elif method == 'hillclimbing':
+            cmd = [
+                'python', 'optimizations/hillclimbing_optimization.py',
+                '--model', model,
+                '--n_iterations', str(max(20, self.n_trials // 3)),
+                '--n_restarts', '5',
                 '--study_name', study_name,
                 '--results_dir', str(self.results_dir / method),
                 '--seed', str(seed)
@@ -235,12 +193,10 @@ class BatchOptimizationRunner:
                     # Add test results if available
                     if data.get('test_results'):
                         test_res = data['test_results']
-                        # Handle different key formats for test results
-                        target_label = 'target'
-                        result_entry['test_accuracy'] = test_res.get(f"acc_{target_label}", None)
+                        result_entry['test_accuracy'] = test_res.get(f"acc_{data['model_name']}", None)
                         result_entry['test_f1'] = test_res.get('macro_f1', None)
-                        result_entry['test_auc'] = test_res.get(f"auc_{target_label}", None)
-                        result_entry['test_mcc'] = test_res.get(f"mcc_{target_label}", None)
+                        result_entry['test_auc'] = test_res.get(f"auc_{data['model_name']}", None)
+                        result_entry['test_mcc'] = test_res.get(f"mcc_{data['model_name']}", None)
 
                     # Add method-specific info
                     if method == 'bayesian':
@@ -251,23 +207,6 @@ class BatchOptimizationRunner:
                         result_entry['pruned_trials'] = data.get('pruned_trials')
                     elif method == 'cmaes':
                         result_entry['n_iterations'] = data.get('n_iterations')
-                        result_entry['total_evaluations'] = data.get('total_evaluations')
-                    elif method == 'genetic':
-                        result_entry['population_size'] = data.get('population_size')
-                        result_entry['n_generations'] = data.get('n_generations')
-                        result_entry['total_evaluations'] = data.get('total_evaluations')
-                    elif method == 'pso':
-                        result_entry['n_particles'] = data.get('n_particles')
-                        result_entry['n_iterations'] = data.get('n_iterations')
-                        result_entry['total_evaluations'] = data.get('total_evaluations')
-                    elif method == 'hillclimbing':
-                        result_entry['n_restarts'] = data.get('n_restarts')
-                        result_entry['n_iterations'] = data.get('n_iterations')
-                        result_entry['total_evaluations'] = data.get('total_evaluations')
-                    elif method == 'abc':
-                        result_entry['colony_size'] = data.get('colony_size')
-                        result_entry['n_iterations'] = data.get('n_iterations')
-                        result_entry['limit'] = data.get('limit')
                         result_entry['total_evaluations'] = data.get('total_evaluations')
 
                     results.append(result_entry)
@@ -290,16 +229,16 @@ class BatchOptimizationRunner:
 
         with open(report_file, 'w') as f:
             f.write("=" * 80 + "\n")
-            f.write("OPTIMIZATION METHODS COMPARISON REPORT\n")
+            f.write("HYPERPARAMETER OPTIMIZATION COMPARISON REPORT\n")
             f.write("=" * 80 + "\n\n")
             f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"Total Optimization Runs: {len(df)}\n")
             f.write(f"Methods Compared: {', '.join(df['method'].unique())}\n")
-            f.write(f"Models Tested: {', '.join(df['model'].unique())}\n")
-            f.write(f"Total Runs: {len(df)}\n\n")
+            f.write(f"Models Optimized: {', '.join(df['model'].unique())}\n\n")
 
             # Overall best results
             f.write("=" * 80 + "\n")
-            f.write("OVERALL BEST RESULTS\n")
+            f.write("*** OVERALL BEST RESULTS ***\n")
             f.write("=" * 80 + "\n\n")
 
             if 'best_val_f1' in df.columns:
@@ -341,31 +280,12 @@ class BatchOptimizationRunner:
                         f.write(f"    Test F1: {row['test_f1']:.4f}\n")
                         f.write(f"    Test Accuracy: {row['test_accuracy']:.4f}\n")
 
-                    # Method-specific info
                     if row['method'] == 'hyperband':
                         if 'completed_trials' in row and pd.notna(row['completed_trials']):
                             f.write(f"    Trials: {row['completed_trials']:.0f} completed, ")
                             f.write(f"{row['pruned_trials']:.0f} pruned\n")
                     elif row['method'] == 'cmaes':
                         if 'total_evaluations' in row and pd.notna(row['total_evaluations']):
-                            f.write(f"    Total Evaluations: {row['total_evaluations']:.0f}\n")
-                    elif row['method'] == 'genetic':
-                        if 'total_evaluations' in row and pd.notna(row['total_evaluations']):
-                            f.write(
-                                f"    Population: {row['population_size']:.0f}, Generations: {row['n_generations']:.0f}\n")
-                            f.write(f"    Total Evaluations: {row['total_evaluations']:.0f}\n")
-                    elif row['method'] == 'pso':
-                        if 'total_evaluations' in row and pd.notna(row['total_evaluations']):
-                            f.write(f"    Particles: {row['n_particles']:.0f}, Iterations: {row['n_iterations']:.0f}\n")
-                            f.write(f"    Total Evaluations: {row['total_evaluations']:.0f}\n")
-                    elif row['method'] == 'hillclimbing':
-                        if 'total_evaluations' in row and pd.notna(row['total_evaluations']):
-                            f.write(f"    Restarts: {row['n_restarts']:.0f}, Iterations: {row['n_iterations']:.0f}\n")
-                            f.write(f"    Total Evaluations: {row['total_evaluations']:.0f}\n")
-                    elif row['method'] == 'abc':
-                        if 'total_evaluations' in row and pd.notna(row['total_evaluations']):
-                            f.write(f"    Colony: {row['colony_size']:.0f}, Iterations: {row['n_iterations']:.0f}\n")
-                            f.write(f"    Abandonment Limit: {row['limit']:.0f}\n")
                             f.write(f"    Total Evaluations: {row['total_evaluations']:.0f}\n")
 
             # Results by method
@@ -389,10 +309,6 @@ class BatchOptimizationRunner:
                 f.write(f"  Best Model: {method_df.loc[method_df['best_val_f1'].idxmax()]['model']}\n")
                 f.write(f"  Best Validation F1: {method_df['best_val_f1'].max():.4f}\n")
 
-                # Average evaluations for this method
-                if 'total_evaluations' in method_df.columns and method_df['total_evaluations'].notna().any():
-                    f.write(f"  Average Evaluations: {method_df['total_evaluations'].mean():.1f}\n")
-
             # Statistical summary
             f.write("\n" + "=" * 80 + "\n")
             f.write("STATISTICAL SUMMARY\n")
@@ -412,22 +328,6 @@ class BatchOptimizationRunner:
                 f.write(f"  Overall Std: {test_f1_df['test_f1'].std():.4f}\n")
                 f.write(f"  Overall Min: {test_f1_df['test_f1'].min():.4f}\n")
                 f.write(f"  Overall Max: {test_f1_df['test_f1'].max():.4f}\n\n")
-
-            # Efficiency comparison
-            f.write("=" * 80 + "\n")
-            f.write("EFFICIENCY COMPARISON\n")
-            f.write("=" * 80 + "\n\n")
-
-            if 'total_evaluations' in df.columns and df['total_evaluations'].notna().any():
-                efficiency_df = df[df['total_evaluations'].notna()].copy()
-                efficiency_df['f1_per_eval'] = efficiency_df['best_val_f1'] / efficiency_df['total_evaluations']
-
-                for method in sorted(efficiency_df['method'].unique()):
-                    method_eff = efficiency_df[efficiency_df['method'] == method]
-                    avg_eff = method_eff['f1_per_eval'].mean()
-                    f.write(f"{method.upper()}:\n")
-                    f.write(f"  F1 per Evaluation: {avg_eff:.6f}\n")
-                    f.write(f"  Average Total Evaluations: {method_eff['total_evaluations'].mean():.1f}\n\n")
 
             # Recommendations
             f.write("=" * 80 + "\n")
@@ -455,16 +355,6 @@ class BatchOptimizationRunner:
             f.write(
                 f"   Average F1: {model_avg.loc[best_model, 'mean']:.4f} ± {model_avg.loc[best_model, 'std']:.4f}\n\n")
 
-            # Efficiency recommendation
-            if 'total_evaluations' in df.columns and df['total_evaluations'].notna().any():
-                efficiency_df = df[df['total_evaluations'].notna()].copy()
-                efficiency_df['f1_per_eval'] = efficiency_df['best_val_f1'] / efficiency_df['total_evaluations']
-                eff_by_method = efficiency_df.groupby('method')['f1_per_eval'].mean()
-                most_efficient = eff_by_method.idxmax()
-                f.write(f"4. MOST EFFICIENT METHOD:\n")
-                f.write(f"   {most_efficient.upper()} provides best F1 per evaluation\n")
-                f.write(f"   Efficiency score: {eff_by_method[most_efficient]:.6f}\n\n")
-
             f.write("=" * 80 + "\n")
             f.write("End of Report\n")
             f.write("=" * 80 + "\n")
@@ -488,14 +378,14 @@ Examples:
   # Run all methods on all models
   python run_all_optimizations.py --n_trials 100
 
-  # Run only Bayesian and Genetic optimization
-  python run_all_optimizations.py --methods bayesian genetic --n_trials 150
+  # Run only Bayesian optimization
+  python run_all_optimizations.py --methods bayesian --n_trials 150
+
+  # Run evolutionary methods only
+  python run_all_optimizations.py --methods genetic pso abc --n_trials 100
 
   # Run on specific models only
   python run_all_optimizations.py --models GAT GCN --n_trials 100
-
-  # Compare new metaheuristic methods
-  python run_all_optimizations.py --methods genetic pso hillclimbing abc --n_trials 100
 
   # Quick test run
   python run_all_optimizations.py --n_trials 10 --no_evaluate_test
@@ -503,8 +393,8 @@ Examples:
     )
 
     parser.add_argument('--methods', nargs='+',
-                        choices=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'hillclimbing', 'abc'],
-                        default=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'hillclimbing', 'abc'],
+                        choices=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'abc', 'hillclimbing'],
+                        default=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'abc', 'hillclimbing'],
                         help='Optimization methods to run')
     parser.add_argument('--models', nargs='+',
                         choices=['GAT', 'GCN', 'GraphSAGE', 'GIN', 'GINE'],

@@ -37,25 +37,25 @@ from configs.predictor_config import GraphConfig
 
 class HillClimbingOptimizer:
     """Hill Climbing with random restarts for GNN hyperparameter tuning"""
-    
+
     def __init__(
-        self,
-        model_name: str,
-        n_iterations: int = 100,
-        n_restarts: int = 5,
-        n_neighbors: int = 8,
-        neighbor_strategy: str = 'mixed',
-        use_simulated_annealing: bool = False,
-        initial_temperature: float = 1.0,
-        cooling_rate: float = 0.95,
-        plateau_patience: int = 5,
-        study_name: str = None,
-        results_dir: Path = None,
-        seed: int = 42
+            self,
+            model_name: str,
+            n_iterations: int = 100,
+            n_restarts: int = 5,
+            n_neighbors: int = 8,
+            neighbor_strategy: str = 'mixed',
+            use_simulated_annealing: bool = False,
+            initial_temperature: float = 1.0,
+            cooling_rate: float = 0.95,
+            plateau_patience: int = 5,
+            study_name: str = None,
+            results_dir: Path = None,
+            seed: int = 42
     ):
         """
         Initialize Hill Climbing Optimizer
-        
+
         Args:
             model_name: One of ['GAT', 'GCN', 'GraphSAGE', 'GIN', 'GINE']
             n_iterations: Number of iterations per restart
@@ -83,49 +83,50 @@ class HillClimbingOptimizer:
         self.results_dir = results_dir or settings.EXPERIMENTS_FOLDER / "hillclimbing_optimization"
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self.seed = seed
-        
+
         # Set random seeds
         torch.manual_seed(seed)
         np.random.seed(seed)
         random.seed(seed)
-        
+
         # Load datasets
         print("Loading datasets...")
         self.train_df = pd.read_csv(settings.TRAIN_DATA)
         self.val_df = pd.read_csv(settings.VAL_DATA)
         self.test_df = pd.read_csv(settings.TEST_DATA)
-        
+
         # Prepare datasets
         self.train_dataset = MoleculeDataset(data=self.train_df)
         self.stats = compute_feature_stats(self.train_dataset)
         normalize_dataset(self.train_dataset, self.stats)
-        
+
         self.val_dataset = MoleculeDataset(data=self.val_df)
         normalize_dataset(self.val_dataset, self.stats)
-        
+
         self.test_dataset = MoleculeDataset(data=self.test_df)
         normalize_dataset(self.test_dataset, self.stats)
-        
+
         # Get graph info
         sample = self.train_dataset[0]
         self.graph_info = {
             'node_dim': sample.x.shape[1],
-            'edge_dim': sample.edge_attr.shape[1] if hasattr(sample, 'edge_attr') and sample.edge_attr is not None else 4
+            'edge_dim': sample.edge_attr.shape[1] if hasattr(sample,
+                                                             'edge_attr') and sample.edge_attr is not None else 4
         }
-        
+
         print(f"Train: {len(self.train_dataset)} | Val: {len(self.val_dataset)} | Test: {len(self.test_dataset)}")
         print(f"Node dim: {self.graph_info['node_dim']}, Edge dim: {self.graph_info['edge_dim']}")
-        
+
         # Results tracking
         self.global_best_config = None
         self.global_best_fitness = -float('inf')
         self.history = []
         self.evaluation_count = 0
         self.restart_history = []
-        
+
         # Define search space
         self.search_space = self._define_search_space()
-    
+
     def _define_search_space(self) -> dict:
         """Define the hyperparameter search space"""
         space = {
@@ -140,14 +141,14 @@ class HillClimbingOptimizer:
             'lr': {'type': 'log_float', 'min': 1e-5, 'max': 1e-2, 'factor': 2.0},
             'epochs': {'type': 'int', 'min': 20, 'max': 100, 'step': 10},
         }
-        
+
         # Model-specific hyperparameters
         if self.model_name == 'GAT':
             space['attention_heads'] = {'type': 'categorical', 'values': [2, 4, 8]}
             space['attention_dropouts'] = {'type': 'float', 'min': 0.0, 'max': 0.6, 'step': 0.05}
-        
+
         return space
-    
+
     def _random_config(self) -> dict:
         """Generate a random configuration"""
         config = {
@@ -156,7 +157,7 @@ class HillClimbingOptimizer:
             'loss': 'crossentropy',
             'subset_size': 1.0,
         }
-        
+
         for param_name, spec in self.search_space.items():
             if spec['type'] == 'int':
                 config[param_name] = random.randint(spec['min'], spec['max'])
@@ -168,30 +169,30 @@ class HillClimbingOptimizer:
                 config[param_name] = 10 ** random.uniform(log_min, log_max)
             elif spec['type'] == 'categorical':
                 config[param_name] = random.choice(spec['values'])
-        
+
         return config
-    
+
     def _generate_neighbor(self, config: dict, n_changes: int = 1) -> dict:
         """
         Generate a neighbor by modifying parameters
-        
+
         Args:
             config: Current configuration
             n_changes: Number of parameters to change
-            
+
         Returns:
             Neighboring configuration
         """
         neighbor = copy.deepcopy(config)
-        
+
         # Select parameters to modify
         modifiable_params = list(self.search_space.keys())
         params_to_change = random.sample(modifiable_params, min(n_changes, len(modifiable_params)))
-        
+
         for param_name in params_to_change:
             spec = self.search_space[param_name]
             current_val = neighbor[param_name]
-            
+
             if spec['type'] == 'int':
                 # Step up or down
                 step = spec.get('step', 1)
@@ -199,7 +200,7 @@ class HillClimbingOptimizer:
                 new_val = current_val + direction * step
                 new_val = int(np.clip(new_val, spec['min'], spec['max']))
                 neighbor[param_name] = new_val
-            
+
             elif spec['type'] == 'float':
                 # Add Gaussian noise
                 step = spec.get('step', (spec['max'] - spec['min']) * 0.1)
@@ -207,7 +208,7 @@ class HillClimbingOptimizer:
                 new_val = current_val + direction * step
                 new_val = np.clip(new_val, spec['min'], spec['max'])
                 neighbor[param_name] = float(new_val)
-            
+
             elif spec['type'] == 'log_float':
                 # Multiply or divide by factor
                 factor = spec.get('factor', 2.0)
@@ -218,27 +219,27 @@ class HillClimbingOptimizer:
                     new_val = current_val / factor
                 new_val = np.clip(new_val, spec['min'], spec['max'])
                 neighbor[param_name] = float(new_val)
-            
+
             elif spec['type'] == 'categorical':
                 # Choose a different value
                 values = [v for v in spec['values'] if v != current_val]
                 if values:
                     neighbor[param_name] = random.choice(values)
-        
+
         return neighbor
-    
+
     def _generate_neighbors(self, config: dict) -> list:
         """
         Generate multiple neighbors
-        
+
         Args:
             config: Current configuration
-            
+
         Returns:
             List of neighboring configurations
         """
         neighbors = []
-        
+
         for _ in range(self.n_neighbors):
             if self.neighbor_strategy == 'single':
                 n_changes = 1
@@ -246,19 +247,19 @@ class HillClimbingOptimizer:
                 n_changes = random.randint(2, min(4, len(self.search_space)))
             else:  # mixed
                 n_changes = random.choice([1, 1, 2, 3])  # Bias toward single changes
-            
+
             neighbor = self._generate_neighbor(config, n_changes)
             neighbors.append(neighbor)
-        
+
         return neighbors
-    
+
     def _evaluate_config(self, config: dict) -> float:
         """
         Evaluate a configuration
-        
+
         Args:
             config: Configuration to evaluate
-            
+
         Returns:
             Fitness score (validation F1)
         """
@@ -274,11 +275,11 @@ class HillClimbingOptimizer:
                 batch_size=config['batch_size'],
                 shuffle=False
             )
-            
+
             # Build model
             model_class = GraphConfig.models[self.model_name]['model']
             model = model_class.from_config(config, self.graph_info)
-            
+
             # Train model
             res, trained_model = train_model(
                 model,
@@ -292,124 +293,124 @@ class HillClimbingOptimizer:
                 log=False,
                 save_to=None
             )
-            
+
             fitness = res['macro_f1']
             self.evaluation_count += 1
-            
+
             # Update global best
             if fitness > self.global_best_fitness:
                 self.global_best_fitness = fitness
                 self.global_best_config = copy.deepcopy(config)
-                print(f"\n{'='*70}")
+                print(f"\n{'=' * 70}")
                 print(f"NEW GLOBAL BEST: {fitness:.4f}")
-                print(f"{'='*70}\n")
-            
+                print(f"{'=' * 70}\n")
+
             return fitness
-            
+
         except Exception as e:
             print(f"Evaluation failed: {e}")
             import traceback
             traceback.print_exc()
             return -1.0
-    
+
     def _accept_worse_solution(self, current_fitness: float, neighbor_fitness: float, temperature: float) -> bool:
         """
         Decide whether to accept a worse solution (simulated annealing)
-        
+
         Args:
             current_fitness: Current solution fitness
             neighbor_fitness: Neighbor solution fitness
             temperature: Current temperature
-            
+
         Returns:
             True if worse solution should be accepted
         """
         if not self.use_simulated_annealing:
             return False
-        
+
         if temperature <= 0:
             return False
-        
+
         delta = neighbor_fitness - current_fitness
         probability = math.exp(delta / temperature)
         return random.random() < probability
-    
+
     def _hill_climb_restart(self, restart_num: int) -> tuple:
         """
         Perform one hill climbing run with random restart
-        
+
         Args:
             restart_num: Restart number
-            
+
         Returns:
             Tuple of (best_config, best_fitness)
         """
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"RESTART {restart_num}/{self.n_restarts}")
-        print(f"{'='*70}\n")
-        
+        print(f"{'=' * 70}\n")
+
         # Random initialization
         current_config = self._random_config()
         current_fitness = self._evaluate_config(current_config)
         print(f"Initial fitness: {current_fitness:.4f}")
-        
+
         best_config = copy.deepcopy(current_config)
         best_fitness = current_fitness
-        
+
         temperature = self.initial_temperature
         plateau_counter = 0
-        
+
         for iteration in range(1, self.n_iterations + 1):
             # Generate neighbors
             neighbors = self._generate_neighbors(current_config)
-            
+
             # Evaluate neighbors
             neighbor_fitnesses = []
             for i, neighbor in enumerate(neighbors):
-                print(f"Restart {restart_num}, Iteration {iteration}, Neighbor {i+1}/{len(neighbors)}...", end=" ")
+                print(f"Restart {restart_num}, Iteration {iteration}, Neighbor {i + 1}/{len(neighbors)}...", end=" ")
                 fitness = self._evaluate_config(neighbor)
                 neighbor_fitnesses.append((neighbor, fitness))
                 print(f"Fitness: {fitness:.4f}")
-            
+
             # Find best neighbor
             best_neighbor, best_neighbor_fitness = max(neighbor_fitnesses, key=lambda x: x[1])
-            
+
             # Decide whether to move to neighbor
             if best_neighbor_fitness > current_fitness:
                 # Uphill move
                 current_config = best_neighbor
                 current_fitness = best_neighbor_fitness
                 plateau_counter = 0
-                
+
                 # Update local best
                 if current_fitness > best_fitness:
                     best_config = copy.deepcopy(current_config)
                     best_fitness = current_fitness
                     print(f"  ↑ Improved! New best: {best_fitness:.4f}")
-            
+
             elif self._accept_worse_solution(current_fitness, best_neighbor_fitness, temperature):
                 # Accept worse solution (simulated annealing)
                 current_config = best_neighbor
                 current_fitness = best_neighbor_fitness
                 plateau_counter = 0
                 print(f"  ↓ Accepted worse solution (SA): {current_fitness:.4f}")
-            
+
             else:
                 # Stuck on plateau
                 plateau_counter += 1
                 print(f"  → Plateau ({plateau_counter}/{self.plateau_patience})")
-                
+
                 if plateau_counter >= self.plateau_patience:
                     print(f"  Plateau detected! Perturbing solution...")
                     # Large perturbation to escape plateau
                     current_config = self._generate_neighbor(current_config, n_changes=3)
                     current_fitness = self._evaluate_config(current_config)
                     plateau_counter = 0
-            
+
             # Cool down temperature
             if self.use_simulated_annealing:
                 temperature *= self.cooling_rate
-            
+
             # Record history
             self.history.append({
                 'restart': restart_num,
@@ -419,20 +420,20 @@ class HillClimbingOptimizer:
                 'temperature': float(temperature) if self.use_simulated_annealing else None,
                 'plateau_counter': plateau_counter
             })
-        
+
         print(f"\nRestart {restart_num} complete. Best fitness: {best_fitness:.4f}")
-        
+
         self.restart_history.append({
             'restart': restart_num,
             'best_fitness': float(best_fitness),
             'best_config': copy.deepcopy(best_config)
         })
-        
+
         return best_config, best_fitness
-    
+
     def run_optimization(self):
         """Run hill climbing optimization with restarts"""
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"STARTING HILL CLIMBING OPTIMIZATION FOR {self.model_name}")
         print(f"Iterations per restart: {self.n_iterations}")
         print(f"Number of restarts: {self.n_restarts}")
@@ -441,36 +442,36 @@ class HillClimbingOptimizer:
         print(f"Simulated annealing: {self.use_simulated_annealing}")
         if self.use_simulated_annealing:
             print(f"Temperature: {self.initial_temperature} (cooling: {self.cooling_rate})")
-        print(f"{'='*70}\n")
-        
+        print(f"{'=' * 70}\n")
+
         # Perform multiple restarts
         for restart in range(1, self.n_restarts + 1):
             self._hill_climb_restart(restart)
-        
+
         # Final statistics
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"OPTIMIZATION COMPLETE")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
         print(f"Total evaluations: {self.evaluation_count}")
         print(f"Global best fitness: {self.global_best_fitness:.4f}")
         print(f"\nBest hyperparameters:")
         for key, value in self.global_best_config.items():
             if key not in ['model_name', 'config_name', 'loss', 'subset_size']:
                 print(f"  {key:30s}: {value}")
-        print(f"{'='*70}\n")
-    
+        print(f"{'=' * 70}\n")
+
     def evaluate_best_model(self):
         """Evaluate best model on test set"""
         if self.global_best_config is None:
             print("No best configuration found. Run optimization first.")
             return None
-        
-        print(f"\n{'='*70}")
+
+        print(f"\n{'=' * 70}")
         print(f"EVALUATING BEST MODEL ON TEST SET")
-        print(f"{'='*70}\n")
-        
+        print(f"{'=' * 70}\n")
+
         config = self.global_best_config
-        
+
         # Create data loaders
         train_loader = DataLoader(
             self.train_dataset,
@@ -482,11 +483,11 @@ class HillClimbingOptimizer:
             batch_size=config['batch_size'],
             shuffle=False
         )
-        
+
         # Build and train model
         model_class = GraphConfig.models[self.model_name]['model']
         model = model_class.from_config(config, self.graph_info)
-        
+
         _, trained_model = train_model(
             model,
             train_loader,
@@ -499,28 +500,28 @@ class HillClimbingOptimizer:
             log=False,
             save_to=None
         )
-        
+
         # Evaluate on test set
         test_results = test_model(
             test_loader,
             trained_model,
             [settings.TEST_LABEL]
         )
-        
-        print(f"\n{'='*70}")
+
+        print(f"\n{'=' * 70}")
         print(f"TEST SET RESULTS")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
         for key, value in test_results.items():
             if value is not None:
                 print(f"{key:30s}: {value:.4f}")
-        print(f"{'='*70}\n")
-        
+        print(f"{'=' * 70}\n")
+
         return test_results
-    
+
     def save_results(self, test_results: dict = None):
         """Save optimization results to files"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        
+
         # Save detailed results to JSON
         results_file = self.results_dir / f"{self.study_name}_{timestamp}_detailed.json"
         with open(results_file, 'w') as f:
@@ -540,15 +541,15 @@ class HillClimbingOptimizer:
                 'restart_history': self.restart_history,
                 'total_evaluations': self.evaluation_count
             }, f, indent=2)
-        
+
         print(f"Detailed results saved to: {results_file}")
-        
+
         # Save summary
         summary_file = self.results_dir / f"{self.study_name}_{timestamp}_summary.txt"
         with open(summary_file, 'w') as f:
-            f.write("="*80 + "\n")
+            f.write("=" * 80 + "\n")
             f.write(f"HILL CLIMBING OPTIMIZATION RESULTS - {self.model_name}\n")
-            f.write("="*80 + "\n\n")
+            f.write("=" * 80 + "\n\n")
             f.write(f"Optimization Study: {self.study_name}\n")
             f.write(f"Iterations per restart: {self.n_iterations}\n")
             f.write(f"Number of restarts: {self.n_restarts}\n")
@@ -560,37 +561,37 @@ class HillClimbingOptimizer:
                 f.write(f"Initial temperature: {self.initial_temperature}\n")
                 f.write(f"Cooling rate: {self.cooling_rate}\n")
             f.write(f"Timestamp: {timestamp}\n\n")
-            
-            f.write("="*80 + "\n")
+
+            f.write("=" * 80 + "\n")
             f.write("*** BEST CONFIGURATION ***\n")
-            f.write("="*80 + "\n")
+            f.write("=" * 80 + "\n")
             f.write(f"Global Best Fitness: {self.global_best_fitness:.4f}\n\n")
             f.write("Hyperparameters:\n")
             for key, value in self.global_best_config.items():
                 f.write(f"  {key:30s}: {value}\n")
             f.write("\n")
-            
+
             if test_results:
-                f.write("="*80 + "\n")
+                f.write("=" * 80 + "\n")
                 f.write("*** TEST SET PERFORMANCE ***\n")
-                f.write("="*80 + "\n")
+                f.write("=" * 80 + "\n")
                 for key, value in test_results.items():
                     if value is not None:
                         f.write(f"  {key:30s}: {value:.4f}\n")
                 f.write("\n")
-            
+
             # Restart summary
-            f.write("="*80 + "\n")
+            f.write("=" * 80 + "\n")
             f.write("RESTART SUMMARY\n")
-            f.write("="*80 + "\n")
+            f.write("=" * 80 + "\n")
             for entry in self.restart_history:
                 f.write(f"\nRestart {entry['restart']}:\n")
                 f.write(f"  Best fitness: {entry['best_fitness']:.4f}\n")
-            
-            f.write("\n" + "="*80 + "\n")
+
+            f.write("\n" + "=" * 80 + "\n")
             f.write("Optimization completed successfully!\n")
-            f.write("="*80 + "\n")
-        
+            f.write("=" * 80 + "\n")
+
         print(f"Summary saved to: {summary_file}")
 
 
@@ -599,7 +600,7 @@ def main():
         description="Hill Climbing Optimization for BBB Prediction Models",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    
+
     parser.add_argument('--model', type=str, required=True,
                         choices=['GAT', 'GCN', 'GraphSAGE', 'GIN', 'GINE'],
                         help='GNN model to optimize')
@@ -628,9 +629,9 @@ def main():
                         help='Random seed (default: 42)')
     parser.add_argument('--evaluate_test', action='store_true',
                         help='Evaluate best model on test set after optimization')
-    
+
     args = parser.parse_args()
-    
+
     # Create optimizer
     optimizer = HillClimbingOptimizer(
         model_name=args.model,
@@ -646,21 +647,21 @@ def main():
         results_dir=Path(args.results_dir) if args.results_dir else None,
         seed=args.seed
     )
-    
+
     # Run optimization
     optimizer.run_optimization()
-    
+
     # Evaluate on test set if requested
     test_results = None
     if args.evaluate_test:
         test_results = optimizer.evaluate_best_model()
-    
+
     # Save results
     optimizer.save_results(test_results)
-    
-    print("\n" + "="*80)
+
+    print("\n" + "=" * 80)
     print("HILL CLIMBING OPTIMIZATION COMPLETE!")
-    print("="*80 + "\n")
+    print("=" * 80 + "\n")
 
 
 if __name__ == "__main__":
