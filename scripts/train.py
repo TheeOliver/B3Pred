@@ -10,6 +10,12 @@ import torch
 from configs.predictor_config import TrainConfig as train_settings
 from scripts.evaluate import test_model
 
+# ---------------------------------------------------------------------------
+# Global device: use GPU if available, otherwise fall back to CPU
+# ---------------------------------------------------------------------------
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"[train] Using device: {DEVICE}")
+
 
 def train_model(model, train_loader, val_loader, epochs, target_labels, loss_type: str = 'crossentropy',
                 learning_rate: float = 0.001, hetero=False, log=False, save_to=None):
@@ -20,6 +26,10 @@ def train_model(model, train_loader, val_loader, epochs, target_labels, loss_typ
 
     print('Starting training')
     criterion = train_settings.loss_function[loss_type]()
+
+    # Move model to GPU
+    model = model.to(DEVICE)
+
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=5e-4)
 
     best_f1 = -1.0
@@ -29,7 +39,7 @@ def train_model(model, train_loader, val_loader, epochs, target_labels, loss_typ
         model.train()
         i = 1
         for data in train_loader:
-            # data = data.to(device)
+            data = data.to(DEVICE)
 
             optimizer.zero_grad()
             out = model(data)  # predict per graph

@@ -70,7 +70,11 @@ class ParticleSwarmOptimizer:
         v_max_fraction: float = 0.2,
         study_name: str = None,
         results_dir: Path = None,
-        seed: int = 42
+        seed: int = 42,
+        opt_subset_size: float = 0.1,
+        opt_epochs: int = 10,
+        top_k: int = 10,
+        full_epochs: int = 100
     ):
         """
         Initialize Particle Swarm Optimizer
@@ -87,6 +91,10 @@ class ParticleSwarmOptimizer:
             study_name: Name for the optimization study
             results_dir: Directory to save results
             seed: Random seed
+            opt_subset_size: Fraction of training data to use during optimization
+            opt_epochs: Number of epochs to use during optimization
+            top_k: Number of top configurations to retrain
+            full_epochs: Number of epochs for full training
         """
         self.model_name = model_name
         self.n_particles = n_particles
@@ -100,6 +108,12 @@ class ParticleSwarmOptimizer:
         self.results_dir = results_dir or settings.EXPERIMENTS_FOLDER / "pso_optimization"
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self.seed = seed
+        
+        # Optimization strategy parameters
+        self.opt_subset_size = opt_subset_size
+        self.opt_epochs = opt_epochs
+        self.top_k = top_k
+        self.full_epochs = full_epochs
         
         # Set random seeds
         torch.manual_seed(seed)
@@ -122,6 +136,17 @@ class ParticleSwarmOptimizer:
         
         self.test_dataset = MoleculeDataset(data=self.test_df)
         normalize_dataset(self.test_dataset, self.stats)
+        
+        # Create fixed random subset for optimization
+        if self.opt_subset_size < 1.0:
+            n_subset = int(len(self.train_dataset) * self.opt_subset_size)
+            generator = torch.Generator().manual_seed(self.seed)
+            subset_indices = torch.randperm(len(self.train_dataset), generator=generator)[:n_subset]
+            self.train_subset = torch.utils.data.Subset(self.train_dataset, subset_indices)
+            print(f"Using {len(self.train_subset)}/{len(self.train_dataset)} samples for optimization ({self.opt_subset_size*100:.1f}%)")
+        else:
+            self.train_subset = self.train_dataset
+            print("Using full training dataset for optimization")
         
         # Get graph info
         sample = self.train_dataset[0]
@@ -156,7 +181,7 @@ class ParticleSwarmOptimizer:
             'pred_dropouts': {'type': 'float', 'min': 0.0, 'max': 0.6},
             'batch_size': {'type': 'categorical', 'values': [16, 32, 64, 128]},
             'lr': {'type': 'log_float', 'min': 1e-5, 'max': 1e-2},
-            'epochs': {'type': 'int', 'min': 20, 'max': 100},
+            # Removed: 'epochs': {'type': 'int', 'min': 20, 'max': 100},
         }
         
         # Model-specific hyperparameters
@@ -184,7 +209,8 @@ class ParticleSwarmOptimizer:
             'model_name': self.model_name,
             'config_name': f"{self.study_name}_particle_{self.evaluation_count}",
             'loss': 'crossentropy',
-            'subset_size': 1.0,
+            'subset_size': self.opt_subset_size,
+            'epochs': self.opt_epochs,
         }
         
         for param_name, spec in self.search_space.items():
@@ -237,14 +263,18 @@ class ParticleSwarmOptimizer:
             
             # Create data loaders
             train_loader = DataLoader(
-                self.train_dataset,
+                self.train_subset,
                 batch_size=config['batch_size'],
-                shuffle=True
+                shuffle=True,
+                num_workers=4,
+                pin_memory=torch.cuda.is_available()
             )
             val_loader = DataLoader(
                 self.val_dataset,
                 batch_size=config['batch_size'],
-                shuffle=False
+                shuffle=False,
+                num_workers=4,
+                pin_memory=torch.cuda.is_available()
             )
             
             # Build model
@@ -462,6 +492,7 @@ class ParticleSwarmOptimizer:
         print(f"STARTING PARTICLE SWARM OPTIMIZATION FOR {self.model_name}")
         print(f"Swarm size: {self.n_particles}")
         print(f"Iterations: {self.n_iterations}")
+        print(f"Using {self.opt_subset_size*100:.1f}% of data for {self.opt_epochs} epochs per evaluation")
         print(f"Inertia: {self.w_start} -> {self.w_end}")
         print(f"c1 (cognitive): {self.c1}")
         print(f"c2 (social): {self.c2}")
@@ -491,6 +522,155 @@ class ParticleSwarmOptimizer:
                 print(f"  {key:30s}: {value}")
         print(f"{'='*70}\n")
     
+    def retrain_top_k(self, k=None, full_epochs=None):
+        """
+        Retrain top-k configurations on full dataset and pick the best.
+        
+        Args:
+            k: Number of top configurations to retrain (default: self.top_k)
+            full_epochs: Number of epochs for full training (default: self.full_epochs)
+        
+        Returns:
+            Test results for the best model
+        """
+        if k is None:
+            k = self.top_k
+        if full_epochs is None:
+            full_epochs = self.full_epochs
+            
+        # Collect all evaluated configurations from history and current swarm
+        all_configs = []
+        
+        # Add history best configs
+        for entry in self.history:
+            if entry.get('best_config'):
+                all_configs.append({
+                    'config': entry['best_config'],
+                    'val_f1': entry['global_best']
+                })
+        
+        # Add current swarm particles
+        for particle in self.swarm:
+            if particle.fitness is not None:
+                all_configs.append({
+                    'config': particle.position,
+                    'val_f1': particle.fitness
+                })
+        
+        if not all_configs:
+            print("No results available to retrain. Run optimization first.")
+            return None
+
+        # Sort by validation F1 (descending)
+        sorted_results = sorted(all_configs, key=lambda x: x['val_f1'], reverse=True)
+        top_configs = [r['config'] for r in sorted_results[:k]]
+
+        print(f"\n{'='*70}")
+        print(f"RETRAINING TOP {k} CONFIGURATIONS ON FULL DATASET")
+        print(f"Full training epochs: {full_epochs}")
+        print(f"{'='*70}\n")
+        
+        best_val_f1 = -float('inf')
+        best_config = None
+        best_model = None
+        best_train_results = None
+        retrain_results = []
+
+        for i, config in enumerate(top_configs):
+            print(f"\n[{i+1}/{k}] Retraining configuration...")
+            
+            # Override epochs to use full training epochs
+            config['epochs'] = full_epochs
+            config['subset_size'] = 1.0  # Use full data
+            
+            # Create data loaders with full dataset
+            train_loader = DataLoader(
+                self.train_dataset,
+                batch_size=config['batch_size'],
+                shuffle=True,
+                num_workers=4,
+                pin_memory=torch.cuda.is_available()
+            )
+            val_loader = DataLoader(
+                self.val_dataset,
+                batch_size=config['batch_size'],
+                shuffle=False,
+                num_workers=4,
+                pin_memory=torch.cuda.is_available()
+            )
+
+            # Build model
+            model_class = GraphConfig.models[self.model_name]['model']
+            model = model_class.from_config(config, self.graph_info)
+
+            # Train on full dataset
+            print(f"  Training for {full_epochs} epochs...")
+            res, trained_model = train_model(
+                model,
+                train_loader,
+                val_loader,
+                config['epochs'],
+                [settings.TARGET_LABEL],
+                loss_type=config['loss'],
+                learning_rate=config['lr'],
+                hetero=False,
+                log=False,
+                save_to=None
+            )
+            
+            val_f1 = res['macro_f1']
+            print(f"  Validation F1 after full training: {val_f1:.4f}")
+            
+            # Store retraining result
+            retrain_result = {
+                'original_config': config.get('config_name', f'config_{i}'),
+                'config': config,
+                'val_f1': float(val_f1),
+                'all_metrics': res
+            }
+            retrain_results.append(retrain_result)
+
+            if val_f1 > best_val_f1:
+                best_val_f1 = val_f1
+                best_config = config
+                best_model = trained_model
+                best_train_results = res
+                print(f"  → New best among top-{k}!")
+
+        # Evaluate best model on test set
+        print(f"\n{'='*70}")
+        print(f"Evaluating best model on test set")
+        print(f"{'='*70}")
+        
+        test_loader = DataLoader(
+            self.test_dataset,
+            batch_size=best_config['batch_size'],
+            shuffle=False,
+            num_workers=0
+        )
+        
+        test_results = test_model(
+            test_loader,
+            best_model,
+            [settings.TEST_LABEL]
+        )
+
+        print(f"\nBest validation F1 after full training: {best_val_f1:.4f}")
+        print(f"Test results:")
+        for key, value in test_results.items():
+            if value is not None:
+                print(f"  {key}: {value:.4f}")
+
+        # Update global best with the retrained model
+        self.global_best_position = best_config
+        self.global_best_fitness = best_val_f1
+        
+        # Store retraining results
+        self.retrain_results = retrain_results
+        self.final_test_results = test_results
+
+        return test_results
+    
     def evaluate_best_model(self):
         """Evaluate best model on test set"""
         if self.global_best_position is None:
@@ -507,12 +687,14 @@ class ParticleSwarmOptimizer:
         train_loader = DataLoader(
             self.train_dataset,
             batch_size=config['batch_size'],
-            shuffle=True
+            shuffle=True,
+            num_workers=0
         )
         test_loader = DataLoader(
             self.test_dataset,
             batch_size=config['batch_size'],
-            shuffle=False
+            shuffle=False,
+            num_workers=0
         )
         
         # Build and train model
@@ -553,23 +735,34 @@ class ParticleSwarmOptimizer:
         """Save optimization results to files"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
+        # Prepare data dictionary
+        data = {
+            'model_name': self.model_name,
+            'n_particles': self.n_particles,
+            'n_iterations': self.n_iterations,
+            'w_start': self.w_start,
+            'w_end': self.w_end,
+            'c1': self.c1,
+            'c2': self.c2,
+            'opt_subset_size': self.opt_subset_size,
+            'opt_epochs': self.opt_epochs,
+            'global_best_fitness': float(self.global_best_fitness),
+            'best_config': self.global_best_position,
+            'test_results': test_results,
+            'history': self.history,
+            'total_evaluations': self.evaluation_count
+        }
+        
+        # Add retraining results if available
+        if hasattr(self, 'retrain_results'):
+            data['retrain_results'] = self.retrain_results
+        if hasattr(self, 'final_test_results'):
+            data['final_test_results'] = self.final_test_results
+        
         # Save detailed results to JSON
         results_file = self.results_dir / f"{self.study_name}_{timestamp}_detailed.json"
         with open(results_file, 'w') as f:
-            json.dump({
-                'model_name': self.model_name,
-                'n_particles': self.n_particles,
-                'n_iterations': self.n_iterations,
-                'w_start': self.w_start,
-                'w_end': self.w_end,
-                'c1': self.c1,
-                'c2': self.c2,
-                'global_best_fitness': float(self.global_best_fitness),
-                'best_config': self.global_best_position,
-                'test_results': test_results,
-                'history': self.history,
-                'total_evaluations': self.evaluation_count
-            }, f, indent=2)
+            json.dump(data, f, indent=2)
         
         print(f"Detailed results saved to: {results_file}")
         
@@ -583,6 +776,8 @@ class ParticleSwarmOptimizer:
             f.write(f"Swarm Size: {self.n_particles}\n")
             f.write(f"Iterations: {self.n_iterations}\n")
             f.write(f"Total Evaluations: {self.evaluation_count}\n")
+            f.write(f"Optimization Data Subset: {self.opt_subset_size*100:.1f}%\n")
+            f.write(f"Optimization Epochs: {self.opt_epochs}\n")
             f.write(f"Inertia Weight: {self.w_start} -> {self.w_end}\n")
             f.write(f"c1 (cognitive): {self.c1}\n")
             f.write(f"c2 (social): {self.c2}\n")
@@ -605,6 +800,21 @@ class ParticleSwarmOptimizer:
                     if value is not None:
                         f.write(f"  {key:30s}: {value:.4f}\n")
                 f.write("\n")
+            
+            # Add retraining section if available
+            if hasattr(self, 'retrain_results'):
+                f.write("\n" + "="*80 + "\n")
+                f.write(f"*** RETRAINING RESULTS (TOP-{self.top_k} ON FULL DATA) ***\n")
+                f.write("="*80 + "\n\n")
+                
+                sorted_retrain = sorted(self.retrain_results, key=lambda x: x['val_f1'], reverse=True)
+                for i, res in enumerate(sorted_retrain, 1):
+                    f.write(f"Rank {i}:\n")
+                    f.write(f"  Validation F1: {res['val_f1']:.4f}\n")
+                    if i == 1 and hasattr(self, 'final_test_results'):
+                        f.write(f"  Test F1: {self.final_test_results.get('macro_f1', 0):.4f}\n")
+                        f.write(f"  Test Accuracy: {self.final_test_results.get('acc_' + self.model_name, 0):.4f}\n")
+                    f.write("\n")
             
             # Convergence progress
             f.write("="*80 + "\n")
@@ -655,6 +865,18 @@ def main():
     parser.add_argument('--evaluate_test', action='store_true',
                         help='Evaluate best model on test set after optimization')
     
+    # New arguments for optimization strategy
+    parser.add_argument('--subset_size', type=float, default=0.1,
+                        help='Fraction of training data to use during optimization (default: 0.1)')
+    parser.add_argument('--opt_epochs', type=int, default=10,
+                        help='Number of epochs to use during optimization (default: 10)')
+    parser.add_argument('--top_k', type=int, default=10,
+                        help='Number of top configurations to retrain on full data (default: 10)')
+    parser.add_argument('--full_epochs', type=int, default=100,
+                        help='Number of epochs for full training (default: 100)')
+    parser.add_argument('--auto_retrain', action='store_true',
+                        help='Automatically retrain top-k models after optimization')
+    
     args = parser.parse_args()
     
     # Create optimizer
@@ -669,16 +891,31 @@ def main():
         v_max_fraction=args.v_max_fraction,
         study_name=args.study_name,
         results_dir=Path(args.results_dir) if args.results_dir else None,
-        seed=args.seed
+        seed=args.seed,
+        opt_subset_size=args.subset_size,
+        opt_epochs=args.opt_epochs,
+        top_k=args.top_k,
+        full_epochs=args.full_epochs
     )
     
     # Run optimization
     optimizer.run_optimization()
     
-    # Evaluate on test set if requested
-    test_results = None
-    if args.evaluate_test:
-        test_results = optimizer.evaluate_best_model()
+    # Auto-retrain if requested
+    if args.auto_retrain:
+        print("\n" + "="*70)
+        print("AUTOMATICALLY RETRAINING TOP MODELS ON FULL DATA")
+        print("="*70)
+        final_test_results = optimizer.retrain_top_k(
+            k=args.top_k,
+            full_epochs=args.full_epochs
+        )
+        test_results = final_test_results
+    else:
+        # Evaluate on test set if requested
+        test_results = None
+        if args.evaluate_test:
+            test_results = optimizer.evaluate_best_model()
     
     # Save results
     optimizer.save_results(test_results)

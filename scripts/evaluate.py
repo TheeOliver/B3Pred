@@ -22,6 +22,11 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# Global device: use GPU if available, otherwise fall back to CPU
+# ---------------------------------------------------------------------------
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 def test_model(
     loader,
@@ -48,6 +53,7 @@ def test_model(
     Returns:
         Dictionary of evaluation metrics
     """
+    model = model.to(DEVICE)
     model.eval()
 
     all_preds = []
@@ -56,6 +62,8 @@ def test_model(
 
     with torch.no_grad():
         for data in loader:
+            data = data.to(DEVICE)
+
             # Forward pass
             out = model(data)  # shape: [num_graphs, num_classes]
 
@@ -154,6 +162,7 @@ def compute_confusion_matrix(
     Returns:
         Confusion matrix as numpy array
     """
+    model = model.to(DEVICE)
     model.eval()
 
     all_preds = []
@@ -161,6 +170,7 @@ def compute_confusion_matrix(
 
     with torch.no_grad():
         for data in loader:
+            data = data.to(DEVICE)
             out = model(data)
             preds = out.argmax(dim=1).cpu().numpy()
             truths = data.y.cpu().numpy()
@@ -189,6 +199,7 @@ def evaluate_per_class_metrics(
     Returns:
         Dictionary mapping class names to their metrics
     """
+    model = model.to(DEVICE)
     model.eval()
 
     all_preds = []
@@ -196,6 +207,7 @@ def evaluate_per_class_metrics(
 
     with torch.no_grad():
         for data in loader:
+            data = data.to(DEVICE)
             out = model(data)
             preds = out.argmax(dim=1).cpu().numpy()
             truths = data.y.cpu().numpy()
