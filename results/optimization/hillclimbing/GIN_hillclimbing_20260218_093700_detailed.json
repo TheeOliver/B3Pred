@@ -1,0 +1,944 @@
+{
+  "model_name": "GIN",
+  "n_iterations": 20,
+  "n_restarts": 5,
+  "n_neighbors": 8,
+  "neighbor_strategy": "mixed",
+  "use_simulated_annealing": false,
+  "initial_temperature": 1.0,
+  "cooling_rate": 0.95,
+  "opt_subset_size": 0.1,
+  "opt_epochs": 10,
+  "global_best_fitness": 0.8874217579953972,
+  "best_config": {
+    "model_name": "GIN",
+    "config_name": "GIN_hillclimbing_eval_163",
+    "loss": "crossentropy",
+    "subset_size": 0.1,
+    "epochs": 10,
+    "graph_layers": 4,
+    "graph_hidden_channels": 512,
+    "graph_dropouts": 0.10428812899586068,
+    "graph_norm": false,
+    "pred_layers": 2,
+    "pred_hidden_channels": 128,
+    "pred_dropouts": 0.24511054359601597,
+    "batch_size": 64,
+    "lr": 0.00029911476987322264
+  },
+  "test_results": {
+    "acc_target": 0.781491002570694,
+    "prec_target": 0.7821129968037575,
+    "recall_target": 0.781491002570694,
+    "f1_target": 0.7747883215414648,
+    "mcc_target": 0.5317354981931866,
+    "spec_target": 0.6052631578947368,
+    "macro_f1": 0.7747883215414648,
+    "auc_target": 0.8564429269375972
+  },
+  "history": [
+    {
+      "restart": 1,
+      "iteration": 1,
+      "current_fitness": 0.8079051126406013,
+      "best_fitness": 0.8079051126406013,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 1,
+      "iteration": 2,
+      "current_fitness": 0.8368919166278177,
+      "best_fitness": 0.8368919166278177,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 1,
+      "iteration": 3,
+      "current_fitness": 0.8465507290681157,
+      "best_fitness": 0.8465507290681157,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 1,
+      "iteration": 4,
+      "current_fitness": 0.8465507290681157,
+      "best_fitness": 0.8465507290681157,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 1,
+      "iteration": 5,
+      "current_fitness": 0.8465507290681157,
+      "best_fitness": 0.8465507290681157,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 1,
+      "iteration": 6,
+      "current_fitness": 0.8465507290681157,
+      "best_fitness": 0.8465507290681157,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 1,
+      "iteration": 7,
+      "current_fitness": 0.8465507290681157,
+      "best_fitness": 0.8465507290681157,
+      "temperature": null,
+      "plateau_counter": 4
+    },
+    {
+      "restart": 1,
+      "iteration": 8,
+      "current_fitness": 0.8123463850639251,
+      "best_fitness": 0.8465507290681157,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 1,
+      "iteration": 9,
+      "current_fitness": 0.8372793299016431,
+      "best_fitness": 0.8465507290681157,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 1,
+      "iteration": 10,
+      "current_fitness": 0.8426647426647428,
+      "best_fitness": 0.8465507290681157,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 1,
+      "iteration": 11,
+      "current_fitness": 0.8600400307451336,
+      "best_fitness": 0.8600400307451336,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 1,
+      "iteration": 12,
+      "current_fitness": 0.8600400307451336,
+      "best_fitness": 0.8600400307451336,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 1,
+      "iteration": 13,
+      "current_fitness": 0.8600400307451336,
+      "best_fitness": 0.8600400307451336,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 1,
+      "iteration": 14,
+      "current_fitness": 0.8600400307451336,
+      "best_fitness": 0.8600400307451336,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 1,
+      "iteration": 15,
+      "current_fitness": 0.8600400307451336,
+      "best_fitness": 0.8600400307451336,
+      "temperature": null,
+      "plateau_counter": 4
+    },
+    {
+      "restart": 1,
+      "iteration": 16,
+      "current_fitness": 0.8158757104267617,
+      "best_fitness": 0.8600400307451336,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 1,
+      "iteration": 17,
+      "current_fitness": 0.8480735705249515,
+      "best_fitness": 0.8600400307451336,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 1,
+      "iteration": 18,
+      "current_fitness": 0.8480735705249515,
+      "best_fitness": 0.8600400307451336,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 1,
+      "iteration": 19,
+      "current_fitness": 0.8480735705249515,
+      "best_fitness": 0.8600400307451336,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 1,
+      "iteration": 20,
+      "current_fitness": 0.8480735705249515,
+      "best_fitness": 0.8600400307451336,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 2,
+      "iteration": 1,
+      "current_fitness": 0.8149057452986882,
+      "best_fitness": 0.8149057452986882,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 2,
+      "iteration": 2,
+      "current_fitness": 0.8559841706210929,
+      "best_fitness": 0.8559841706210929,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 2,
+      "iteration": 3,
+      "current_fitness": 0.8670469230150928,
+      "best_fitness": 0.8670469230150928,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 2,
+      "iteration": 4,
+      "current_fitness": 0.8670469230150928,
+      "best_fitness": 0.8670469230150928,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 2,
+      "iteration": 5,
+      "current_fitness": 0.8810335708007114,
+      "best_fitness": 0.8810335708007114,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 2,
+      "iteration": 6,
+      "current_fitness": 0.8810335708007114,
+      "best_fitness": 0.8810335708007114,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 2,
+      "iteration": 7,
+      "current_fitness": 0.8810335708007114,
+      "best_fitness": 0.8810335708007114,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 2,
+      "iteration": 8,
+      "current_fitness": 0.8810335708007114,
+      "best_fitness": 0.8810335708007114,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 2,
+      "iteration": 9,
+      "current_fitness": 0.8810335708007114,
+      "best_fitness": 0.8810335708007114,
+      "temperature": null,
+      "plateau_counter": 4
+    },
+    {
+      "restart": 2,
+      "iteration": 10,
+      "current_fitness": 0.8858442219063624,
+      "best_fitness": 0.8858442219063624,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 2,
+      "iteration": 11,
+      "current_fitness": 0.8858442219063624,
+      "best_fitness": 0.8858442219063624,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 2,
+      "iteration": 12,
+      "current_fitness": 0.8858442219063624,
+      "best_fitness": 0.8858442219063624,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 2,
+      "iteration": 13,
+      "current_fitness": 0.8874217579953972,
+      "best_fitness": 0.8874217579953972,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 2,
+      "iteration": 14,
+      "current_fitness": 0.8874217579953972,
+      "best_fitness": 0.8874217579953972,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 2,
+      "iteration": 15,
+      "current_fitness": 0.8874217579953972,
+      "best_fitness": 0.8874217579953972,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 2,
+      "iteration": 16,
+      "current_fitness": 0.8874217579953972,
+      "best_fitness": 0.8874217579953972,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 2,
+      "iteration": 17,
+      "current_fitness": 0.8874217579953972,
+      "best_fitness": 0.8874217579953972,
+      "temperature": null,
+      "plateau_counter": 4
+    },
+    {
+      "restart": 2,
+      "iteration": 18,
+      "current_fitness": 0.8638588701339689,
+      "best_fitness": 0.8874217579953972,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 2,
+      "iteration": 19,
+      "current_fitness": 0.879424284727599,
+      "best_fitness": 0.8874217579953972,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 2,
+      "iteration": 20,
+      "current_fitness": 0.879424284727599,
+      "best_fitness": 0.8874217579953972,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 3,
+      "iteration": 1,
+      "current_fitness": 0.8093291311259144,
+      "best_fitness": 0.8093291311259144,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 3,
+      "iteration": 2,
+      "current_fitness": 0.8408792842346614,
+      "best_fitness": 0.8408792842346614,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 3,
+      "iteration": 3,
+      "current_fitness": 0.8408792842346614,
+      "best_fitness": 0.8408792842346614,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 3,
+      "iteration": 4,
+      "current_fitness": 0.8518490257692006,
+      "best_fitness": 0.8518490257692006,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 3,
+      "iteration": 5,
+      "current_fitness": 0.8518490257692006,
+      "best_fitness": 0.8518490257692006,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 3,
+      "iteration": 6,
+      "current_fitness": 0.8518490257692006,
+      "best_fitness": 0.8518490257692006,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 3,
+      "iteration": 7,
+      "current_fitness": 0.8518490257692006,
+      "best_fitness": 0.8518490257692006,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 3,
+      "iteration": 8,
+      "current_fitness": 0.8518490257692006,
+      "best_fitness": 0.8518490257692006,
+      "temperature": null,
+      "plateau_counter": 4
+    },
+    {
+      "restart": 3,
+      "iteration": 9,
+      "current_fitness": 0.809173179761415,
+      "best_fitness": 0.8518490257692006,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 3,
+      "iteration": 10,
+      "current_fitness": 0.8348015990197851,
+      "best_fitness": 0.8518490257692006,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 3,
+      "iteration": 11,
+      "current_fitness": 0.8348015990197851,
+      "best_fitness": 0.8518490257692006,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 3,
+      "iteration": 12,
+      "current_fitness": 0.8348015990197851,
+      "best_fitness": 0.8518490257692006,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 3,
+      "iteration": 13,
+      "current_fitness": 0.8596350621728621,
+      "best_fitness": 0.8596350621728621,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 3,
+      "iteration": 14,
+      "current_fitness": 0.8596350621728621,
+      "best_fitness": 0.8596350621728621,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 3,
+      "iteration": 15,
+      "current_fitness": 0.8596350621728621,
+      "best_fitness": 0.8596350621728621,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 3,
+      "iteration": 16,
+      "current_fitness": 0.8674743265809495,
+      "best_fitness": 0.8674743265809495,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 3,
+      "iteration": 17,
+      "current_fitness": 0.8674743265809495,
+      "best_fitness": 0.8674743265809495,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 3,
+      "iteration": 18,
+      "current_fitness": 0.8674743265809495,
+      "best_fitness": 0.8674743265809495,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 3,
+      "iteration": 19,
+      "current_fitness": 0.8674743265809495,
+      "best_fitness": 0.8674743265809495,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 3,
+      "iteration": 20,
+      "current_fitness": 0.8674743265809495,
+      "best_fitness": 0.8674743265809495,
+      "temperature": null,
+      "plateau_counter": 4
+    },
+    {
+      "restart": 4,
+      "iteration": 1,
+      "current_fitness": 0.8182509664437376,
+      "best_fitness": 0.8182509664437376,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 4,
+      "iteration": 2,
+      "current_fitness": 0.8628661110266169,
+      "best_fitness": 0.8628661110266169,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 4,
+      "iteration": 3,
+      "current_fitness": 0.8628661110266169,
+      "best_fitness": 0.8628661110266169,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 4,
+      "iteration": 4,
+      "current_fitness": 0.8721744319029386,
+      "best_fitness": 0.8721744319029386,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 4,
+      "iteration": 5,
+      "current_fitness": 0.8852875439060381,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 4,
+      "iteration": 6,
+      "current_fitness": 0.8852875439060381,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 4,
+      "iteration": 7,
+      "current_fitness": 0.8852875439060381,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 4,
+      "iteration": 8,
+      "current_fitness": 0.8852875439060381,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 4,
+      "iteration": 9,
+      "current_fitness": 0.8852875439060381,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 4
+    },
+    {
+      "restart": 4,
+      "iteration": 10,
+      "current_fitness": 0.8625636613400216,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 4,
+      "iteration": 11,
+      "current_fitness": 0.8671281402408696,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 4,
+      "iteration": 12,
+      "current_fitness": 0.8743176779723122,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 4,
+      "iteration": 13,
+      "current_fitness": 0.8743176779723122,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 4,
+      "iteration": 14,
+      "current_fitness": 0.8800134079936723,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 4,
+      "iteration": 15,
+      "current_fitness": 0.8800134079936723,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 4,
+      "iteration": 16,
+      "current_fitness": 0.8800134079936723,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 4,
+      "iteration": 17,
+      "current_fitness": 0.8800134079936723,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 4,
+      "iteration": 18,
+      "current_fitness": 0.8800134079936723,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 4
+    },
+    {
+      "restart": 4,
+      "iteration": 19,
+      "current_fitness": 0.759848588646661,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 4,
+      "iteration": 20,
+      "current_fitness": 0.8649479639302589,
+      "best_fitness": 0.8852875439060381,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 5,
+      "iteration": 1,
+      "current_fitness": 0.8200909914088209,
+      "best_fitness": 0.8200909914088209,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 5,
+      "iteration": 2,
+      "current_fitness": 0.844159191472883,
+      "best_fitness": 0.844159191472883,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 5,
+      "iteration": 3,
+      "current_fitness": 0.8450336939089012,
+      "best_fitness": 0.8450336939089012,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 5,
+      "iteration": 4,
+      "current_fitness": 0.8450336939089012,
+      "best_fitness": 0.8450336939089012,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 5,
+      "iteration": 5,
+      "current_fitness": 0.86373390348577,
+      "best_fitness": 0.86373390348577,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 5,
+      "iteration": 6,
+      "current_fitness": 0.86373390348577,
+      "best_fitness": 0.86373390348577,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 5,
+      "iteration": 7,
+      "current_fitness": 0.8659173269346484,
+      "best_fitness": 0.8659173269346484,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 5,
+      "iteration": 8,
+      "current_fitness": 0.8659173269346484,
+      "best_fitness": 0.8659173269346484,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 5,
+      "iteration": 9,
+      "current_fitness": 0.8659173269346484,
+      "best_fitness": 0.8659173269346484,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 5,
+      "iteration": 10,
+      "current_fitness": 0.8659173269346484,
+      "best_fitness": 0.8659173269346484,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 5,
+      "iteration": 11,
+      "current_fitness": 0.8659173269346484,
+      "best_fitness": 0.8659173269346484,
+      "temperature": null,
+      "plateau_counter": 4
+    },
+    {
+      "restart": 5,
+      "iteration": 12,
+      "current_fitness": 0.86616091578976,
+      "best_fitness": 0.86616091578976,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 5,
+      "iteration": 13,
+      "current_fitness": 0.86616091578976,
+      "best_fitness": 0.86616091578976,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 5,
+      "iteration": 14,
+      "current_fitness": 0.86616091578976,
+      "best_fitness": 0.86616091578976,
+      "temperature": null,
+      "plateau_counter": 2
+    },
+    {
+      "restart": 5,
+      "iteration": 15,
+      "current_fitness": 0.86616091578976,
+      "best_fitness": 0.86616091578976,
+      "temperature": null,
+      "plateau_counter": 3
+    },
+    {
+      "restart": 5,
+      "iteration": 16,
+      "current_fitness": 0.86616091578976,
+      "best_fitness": 0.86616091578976,
+      "temperature": null,
+      "plateau_counter": 4
+    },
+    {
+      "restart": 5,
+      "iteration": 17,
+      "current_fitness": 0.7961618189250114,
+      "best_fitness": 0.86616091578976,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 5,
+      "iteration": 18,
+      "current_fitness": 0.8603904851347517,
+      "best_fitness": 0.86616091578976,
+      "temperature": null,
+      "plateau_counter": 0
+    },
+    {
+      "restart": 5,
+      "iteration": 19,
+      "current_fitness": 0.8603904851347517,
+      "best_fitness": 0.86616091578976,
+      "temperature": null,
+      "plateau_counter": 1
+    },
+    {
+      "restart": 5,
+      "iteration": 20,
+      "current_fitness": 0.8603904851347517,
+      "best_fitness": 0.86616091578976,
+      "temperature": null,
+      "plateau_counter": 2
+    }
+  ],
+  "restart_history": [
+    {
+      "restart": 1,
+      "best_fitness": 0.8600400307451336,
+      "best_config": {
+        "model_name": "GIN",
+        "config_name": "GIN_hillclimbing_eval_0",
+        "loss": "crossentropy",
+        "subset_size": 0.1,
+        "epochs": 10,
+        "graph_layers": 2,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.4449302998558997,
+        "graph_norm": false,
+        "pred_layers": 2,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.39188272849840744,
+        "batch_size": 16,
+        "lr": 0.001181700809439134
+      }
+    },
+    {
+      "restart": 2,
+      "best_fitness": 0.8874217579953972,
+      "best_config": {
+        "model_name": "GIN",
+        "config_name": "GIN_hillclimbing_eval_163",
+        "loss": "crossentropy",
+        "subset_size": 0.1,
+        "epochs": 10,
+        "graph_layers": 4,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.10428812899586068,
+        "graph_norm": false,
+        "pred_layers": 2,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.24511054359601597,
+        "batch_size": 64,
+        "lr": 0.00029911476987322264
+      }
+    },
+    {
+      "restart": 3,
+      "best_fitness": 0.8674743265809495,
+      "best_config": {
+        "model_name": "GIN",
+        "config_name": "GIN_hillclimbing_eval_325",
+        "loss": "crossentropy",
+        "subset_size": 0.1,
+        "epochs": 10,
+        "graph_layers": 5,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.03840919359496257,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.4400219535133003,
+        "batch_size": 128,
+        "lr": 0.006186083550537501
+      }
+    },
+    {
+      "restart": 4,
+      "best_fitness": 0.8852875439060381,
+      "best_config": {
+        "model_name": "GIN",
+        "config_name": "GIN_hillclimbing_eval_487",
+        "loss": "crossentropy",
+        "subset_size": 0.1,
+        "epochs": 10,
+        "graph_layers": 4,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.1377532113221146,
+        "graph_norm": false,
+        "pred_layers": 4,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.44475142722989336,
+        "batch_size": 32,
+        "lr": 6.0579032045107796e-05
+      }
+    },
+    {
+      "restart": 5,
+      "best_fitness": 0.86616091578976,
+      "best_config": {
+        "model_name": "GIN",
+        "config_name": "GIN_hillclimbing_eval_650",
+        "loss": "crossentropy",
+        "subset_size": 0.1,
+        "epochs": 10,
+        "graph_layers": 3,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.40276464178326377,
+        "graph_norm": false,
+        "pred_layers": 4,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.32507481712648917,
+        "batch_size": 64,
+        "lr": 0.001104948095764893
+      }
+    }
+  ],
+  "total_evaluations": 812
+}

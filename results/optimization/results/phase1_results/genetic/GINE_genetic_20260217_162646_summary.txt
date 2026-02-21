@@ -1,0 +1,95 @@
+================================================================================
+GENETIC ALGORITHM OPTIMIZATION RESULTS - GINE
+================================================================================
+
+Optimization Study: GINE_genetic
+Population Size: 10
+Generations: 25
+Total Evaluations: 188
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Mutation Rate: 0.2
+Crossover Rate: 0.8
+Timestamp: 20260217_162646
+
+================================================================================
+*** BEST CONFIGURATION ***
+================================================================================
+Best Validation F1 Score: 0.8723
+Found in Generation: 4
+
+Hyperparameters:
+  model_name                    : GINE
+  config_name                   : GINE_genetic_ind_0
+  loss                          : crossentropy
+  subset_size                   : 0.1
+  epochs                        : 10
+  graph_layers                  : 5
+  graph_hidden_channels         : 64
+  graph_dropouts                : 0.1646779813981239
+  graph_norm                    : True
+  pred_layers                   : 4
+  pred_hidden_channels          : 64
+  pred_dropouts                 : 0.45197554059088035
+  batch_size                    : 128
+  lr                            : 0.009135501324725353
+
+================================================================================
+*** TEST SET PERFORMANCE ***
+================================================================================
+  acc_target                    : 0.7481
+  prec_target                   : 0.7447
+  recall_target                 : 0.7481
+  f1_target                     : 0.7428
+  mcc_target                    : 0.4590
+  spec_target                   : 0.5921
+  macro_f1                      : 0.7428
+  auc_target                    : 0.8091
+
+================================================================================
+EVOLUTION PROGRESS
+================================================================================
+
+Generation 16:
+  Best fitness: 0.8723
+  Avg fitness:  0.8262
+
+Generation 17:
+  Best fitness: 0.8723
+  Avg fitness:  0.8268
+
+Generation 18:
+  Best fitness: 0.8723
+  Avg fitness:  0.8311
+
+Generation 19:
+  Best fitness: 0.8723
+  Avg fitness:  0.7992
+
+Generation 20:
+  Best fitness: 0.8723
+  Avg fitness:  0.8146
+
+Generation 21:
+  Best fitness: 0.8723
+  Avg fitness:  0.8363
+
+Generation 22:
+  Best fitness: 0.8723
+  Avg fitness:  0.8288
+
+Generation 23:
+  Best fitness: 0.8723
+  Avg fitness:  0.8085
+
+Generation 24:
+  Best fitness: 0.8723
+  Avg fitness:  0.8283
+
+Generation 25:
+  Best fitness: 0.8723
+  Avg fitness:  0.8312
+
+================================================================================
+Optimization completed successfully!
+================================================================================

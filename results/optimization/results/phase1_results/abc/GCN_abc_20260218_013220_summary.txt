@@ -1,0 +1,99 @@
+================================================================================
+ARTIFICIAL BEE COLONY OPTIMIZATION RESULTS - GCN
+================================================================================
+
+Optimization Study: GCN_abc
+Colony Size: 20
+Iterations: 30
+Total Evaluations: 1274
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Abandonment Limit: 10
+Timestamp: 20260218_013220
+
+================================================================================
+*** BEST CONFIGURATION ***
+================================================================================
+Global Best Fitness: 0.7576
+
+Hyperparameters:
+  epochs                        : 10
+  graph_layers                  : 2
+  graph_hidden_channels         : 32
+  graph_dropouts                : 0.12268858483720935
+  graph_norm                    : False
+  pred_layers                   : 2
+  pred_hidden_channels          : 32
+  pred_dropouts                 : 0.4677157335506618
+  batch_size                    : 16
+  lr                            : 0.007580294321041467
+
+================================================================================
+*** TEST SET PERFORMANCE ***
+================================================================================
+  acc_target                    : 0.7095
+  prec_target                   : 0.7061
+  recall_target                 : 0.7095
+  f1_target                     : 0.6952
+  mcc_target                    : 0.3672
+  spec_target                   : 0.4671
+  macro_f1                      : 0.6952
+  auc_target                    : 0.7362
+
+================================================================================
+CONVERGENCE PROGRESS (Last 10 iterations)
+================================================================================
+
+Iteration 21:
+  Global best: 0.7563
+  Colony avg:  0.6448
+  Evaluations: 899
+
+Iteration 22:
+  Global best: 0.7563
+  Colony avg:  0.6531
+  Evaluations: 939
+
+Iteration 23:
+  Global best: 0.7563
+  Colony avg:  0.6539
+  Evaluations: 980
+
+Iteration 24:
+  Global best: 0.7563
+  Colony avg:  0.6489
+  Evaluations: 1022
+
+Iteration 25:
+  Global best: 0.7563
+  Colony avg:  0.6498
+  Evaluations: 1065
+
+Iteration 26:
+  Global best: 0.7563
+  Colony avg:  0.6473
+  Evaluations: 1108
+
+Iteration 27:
+  Global best: 0.7563
+  Colony avg:  0.6577
+  Evaluations: 1148
+
+Iteration 28:
+  Global best: 0.7563
+  Colony avg:  0.6526
+  Evaluations: 1190
+
+Iteration 29:
+  Global best: 0.7576
+  Colony avg:  0.6600
+  Evaluations: 1232
+
+Iteration 30:
+  Global best: 0.7576
+  Colony avg:  0.6609
+  Evaluations: 1274
+
+================================================================================
+Optimization completed successfully!
+================================================================================

@@ -1,0 +1,1 @@
+{"model_name": "GIN", "graph_layers": 4, "graph_hidden_channels": 512, "graph_dropouts": 0.10428812899586068, "graph_norm": false, "config_name": "GIN_hillclimbing", "batch_size": 64, "epochs": 100, "lr": 0.00029911476987322264, "loss": "crossentropy", "pred_layers": 2, "pred_hidden_channels": 128, "pred_dropouts": 0.24511054359601597, "subset_size": 1.0}

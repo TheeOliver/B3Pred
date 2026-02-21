@@ -1,0 +1,1 @@
+{"model_name": "GAT", "graph_layers": 2, "graph_hidden_channels": 64, "attention_heads": 4, "attention_dropouts": 0.0, "graph_dropouts": 0.0, "graph_norm": true, "config_name": "GAT_pso", "batch_size": 32, "epochs": 100, "lr": 0.003627903552590721, "loss": "crossentropy", "pred_layers": 3, "pred_hidden_channels": 128, "pred_dropouts": 0.3143802535195847, "subset_size": 1.0}

@@ -1,0 +1,327 @@
+{
+  "model_name": "GINE",
+  "n_trials": 100,
+  "max_epochs": 10,
+  "opt_subset_size": 0.1,
+  "reduction_factor": 3,
+  "best_score": 0.8695920971939073,
+  "best_config": {
+    "model_name": "GINE",
+    "config_name": "GINE_hyperband_trial_94",
+    "graph_layers": 4,
+    "graph_hidden_channels": 32,
+    "graph_dropouts": 0.005598971896255978,
+    "graph_norm": false,
+    "pred_layers": 4,
+    "pred_hidden_channels": 128,
+    "pred_dropouts": 0.33305096958137176,
+    "batch_size": 16,
+    "lr": 0.002245822111710912,
+    "subset_size": 0.1,
+    "loss": "crossentropy"
+  },
+  "test_results": {
+    "acc_target": 0.8123393316195373,
+    "prec_target": 0.8119949103211891,
+    "recall_target": 0.8123393316195373,
+    "f1_target": 0.8088186753624855,
+    "mcc_target": 0.5997316266182365,
+    "spec_target": 0.680921052631579,
+    "macro_f1": 0.8088186753624855,
+    "auc_target": 0.9086928159005108
+  },
+  "completed_trials": 9,
+  "pruned_trials": 91,
+  "brackets_info": [
+    {
+      "bracket": 2,
+      "n_configs": 9,
+      "initial_epochs": 1,
+      "max_epochs": 10
+    },
+    {
+      "bracket": 1,
+      "n_configs": 5,
+      "initial_epochs": 3,
+      "max_epochs": 10
+    },
+    {
+      "bracket": 0,
+      "n_configs": 3,
+      "initial_epochs": 10,
+      "max_epochs": 10
+    }
+  ],
+  "all_trials": [
+    {
+      "trial": 0,
+      "val_f1": 0.5422091993829556,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GINE",
+        "config_name": "GINE_hyperband_trial_0",
+        "graph_layers": 3,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.03485016730091967,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.10909498032426036,
+        "batch_size": 64,
+        "lr": 7.476312062252303e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.5256410256410257,
+        "prec_target": 0.6432720540141401,
+        "recall_target": 0.5256410256410257,
+        "f1_target": 0.5422091993829556,
+        "mcc_target": 0.12636213570961258,
+        "spec_target": 0.6738197424892703,
+        "macro_f1": 0.5422091993829556,
+        "auc_target": 0.7077229680426202
+      }
+    },
+    {
+      "trial": 1,
+      "val_f1": 0.8622754415614952,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GINE",
+        "config_name": "GINE_hyperband_trial_1",
+        "graph_layers": 4,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.11980426929501584,
+        "graph_norm": false,
+        "pred_layers": 2,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.5793792198447356,
+        "batch_size": 16,
+        "lr": 0.00020914981329035596,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.8589743589743589,
+        "prec_target": 0.8605148062765134,
+        "recall_target": 0.8589743589743589,
+        "f1_target": 0.8596450173133856,
+        "mcc_target": 0.6668807644672122,
+        "spec_target": 0.7811158798283262,
+        "macro_f1": 0.8596450173133856,
+        "auc_target": 0.8745400193015356
+      }
+    },
+    {
+      "trial": 2,
+      "val_f1": 0.8300666853060327,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GINE",
+        "config_name": "GINE_hyperband_trial_2",
+        "graph_layers": 2,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.18702664565364657,
+        "graph_norm": false,
+        "pred_layers": 2,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.3587399872866511,
+        "batch_size": 16,
+        "lr": 9.46217535646148e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.8384615384615385,
+        "prec_target": 0.8361682758887845,
+        "recall_target": 0.8384615384615385,
+        "f1_target": 0.8300666853060327,
+        "mcc_target": 0.5950449714988033,
+        "spec_target": 0.592274678111588,
+        "macro_f1": 0.8300666853060327,
+        "auc_target": 0.8638770978650618
+      }
+    },
+    {
+      "trial": 4,
+      "val_f1": 0.4503630856809225,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GINE",
+        "config_name": "GINE_hyperband_trial_4",
+        "graph_layers": 5,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.43776370700283845,
+        "graph_norm": false,
+        "pred_layers": 3,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.4625803079727366,
+        "batch_size": 32,
+        "lr": 2.1070472806578224e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.4576923076923077,
+        "prec_target": 0.6594237493275955,
+        "recall_target": 0.4576923076923077,
+        "f1_target": 0.4501302038013815,
+        "mcc_target": 0.1275290078670366,
+        "spec_target": 0.8197424892703863,
+        "macro_f1": 0.4501302038013815,
+        "auc_target": 0.42854901099245984
+      }
+    },
+    {
+      "trial": 8,
+      "val_f1": 0.8629550240229523,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GINE",
+        "config_name": "GINE_hyperband_trial_8",
+        "graph_layers": 3,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.1924680389830415,
+        "graph_norm": true,
+        "pred_layers": 3,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.3871036742456699,
+        "batch_size": 128,
+        "lr": 2.5856088907313374e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.8615384615384616,
+        "prec_target": 0.8653676120007393,
+        "recall_target": 0.8615384615384616,
+        "f1_target": 0.8629550240229523,
+        "mcc_target": 0.6776734672908826,
+        "spec_target": 0.8068669527896996,
+        "macro_f1": 0.8629550240229523,
+        "auc_target": 0.8972154004283999
+      }
+    },
+    {
+      "trial": 27,
+      "val_f1": 0.8668317872489533,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GINE",
+        "config_name": "GINE_hyperband_trial_27",
+        "graph_layers": 5,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.06813455531977741,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.525992161595007,
+        "batch_size": 128,
+        "lr": 0.0007259866824755671,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.8615384615384616,
+        "prec_target": 0.8643884209007148,
+        "recall_target": 0.8615384615384616,
+        "f1_target": 0.8626602564102565,
+        "mcc_target": 0.6757223160637816,
+        "spec_target": 0.7982832618025751,
+        "macro_f1": 0.8626602564102565,
+        "auc_target": 0.9017661689590508
+      }
+    },
+    {
+      "trial": 52,
+      "val_f1": 0.85264181474996,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GINE",
+        "config_name": "GINE_hyperband_trial_52",
+        "graph_layers": 4,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.13977568485218025,
+        "graph_norm": false,
+        "pred_layers": 2,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.5987604663200025,
+        "batch_size": 32,
+        "lr": 0.0007629856846111094,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.8576923076923076,
+        "prec_target": 0.8553395131352121,
+        "recall_target": 0.8576923076923076,
+        "f1_target": 0.85264181474996,
+        "mcc_target": 0.647050388131988,
+        "spec_target": 0.6609442060085837,
+        "macro_f1": 0.85264181474996,
+        "auc_target": 0.8646774054342453
+      }
+    },
+    {
+      "trial": 56,
+      "val_f1": 0.857423956553454,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GINE",
+        "config_name": "GINE_hyperband_trial_56",
+        "graph_layers": 5,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.05219205594684608,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.40995525819575757,
+        "batch_size": 32,
+        "lr": 0.0005987194322342229,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.8602564102564103,
+        "prec_target": 0.8574201074660635,
+        "recall_target": 0.8602564102564103,
+        "f1_target": 0.857423956553454,
+        "mcc_target": 0.6568909441152767,
+        "spec_target": 0.703862660944206,
+        "macro_f1": 0.857423956553454,
+        "auc_target": 0.8453994084000911
+      }
+    },
+    {
+      "trial": 94,
+      "val_f1": 0.8695920971939073,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GINE",
+        "config_name": "GINE_hyperband_trial_94",
+        "graph_layers": 4,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.005598971896255978,
+        "graph_norm": false,
+        "pred_layers": 4,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.33305096958137176,
+        "batch_size": 16,
+        "lr": 0.002245822111710912,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.8705128205128205,
+        "prec_target": 0.869069503746923,
+        "recall_target": 0.8705128205128205,
+        "f1_target": 0.8695920971939073,
+        "mcc_target": 0.6870947854914216,
+        "spec_target": 0.759656652360515,
+        "macro_f1": 0.8695920971939073,
+        "auc_target": 0.893119708750814
+      }
+    }
+  ]
+}

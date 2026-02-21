@@ -1,0 +1,70 @@
+================================================================================
+HILL CLIMBING OPTIMIZATION RESULTS - GIN
+================================================================================
+
+Optimization Study: GIN_hillclimbing
+Iterations per restart: 20
+Number of restarts: 5
+Total Evaluations: 812
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Neighbors per iteration: 8
+Neighbor strategy: mixed
+Simulated annealing: False
+Timestamp: 20260218_093700
+
+================================================================================
+*** BEST CONFIGURATION ***
+================================================================================
+Global Best Fitness: 0.8874
+
+Hyperparameters:
+  model_name                    : GIN
+  config_name                   : GIN_hillclimbing_eval_163
+  loss                          : crossentropy
+  subset_size                   : 0.1
+  epochs                        : 10
+  graph_layers                  : 4
+  graph_hidden_channels         : 512
+  graph_dropouts                : 0.10428812899586068
+  graph_norm                    : False
+  pred_layers                   : 2
+  pred_hidden_channels          : 128
+  pred_dropouts                 : 0.24511054359601597
+  batch_size                    : 64
+  lr                            : 0.00029911476987322264
+
+================================================================================
+*** TEST SET PERFORMANCE ***
+================================================================================
+  acc_target                    : 0.7815
+  prec_target                   : 0.7821
+  recall_target                 : 0.7815
+  f1_target                     : 0.7748
+  mcc_target                    : 0.5317
+  spec_target                   : 0.6053
+  macro_f1                      : 0.7748
+  auc_target                    : 0.8564
+
+================================================================================
+RESTART SUMMARY
+================================================================================
+
+Restart 1:
+  Best fitness: 0.8600
+
+Restart 2:
+  Best fitness: 0.8874
+
+Restart 3:
+  Best fitness: 0.8675
+
+Restart 4:
+  Best fitness: 0.8853
+
+Restart 5:
+  Best fitness: 0.8662
+
+================================================================================
+Optimization completed successfully!
+================================================================================

@@ -1,0 +1,627 @@
+{
+  "model_name": "GraphSAGE",
+  "n_trials": 100,
+  "max_epochs": 10,
+  "opt_subset_size": 0.1,
+  "reduction_factor": 3,
+  "best_score": 0.7918923519009727,
+  "best_config": {
+    "model_name": "GraphSAGE",
+    "config_name": "GraphSAGE_hyperband_trial_27",
+    "graph_layers": 5,
+    "graph_hidden_channels": 128,
+    "graph_dropouts": 0.06813455531977741,
+    "graph_norm": true,
+    "pred_layers": 4,
+    "pred_hidden_channels": 64,
+    "pred_dropouts": 0.525992161595007,
+    "batch_size": 128,
+    "lr": 0.0007259866824755671,
+    "subset_size": 0.1,
+    "loss": "crossentropy"
+  },
+  "test_results": {
+    "acc_target": 0.7390745501285347,
+    "prec_target": 0.7372331280869904,
+    "recall_target": 0.7390745501285347,
+    "f1_target": 0.7292920651136314,
+    "mcc_target": 0.4361403898807267,
+    "spec_target": 0.5328947368421053,
+    "macro_f1": 0.7292920651136314,
+    "auc_target": 0.7956154230512992
+  },
+  "completed_trials": 19,
+  "pruned_trials": 81,
+  "brackets_info": [
+    {
+      "bracket": 2,
+      "n_configs": 9,
+      "initial_epochs": 1,
+      "max_epochs": 10
+    },
+    {
+      "bracket": 1,
+      "n_configs": 5,
+      "initial_epochs": 3,
+      "max_epochs": 10
+    },
+    {
+      "bracket": 0,
+      "n_configs": 3,
+      "initial_epochs": 10,
+      "max_epochs": 10
+    }
+  ],
+  "all_trials": [
+    {
+      "trial": 0,
+      "val_f1": 0.4642301472083249,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_0",
+        "graph_layers": 3,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.03485016730091967,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.10909498032426036,
+        "batch_size": 64,
+        "lr": 7.476312062252303e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.46794871794871795,
+        "prec_target": 0.6618429487179488,
+        "recall_target": 0.46794871794871795,
+        "f1_target": 0.4642301472083249,
+        "mcc_target": 0.13518746626265035,
+        "spec_target": 0.8111587982832618,
+        "macro_f1": 0.4642301472083249,
+        "auc_target": 0.5559391452401314
+      }
+    },
+    {
+      "trial": 1,
+      "val_f1": 0.7330019296920883,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_1",
+        "graph_layers": 4,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.11980426929501584,
+        "graph_norm": false,
+        "pred_layers": 2,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.5793792198447356,
+        "batch_size": 16,
+        "lr": 0.00020914981329035596,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7128205128205128,
+        "prec_target": 0.7107265158121122,
+        "recall_target": 0.7128205128205128,
+        "f1_target": 0.711730819904733,
+        "mcc_target": 0.3095091946605455,
+        "spec_target": 0.5064377682403434,
+        "macro_f1": 0.711730819904733,
+        "auc_target": 0.7212222736581116
+      }
+    },
+    {
+      "trial": 3,
+      "val_f1": 0.5824044533721953,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_3",
+        "graph_layers": 3,
+        "graph_hidden_channels": 64,
+        "graph_dropouts": 0.08455453498485759,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.4241144063085703,
+        "batch_size": 32,
+        "lr": 2.2264204303769678e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.5641025641025641,
+        "prec_target": 0.6492555045211719,
+        "recall_target": 0.5641025641025641,
+        "f1_target": 0.5824044533721953,
+        "mcc_target": 0.14797211235341448,
+        "spec_target": 0.6223175965665236,
+        "macro_f1": 0.5824044533721953,
+        "auc_target": 0.6177275972726775
+      }
+    },
+    {
+      "trial": 4,
+      "val_f1": 0.5972489091815896,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_4",
+        "graph_layers": 5,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.43776370700283845,
+        "graph_norm": false,
+        "pred_layers": 3,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.4625803079727366,
+        "batch_size": 32,
+        "lr": 2.1070472806578224e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7076923076923077,
+        "prec_target": 0.7280543638520293,
+        "recall_target": 0.7076923076923077,
+        "f1_target": 0.5972489091815896,
+        "mcc_target": 0.11308546805379198,
+        "spec_target": 0.030042918454935622,
+        "macro_f1": 0.5972489091815896,
+        "auc_target": 0.4543079301064723
+      }
+    },
+    {
+      "trial": 5,
+      "val_f1": 0.7702223737269913,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_5",
+        "graph_layers": 2,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.24622975382137782,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.38004225390625407,
+        "batch_size": 128,
+        "lr": 0.0004149795789891589,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7794871794871795,
+        "prec_target": 0.7690230636572101,
+        "recall_target": 0.7794871794871795,
+        "f1_target": 0.7671015832062026,
+        "mcc_target": 0.4369799808073905,
+        "spec_target": 0.48497854077253216,
+        "macro_f1": 0.7671015832062026,
+        "auc_target": 0.7528697303277339
+      }
+    },
+    {
+      "trial": 13,
+      "val_f1": 0.766245838747736,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_13",
+        "graph_layers": 4,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.41820944459716075,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.3068054393165627,
+        "batch_size": 32,
+        "lr": 0.0024399336035729174,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7833333333333333,
+        "prec_target": 0.7820168605456308,
+        "recall_target": 0.7833333333333333,
+        "f1_target": 0.7574818383222245,
+        "mcc_target": 0.43573004844122515,
+        "spec_target": 0.38626609442060084,
+        "macro_f1": 0.7574818383222245,
+        "auc_target": 0.7447175777357573
+      }
+    },
+    {
+      "trial": 16,
+      "val_f1": 0.6483172019131584,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_16",
+        "graph_layers": 4,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.3326124315068404,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.027601585213051647,
+        "batch_size": 32,
+        "lr": 1.9656332139612295e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.6307692307692307,
+        "prec_target": 0.6795593338407357,
+        "recall_target": 0.6307692307692307,
+        "f1_target": 0.6449393632265055,
+        "mcc_target": 0.22595101809313609,
+        "spec_target": 0.6008583690987125,
+        "macro_f1": 0.6449393632265055,
+        "auc_target": 0.6729331272410575
+      }
+    },
+    {
+      "trial": 18,
+      "val_f1": 0.7270382590910756,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_18",
+        "graph_layers": 3,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.5767143382943485,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.042713189076137394,
+        "batch_size": 32,
+        "lr": 7.007519651093011e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.732051282051282,
+        "prec_target": 0.72387607459239,
+        "recall_target": 0.732051282051282,
+        "f1_target": 0.7270382590910756,
+        "mcc_target": 0.3397001228133429,
+        "spec_target": 0.49356223175965663,
+        "macro_f1": 0.7270382590910756,
+        "auc_target": 0.7124698903892476
+      }
+    },
+    {
+      "trial": 19,
+      "val_f1": 0.7415920758362069,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_19",
+        "graph_layers": 2,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.16922074354278388,
+        "graph_norm": false,
+        "pred_layers": 4,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.2044821241518107,
+        "batch_size": 16,
+        "lr": 0.0018349685376940496,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7435897435897436,
+        "prec_target": 0.7399633583996416,
+        "recall_target": 0.7435897435897436,
+        "f1_target": 0.7415920758362069,
+        "mcc_target": 0.37908106958733623,
+        "spec_target": 0.5450643776824035,
+        "macro_f1": 0.7415920758362069,
+        "auc_target": 0.742034193533201
+      }
+    },
+    {
+      "trial": 27,
+      "val_f1": 0.7918923519009727,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_27",
+        "graph_layers": 5,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.06813455531977741,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.525992161595007,
+        "batch_size": 128,
+        "lr": 0.0007259866824755671,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7923076923076923,
+        "prec_target": 0.7836924626424816,
+        "recall_target": 0.7923076923076923,
+        "f1_target": 0.7815143096791848,
+        "mcc_target": 0.4726590318266061,
+        "spec_target": 0.5150214592274678,
+        "macro_f1": 0.7815143096791848,
+        "auc_target": 0.7691622662827283
+      }
+    },
+    {
+      "trial": 33,
+      "val_f1": 0.768567443811077,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_33",
+        "graph_layers": 3,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.14757463703070486,
+        "graph_norm": false,
+        "pred_layers": 2,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.24623809619379688,
+        "batch_size": 16,
+        "lr": 0.003949311389339577,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7705128205128206,
+        "prec_target": 0.7670820845820846,
+        "recall_target": 0.7705128205128206,
+        "f1_target": 0.768567443811077,
+        "mcc_target": 0.44370856695415345,
+        "spec_target": 0.5879828326180258,
+        "macro_f1": 0.768567443811077,
+        "auc_target": 0.7491271155189052
+      }
+    },
+    {
+      "trial": 35,
+      "val_f1": 0.7553853512558869,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_35",
+        "graph_layers": 4,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.19341230698483378,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.20932095992579716,
+        "batch_size": 64,
+        "lr": 0.0015581254655530853,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7435897435897436,
+        "prec_target": 0.7274383781428556,
+        "recall_target": 0.7435897435897436,
+        "f1_target": 0.7286371513175638,
+        "mcc_target": 0.33971331083134754,
+        "spec_target": 0.4206008583690987,
+        "macro_f1": 0.7286371513175638,
+        "auc_target": 0.739248809346337
+      }
+    },
+    {
+      "trial": 47,
+      "val_f1": 0.738947575202621,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_47",
+        "graph_layers": 3,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.08213137804128436,
+        "graph_norm": true,
+        "pred_layers": 3,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.25126231493524387,
+        "batch_size": 32,
+        "lr": 0.001637196657350732,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7538461538461538,
+        "prec_target": 0.7388423926099825,
+        "recall_target": 0.7538461538461538,
+        "f1_target": 0.7284786324786324,
+        "mcc_target": 0.3494741481866509,
+        "spec_target": 0.3605150214592275,
+        "macro_f1": 0.7284786324786324,
+        "auc_target": 0.7281229649041593
+      }
+    },
+    {
+      "trial": 56,
+      "val_f1": 0.7843175731324444,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_56",
+        "graph_layers": 5,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.05219205594684608,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.40995525819575757,
+        "batch_size": 32,
+        "lr": 0.0005987194322342229,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7935897435897435,
+        "prec_target": 0.7851865573719878,
+        "recall_target": 0.7935897435897435,
+        "f1_target": 0.7843175731324444,
+        "mcc_target": 0.478632651969357,
+        "spec_target": 0.5321888412017167,
+        "macro_f1": 0.7843175731324444,
+        "auc_target": 0.7976320311335338
+      }
+    },
+    {
+      "trial": 59,
+      "val_f1": 0.7097203001022704,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_59",
+        "graph_layers": 5,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.412731433380488,
+        "graph_norm": false,
+        "pred_layers": 4,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.027445220287507708,
+        "batch_size": 32,
+        "lr": 2.4561716845766724e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7038461538461539,
+        "prec_target": 0.6992195304695304,
+        "recall_target": 0.7038461538461539,
+        "f1_target": 0.7013356397785406,
+        "mcc_target": 0.2818666651946169,
+        "spec_target": 0.47639484978540775,
+        "macro_f1": 0.7013356397785406,
+        "auc_target": 0.6964558928529395
+      }
+    },
+    {
+      "trial": 68,
+      "val_f1": 0.7306109690171637,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_68",
+        "graph_layers": 5,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.42949497880925314,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.14833864464190621,
+        "batch_size": 16,
+        "lr": 0.000600969669879229,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7461538461538462,
+        "prec_target": 0.7285190112640477,
+        "recall_target": 0.7461538461538462,
+        "f1_target": 0.7241246208988145,
+        "mcc_target": 0.3328816690632036,
+        "spec_target": 0.37339055793991416,
+        "macro_f1": 0.7241246208988145,
+        "auc_target": 0.723956657852822
+      }
+    },
+    {
+      "trial": 77,
+      "val_f1": 0.7371235332318243,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_77",
+        "graph_layers": 4,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.48359552986509485,
+        "graph_norm": true,
+        "pred_layers": 3,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.13684786316935948,
+        "batch_size": 128,
+        "lr": 0.005012672950463252,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7538461538461538,
+        "prec_target": 0.7382311935503425,
+        "recall_target": 0.7538461538461538,
+        "f1_target": 0.733117829497157,
+        "mcc_target": 0.35579597056251594,
+        "spec_target": 0.3905579399141631,
+        "macro_f1": 0.733117829497157,
+        "auc_target": 0.7444194239354733
+      }
+    },
+    {
+      "trial": 83,
+      "val_f1": 0.769797564544905,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_83",
+        "graph_layers": 4,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.12510630861440147,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.4740182617842368,
+        "batch_size": 64,
+        "lr": 0.001215775162286196,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7512820512820513,
+        "prec_target": 0.7370472953124344,
+        "recall_target": 0.7512820512820513,
+        "f1_target": 0.73835664245532,
+        "mcc_target": 0.36387152989576416,
+        "spec_target": 0.44635193133047213,
+        "macro_f1": 0.73835664245532,
+        "auc_target": 0.771119881366172
+      }
+    },
+    {
+      "trial": 93,
+      "val_f1": 0.7557896671250325,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GraphSAGE",
+        "config_name": "GraphSAGE_hyperband_trial_93",
+        "graph_layers": 5,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.025904241478207,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.43968092685975035,
+        "batch_size": 32,
+        "lr": 0.0004955254659537057,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7461538461538462,
+        "prec_target": 0.732821103918623,
+        "recall_target": 0.7461538461538462,
+        "f1_target": 0.735488546499676,
+        "mcc_target": 0.35657616542297554,
+        "spec_target": 0.4592274678111588,
+        "macro_f1": 0.735488546499676,
+        "auc_target": 0.7113439674855434
+      }
+    }
+  ]
+}

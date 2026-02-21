@@ -1,0 +1,1 @@
+{"model_name": "GINE", "graph_layers": 4, "graph_hidden_channels": 512, "graph_dropouts": 0.5262144618345425, "graph_norm": true, "config_name": "GIN_bayesian", "batch_size": 128, "epochs": 100, "lr": 0.00011277159907437804, "loss": "crossentropy", "pred_layers": 3, "pred_hidden_channels": 32, "pred_dropouts": 0.3741588366645436, "subset_size": 1.0}

@@ -1,0 +1,1 @@
+{"model_name": "GraphSAGE", "graph_layers": 5, "graph_hidden_channels": 32, "graph_dropouts": 0.0, "graph_norm": true, "config_name": "GraphSAGE_abc", "batch_size": 64, "epochs": 100, "lr": 0.0027246320179232803, "loss": "crossentropy", "pred_layers": 2, "pred_hidden_channels": 256, "pred_dropouts": 0.05731956643674325, "subset_size": 1.0}

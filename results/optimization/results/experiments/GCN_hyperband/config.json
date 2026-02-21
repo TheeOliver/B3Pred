@@ -1,0 +1,1 @@
+{"model_name": "GCN", "graph_layers": 5, "graph_hidden_channels": 32, "graph_dropouts": 0.49080885955349585, "graph_norm": true, "config_name": "GCN_hyperband", "batch_size": 64, "epochs": 100, "lr": 0.008228984573308165, "loss": "crossentropy", "pred_layers": 3, "pred_hidden_channels": 32, "pred_dropouts": 0.5657458223475115, "subset_size": 1.0}

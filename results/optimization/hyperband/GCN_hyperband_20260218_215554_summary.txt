@@ -1,0 +1,154 @@
+================================================================================
+HYPERBAND OPTIMIZATION RESULTS - GCN
+================================================================================
+
+Optimization Study: GCN_hyperband
+Total Trials: 100
+Max Epochs: 10
+Optimization Data Subset: 10.0%
+Reduction Factor: 3
+Completed Trials: 18
+Pruned Trials: 82
+Timestamp: 20260218_215554
+
+Hyperband Bracket Structure:
+  Bracket 2: 9 configs, 1 initial epochs → 10 max epochs
+  Bracket 1: 5 configs, 3 initial epochs → 10 max epochs
+  Bracket 0: 3 configs, 10 initial epochs → 10 max epochs
+
+================================================================================
+*** BEST CONFIGURATION (VALIDATION) ***
+================================================================================
+Best Validation F1 Score: 0.7168
+
+Hyperparameters:
+  model_name                    : GCN
+  config_name                   : GCN_hyperband_trial_6
+  graph_layers                  : 5
+  graph_hidden_channels         : 32
+  graph_dropouts                : 0.49080885955349585
+  graph_norm                    : True
+  pred_layers                   : 3
+  pred_hidden_channels          : 32
+  pred_dropouts                 : 0.5657458223475115
+  batch_size                    : 64
+  lr                            : 0.008228984573308165
+  subset_size                   : 0.1
+  loss                          : crossentropy
+
+================================================================================
+*** TEST SET PERFORMANCE ***
+================================================================================
+  acc_target                    : 0.6298
+  prec_target                   : 0.6135
+  recall_target                 : 0.6298
+  f1_target                     : 0.5735
+  mcc_target                    : 0.1509
+  spec_target                   : 0.2039
+  macro_f1                      : 0.5735
+  auc_target                    : 0.6349
+
+================================================================================
+TOP 10 TRIALS
+================================================================================
+
+Rank 1: Trial 6
+  Validation F1: 0.7168
+  Epochs Completed: 10
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.008229
+    batch_size: 64
+
+Rank 2: Trial 71
+  Validation F1: 0.7035
+  Epochs Completed: 10
+  Key hyperparameters:
+    graph_layers: 3
+    graph_hidden_channels: 256
+    learning_rate: 0.001048
+    batch_size: 64
+
+Rank 3: Trial 93
+  Validation F1: 0.6997
+  Epochs Completed: 10
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 256
+    learning_rate: 0.000496
+    batch_size: 32
+
+Rank 4: Trial 1
+  Validation F1: 0.6971
+  Epochs Completed: 10
+  Key hyperparameters:
+    graph_layers: 4
+    graph_hidden_channels: 512
+    learning_rate: 0.000209
+    batch_size: 16
+
+Rank 5: Trial 19
+  Validation F1: 0.6952
+  Epochs Completed: 10
+  Key hyperparameters:
+    graph_layers: 2
+    graph_hidden_channels: 128
+    learning_rate: 0.001835
+    batch_size: 16
+
+Rank 6: Trial 77
+  Validation F1: 0.6952
+  Epochs Completed: 10
+  Key hyperparameters:
+    graph_layers: 4
+    graph_hidden_channels: 256
+    learning_rate: 0.005013
+    batch_size: 128
+
+Rank 7: Trial 97
+  Validation F1: 0.6951
+  Epochs Completed: 10
+  Key hyperparameters:
+    graph_layers: 2
+    graph_hidden_channels: 256
+    learning_rate: 0.002275
+    batch_size: 16
+
+Rank 8: Trial 70
+  Validation F1: 0.6891
+  Epochs Completed: 10
+  Key hyperparameters:
+    graph_layers: 2
+    graph_hidden_channels: 128
+    learning_rate: 0.006333
+    batch_size: 16
+
+Rank 9: Trial 83
+  Validation F1: 0.6882
+  Epochs Completed: 10
+  Key hyperparameters:
+    graph_layers: 4
+    graph_hidden_channels: 256
+    learning_rate: 0.001216
+    batch_size: 64
+
+Rank 10: Trial 98
+  Validation F1: 0.6803
+  Epochs Completed: 10
+  Key hyperparameters:
+    graph_layers: 2
+    graph_hidden_channels: 64
+    learning_rate: 0.003356
+    batch_size: 16
+
+================================================================================
+EFFICIENCY STATISTICS
+================================================================================
+Pruning Rate: 82.0%
+This saved approximately 410 epoch-equivalents
+compared to running all trials to completion.
+
+================================================================================
+Optimization completed successfully!
+================================================================================

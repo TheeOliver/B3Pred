@@ -1,0 +1,315 @@
+{
+  "model_name": "GAT",
+  "n_trials": 100,
+  "max_epochs": 10,
+  "opt_subset_size": 0.1,
+  "reduction_factor": 3,
+  "best_score": 0.7775339602925809,
+  "best_config": {
+    "model_name": "GAT",
+    "config_name": "GAT_hyperband_trial_16",
+    "graph_layers": 4,
+    "graph_hidden_channels": 512,
+    "graph_dropouts": 0.594303085200404,
+    "graph_norm": true,
+    "pred_layers": 4,
+    "pred_hidden_channels": 64,
+    "pred_dropouts": 0.4505226406748984,
+    "batch_size": 64,
+    "lr": 0.0030155907210626877,
+    "subset_size": 0.1,
+    "loss": "crossentropy",
+    "attention_heads": 4,
+    "attention_dropouts": 0.006502590888179016
+  },
+  "test_results": {
+    "acc_target": 0.7275064267352185,
+    "prec_target": 0.727155167038914,
+    "recall_target": 0.7275064267352185,
+    "f1_target": 0.7136868407255917,
+    "mcc_target": 0.4090029822455564,
+    "spec_target": 0.4868421052631579,
+    "macro_f1": 0.7136868407255917,
+    "auc_target": 0.7744489784588053
+  },
+  "completed_trials": 8,
+  "pruned_trials": 92,
+  "brackets_info": [
+    {
+      "bracket": 2,
+      "n_configs": 9,
+      "initial_epochs": 1,
+      "max_epochs": 10
+    },
+    {
+      "bracket": 1,
+      "n_configs": 5,
+      "initial_epochs": 3,
+      "max_epochs": 10
+    },
+    {
+      "bracket": 0,
+      "n_configs": 3,
+      "initial_epochs": 10,
+      "max_epochs": 10
+    }
+  ],
+  "all_trials": [
+    {
+      "trial": 0,
+      "val_f1": 0.520458214828188,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GAT",
+        "config_name": "GAT_hyperband_trial_0",
+        "graph_layers": 3,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.03485016730091967,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.10909498032426036,
+        "batch_size": 64,
+        "lr": 7.476312062252303e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy",
+        "attention_heads": 2,
+        "attention_dropouts": 0.219817105976215
+      },
+      "all_metrics": {
+        "acc_target": 0.5128205128205128,
+        "prec_target": 0.6765160283788313,
+        "recall_target": 0.5128205128205128,
+        "f1_target": 0.520458214828188,
+        "mcc_target": 0.175674171754424,
+        "spec_target": 0.7854077253218884,
+        "macro_f1": 0.520458214828188,
+        "auc_target": 0.6609677444665009
+      }
+    },
+    {
+      "trial": 1,
+      "val_f1": 0.7514799091204153,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GAT",
+        "config_name": "GAT_hyperband_trial_1",
+        "graph_layers": 3,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.364526911140863,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.4105398159072941,
+        "batch_size": 64,
+        "lr": 0.00534516611064682,
+        "subset_size": 0.1,
+        "loss": "crossentropy",
+        "attention_heads": 4,
+        "attention_dropouts": 0.3120408127066865
+      },
+      "all_metrics": {
+        "acc_target": 0.7538461538461538,
+        "prec_target": 0.7416416509453708,
+        "recall_target": 0.7538461538461538,
+        "f1_target": 0.7439718588819432,
+        "mcc_target": 0.3777696921659947,
+        "spec_target": 0.47639484978540775,
+        "macro_f1": 0.7439718588819432,
+        "auc_target": 0.7145883516017921
+      }
+    },
+    {
+      "trial": 2,
+      "val_f1": 0.7691486919523387,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GAT",
+        "config_name": "GAT_hyperband_trial_2",
+        "graph_layers": 4,
+        "graph_hidden_channels": 64,
+        "graph_dropouts": 0.3587399872866511,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.49724250549115756,
+        "batch_size": 64,
+        "lr": 0.002550298070162891,
+        "subset_size": 0.1,
+        "loss": "crossentropy",
+        "attention_heads": 4,
+        "attention_dropouts": 0.11922940892050343
+      },
+      "all_metrics": {
+        "acc_target": 0.782051282051282,
+        "prec_target": 0.7722138626964433,
+        "recall_target": 0.782051282051282,
+        "f1_target": 0.767396625283399,
+        "mcc_target": 0.44012474028664883,
+        "spec_target": 0.4678111587982833,
+        "macro_f1": 0.767396625283399,
+        "auc_target": 0.7610140367670711
+      }
+    },
+    {
+      "trial": 3,
+      "val_f1": 0.6906805660967629,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GAT",
+        "config_name": "GAT_hyperband_trial_3",
+        "graph_layers": 2,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.21507943712656355,
+        "graph_norm": false,
+        "pred_layers": 3,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.43776370700283845,
+        "batch_size": 32,
+        "lr": 0.0013795402040204172,
+        "subset_size": 0.1,
+        "loss": "crossentropy",
+        "attention_heads": 8,
+        "attention_dropouts": 0.29627735781863446
+      },
+      "all_metrics": {
+        "acc_target": 0.7012820512820512,
+        "prec_target": 0.685355693689027,
+        "recall_target": 0.7012820512820512,
+        "f1_target": 0.6906805660967629,
+        "mcc_target": 0.24608847691165003,
+        "spec_target": 0.39914163090128757,
+        "macro_f1": 0.6906805660967629,
+        "auc_target": 0.6243497501000385
+      }
+    },
+    {
+      "trial": 5,
+      "val_f1": 0.742732122891221,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GAT",
+        "config_name": "GAT_hyperband_trial_5",
+        "graph_layers": 5,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.49080885955349585,
+        "graph_norm": true,
+        "pred_layers": 3,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.5657458223475115,
+        "batch_size": 64,
+        "lr": 0.008228984573308165,
+        "subset_size": 0.1,
+        "loss": "crossentropy",
+        "attention_heads": 2,
+        "attention_dropouts": 0.1805269858900618
+      },
+      "all_metrics": {
+        "acc_target": 0.7551282051282051,
+        "prec_target": 0.7398986376834477,
+        "recall_target": 0.7551282051282051,
+        "f1_target": 0.7366401254061288,
+        "mcc_target": 0.36283535833742825,
+        "spec_target": 0.40772532188841204,
+        "macro_f1": 0.7366401254061288,
+        "auc_target": 0.6906732783579572
+      }
+    },
+    {
+      "trial": 16,
+      "val_f1": 0.7775339602925809,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GAT",
+        "config_name": "GAT_hyperband_trial_16",
+        "graph_layers": 4,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.594303085200404,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.4505226406748984,
+        "batch_size": 64,
+        "lr": 0.0030155907210626877,
+        "subset_size": 0.1,
+        "loss": "crossentropy",
+        "attention_heads": 4,
+        "attention_dropouts": 0.006502590888179016
+      },
+      "all_metrics": {
+        "acc_target": 0.7833333333333333,
+        "prec_target": 0.7757262836641506,
+        "recall_target": 0.7833333333333333,
+        "f1_target": 0.7775339602925809,
+        "mcc_target": 0.4614222637574253,
+        "spec_target": 0.5579399141630901,
+        "macro_f1": 0.7775339602925809,
+        "auc_target": 0.7722261888882785
+      }
+    },
+    {
+      "trial": 66,
+      "val_f1": 0.6490307794170076,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GAT",
+        "config_name": "GAT_hyperband_trial_66",
+        "graph_layers": 5,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.41546169079462175,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.05139494975785832,
+        "batch_size": 16,
+        "lr": 0.0001161418975897815,
+        "subset_size": 0.1,
+        "loss": "crossentropy",
+        "attention_heads": 4,
+        "attention_dropouts": 0.4802139046934169
+      },
+      "all_metrics": {
+        "acc_target": 0.6089743589743589,
+        "prec_target": 0.6549464682019183,
+        "recall_target": 0.6089743589743589,
+        "f1_target": 0.6234902803530255,
+        "mcc_target": 0.17034717922238052,
+        "spec_target": 0.5493562231759657,
+        "macro_f1": 0.6234902803530255,
+        "auc_target": 0.6561737452040391
+      }
+    },
+    {
+      "trial": 87,
+      "val_f1": 0.7366643739444861,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GAT",
+        "config_name": "GAT_hyperband_trial_87",
+        "graph_layers": 5,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.1722827748507453,
+        "graph_norm": true,
+        "pred_layers": 3,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.0947728937012088,
+        "batch_size": 128,
+        "lr": 0.005229133918643876,
+        "subset_size": 0.1,
+        "loss": "crossentropy",
+        "attention_heads": 4,
+        "attention_dropouts": 0.12120940104149397
+      },
+      "all_metrics": {
+        "acc_target": 0.7538461538461538,
+        "prec_target": 0.742732329398996,
+        "recall_target": 0.7538461538461538,
+        "f1_target": 0.7201289960197175,
+        "mcc_target": 0.34168900184179485,
+        "spec_target": 0.3133047210300429,
+        "macro_f1": 0.7201289960197175,
+        "auc_target": 0.6939058932452472
+      }
+    }
+  ]
+}

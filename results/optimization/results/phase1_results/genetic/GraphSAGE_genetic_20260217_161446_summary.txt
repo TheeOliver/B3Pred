@@ -1,0 +1,95 @@
+================================================================================
+GENETIC ALGORITHM OPTIMIZATION RESULTS - GraphSAGE
+================================================================================
+
+Optimization Study: GraphSAGE_genetic
+Population Size: 10
+Generations: 25
+Total Evaluations: 188
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Mutation Rate: 0.2
+Crossover Rate: 0.8
+Timestamp: 20260217_161446
+
+================================================================================
+*** BEST CONFIGURATION ***
+================================================================================
+Best Validation F1 Score: 0.8486
+Found in Generation: 12
+
+Hyperparameters:
+  model_name                    : GraphSAGE
+  config_name                   : GraphSAGE_genetic_ind_0
+  loss                          : crossentropy
+  subset_size                   : 0.1
+  epochs                        : 10
+  graph_layers                  : 4
+  graph_hidden_channels         : 32
+  graph_dropouts                : 0.10887303030586848
+  graph_norm                    : True
+  pred_layers                   : 3
+  pred_hidden_channels          : 64
+  pred_dropouts                 : 0.38518424417448804
+  batch_size                    : 64
+  lr                            : 0.00218651119594379
+
+================================================================================
+*** TEST SET PERFORMANCE ***
+================================================================================
+  acc_target                    : 0.7352
+  prec_target                   : 0.7357
+  recall_target                 : 0.7352
+  f1_target                     : 0.7222
+  mcc_target                    : 0.4269
+  spec_target                   : 0.5000
+  macro_f1                      : 0.7222
+  auc_target                    : 0.7815
+
+================================================================================
+EVOLUTION PROGRESS
+================================================================================
+
+Generation 16:
+  Best fitness: 0.8486
+  Avg fitness:  0.7842
+
+Generation 17:
+  Best fitness: 0.8486
+  Avg fitness:  0.7647
+
+Generation 18:
+  Best fitness: 0.8486
+  Avg fitness:  0.7633
+
+Generation 19:
+  Best fitness: 0.8486
+  Avg fitness:  0.7643
+
+Generation 20:
+  Best fitness: 0.8486
+  Avg fitness:  0.7883
+
+Generation 21:
+  Best fitness: 0.8486
+  Avg fitness:  0.8108
+
+Generation 22:
+  Best fitness: 0.8486
+  Avg fitness:  0.8063
+
+Generation 23:
+  Best fitness: 0.8486
+  Avg fitness:  0.7786
+
+Generation 24:
+  Best fitness: 0.8486
+  Avg fitness:  0.8173
+
+Generation 25:
+  Best fitness: 0.8486
+  Avg fitness:  0.7958
+
+================================================================================
+Optimization completed successfully!
+================================================================================

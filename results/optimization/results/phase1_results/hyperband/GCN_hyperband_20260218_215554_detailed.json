@@ -1,0 +1,597 @@
+{
+  "model_name": "GCN",
+  "n_trials": 100,
+  "max_epochs": 10,
+  "opt_subset_size": 0.1,
+  "reduction_factor": 3,
+  "best_score": 0.7168194744356733,
+  "best_config": {
+    "model_name": "GCN",
+    "config_name": "GCN_hyperband_trial_6",
+    "graph_layers": 5,
+    "graph_hidden_channels": 32,
+    "graph_dropouts": 0.49080885955349585,
+    "graph_norm": true,
+    "pred_layers": 3,
+    "pred_hidden_channels": 32,
+    "pred_dropouts": 0.5657458223475115,
+    "batch_size": 64,
+    "lr": 0.008228984573308165,
+    "subset_size": 0.1,
+    "loss": "crossentropy"
+  },
+  "test_results": {
+    "acc_target": 0.6298200514138818,
+    "prec_target": 0.6135122729682068,
+    "recall_target": 0.6298200514138818,
+    "f1_target": 0.5734787587434403,
+    "mcc_target": 0.1508544994710484,
+    "spec_target": 0.20394736842105263,
+    "macro_f1": 0.5734787587434403,
+    "auc_target": 0.6349031201421276
+  },
+  "completed_trials": 18,
+  "pruned_trials": 82,
+  "brackets_info": [
+    {
+      "bracket": 2,
+      "n_configs": 9,
+      "initial_epochs": 1,
+      "max_epochs": 10
+    },
+    {
+      "bracket": 1,
+      "n_configs": 5,
+      "initial_epochs": 3,
+      "max_epochs": 10
+    },
+    {
+      "bracket": 0,
+      "n_configs": 3,
+      "initial_epochs": 10,
+      "max_epochs": 10
+    }
+  ],
+  "all_trials": [
+    {
+      "trial": 0,
+      "val_f1": 0.5212895675752818,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_0",
+        "graph_layers": 3,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.03485016730091967,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.10909498032426036,
+        "batch_size": 64,
+        "lr": 7.476312062252303e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.4948717948717949,
+        "prec_target": 0.6427284535308412,
+        "recall_target": 0.4948717948717949,
+        "f1_target": 0.5055128103595673,
+        "mcc_target": 0.11634269388477352,
+        "spec_target": 0.7253218884120172,
+        "macro_f1": 0.5055128103595673,
+        "auc_target": 0.6350911330629025
+      }
+    },
+    {
+      "trial": 1,
+      "val_f1": 0.6971198805359722,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_1",
+        "graph_layers": 4,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.11980426929501584,
+        "graph_norm": false,
+        "pred_layers": 2,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.5793792198447356,
+        "batch_size": 16,
+        "lr": 0.00020914981329035596,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.6948717948717948,
+        "prec_target": 0.6875840035464449,
+        "recall_target": 0.6948717948717948,
+        "f1_target": 0.6907693876569418,
+        "mcc_target": 0.2538244752900322,
+        "spec_target": 0.44635193133047213,
+        "macro_f1": 0.6907693876569418,
+        "auc_target": 0.6515288228417196
+      }
+    },
+    {
+      "trial": 2,
+      "val_f1": 0.5781481266786467,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_2",
+        "graph_layers": 2,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.18702664565364657,
+        "graph_norm": false,
+        "pred_layers": 2,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.3587399872866511,
+        "batch_size": 16,
+        "lr": 9.46217535646148e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.6987179487179487,
+        "prec_target": 0.4912579922220025,
+        "recall_target": 0.6987179487179487,
+        "f1_target": 0.576903725205612,
+        "mcc_target": -0.0330909699089587,
+        "spec_target": 0.0,
+        "macro_f1": 0.576903725205612,
+        "auc_target": 0.6060132913825705
+      }
+    },
+    {
+      "trial": 6,
+      "val_f1": 0.7168194744356733,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_6",
+        "graph_layers": 5,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.49080885955349585,
+        "graph_norm": true,
+        "pred_layers": 3,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.5657458223475115,
+        "batch_size": 64,
+        "lr": 0.008228984573308165,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7102564102564103,
+        "prec_target": 0.6787033814183135,
+        "recall_target": 0.7102564102564103,
+        "f1_target": 0.6761302939484757,
+        "mcc_target": 0.21219764189662021,
+        "spec_target": 0.26609442060085836,
+        "macro_f1": 0.6761302939484757,
+        "auc_target": 0.6271508265921805
+      }
+    },
+    {
+      "trial": 19,
+      "val_f1": 0.6951915261812011,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_19",
+        "graph_layers": 2,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.16922074354278388,
+        "graph_norm": false,
+        "pred_layers": 4,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.2044821241518107,
+        "batch_size": 16,
+        "lr": 0.0018349685376940496,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7269230769230769,
+        "prec_target": 0.7019917582417583,
+        "recall_target": 0.7269230769230769,
+        "f1_target": 0.6926333319570035,
+        "mcc_target": 0.25995082066493563,
+        "spec_target": 0.2832618025751073,
+        "macro_f1": 0.6926333319570035,
+        "auc_target": 0.6497006692768201
+      }
+    },
+    {
+      "trial": 20,
+      "val_f1": 0.5781481266786467,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_20",
+        "graph_layers": 2,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.23352100724049785,
+        "graph_norm": false,
+        "pred_layers": 2,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.37910232730187954,
+        "batch_size": 128,
+        "lr": 0.0018076884714446043,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7012820512820512,
+        "prec_target": 0.4917965154503615,
+        "recall_target": 0.7012820512820512,
+        "f1_target": 0.5781481266786467,
+        "mcc_target": 0.0,
+        "spec_target": 0.0,
+        "macro_f1": 0.5781481266786467,
+        "auc_target": 0.5998540615609136
+      }
+    },
+    {
+      "trial": 22,
+      "val_f1": 0.5885854885854885,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_22",
+        "graph_layers": 2,
+        "graph_hidden_channels": 32,
+        "graph_dropouts": 0.5916006382937226,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.06671848938369081,
+        "batch_size": 16,
+        "lr": 2.2722376351800995e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7,
+        "prec_target": 0.62575299034443,
+        "recall_target": 0.7,
+        "f1_target": 0.5866501962653157,
+        "mcc_target": 0.0343997721733658,
+        "spec_target": 0.017167381974248927,
+        "macro_f1": 0.5866501962653157,
+        "auc_target": 0.5515531459149006
+      }
+    },
+    {
+      "trial": 25,
+      "val_f1": 0.5781481266786467,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_25",
+        "graph_layers": 4,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.5465563106963055,
+        "graph_norm": false,
+        "pred_layers": 4,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.027131202063713642,
+        "batch_size": 128,
+        "lr": 2.8265109567655277e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7012820512820512,
+        "prec_target": 0.4917965154503615,
+        "recall_target": 0.7012820512820512,
+        "f1_target": 0.5781481266786467,
+        "mcc_target": 0.0,
+        "spec_target": 0.0,
+        "macro_f1": 0.5781481266786467,
+        "auc_target": 0.40865116789982037
+      }
+    },
+    {
+      "trial": 40,
+      "val_f1": 0.6200439382660897,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_40",
+        "graph_layers": 4,
+        "graph_hidden_channels": 512,
+        "graph_dropouts": 0.5606202088614088,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.521937817237277,
+        "batch_size": 32,
+        "lr": 0.00010129586676262229,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.5935897435897436,
+        "prec_target": 0.6411978761978763,
+        "recall_target": 0.5935897435897436,
+        "f1_target": 0.608830010549022,
+        "mcc_target": 0.1384714147917841,
+        "spec_target": 0.5278969957081545,
+        "macro_f1": 0.608830010549022,
+        "auc_target": 0.5992185231971502
+      }
+    },
+    {
+      "trial": 42,
+      "val_f1": 0.6294906404954251,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_42",
+        "graph_layers": 2,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.051209800847186314,
+        "graph_norm": true,
+        "pred_layers": 3,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.1230837842892043,
+        "batch_size": 128,
+        "lr": 1.5744392873909173e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.6628205128205128,
+        "prec_target": 0.6187357001972387,
+        "recall_target": 0.6628205128205128,
+        "f1_target": 0.6294906404954251,
+        "mcc_target": 0.08393018431614564,
+        "spec_target": 0.2145922746781116,
+        "macro_f1": 0.6294906404954251,
+        "auc_target": 0.5781202187507356
+      }
+    },
+    {
+      "trial": 51,
+      "val_f1": 0.6070965910802656,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_51",
+        "graph_layers": 4,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.5172255905935881,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.04617192097752549,
+        "batch_size": 64,
+        "lr": 8.828176625036896e-05,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.573076923076923,
+        "prec_target": 0.6517556593218727,
+        "recall_target": 0.573076923076923,
+        "f1_target": 0.5911314729471265,
+        "mcc_target": 0.15516028720353084,
+        "spec_target": 0.6137339055793991,
+        "macro_f1": 0.5911314729471265,
+        "auc_target": 0.616652674361127
+      }
+    },
+    {
+      "trial": 70,
+      "val_f1": 0.6891374475443831,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_70",
+        "graph_layers": 2,
+        "graph_hidden_channels": 128,
+        "graph_dropouts": 0.5065022693815182,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 128,
+        "pred_dropouts": 0.3187017168006192,
+        "batch_size": 16,
+        "lr": 0.00633322697065264,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.717948717948718,
+        "prec_target": 0.6883581603581603,
+        "recall_target": 0.717948717948718,
+        "f1_target": 0.6793144746059262,
+        "mcc_target": 0.22679311577212896,
+        "spec_target": 0.2532188841201717,
+        "macro_f1": 0.6793144746059262,
+        "auc_target": 0.648931746318193
+      }
+    },
+    {
+      "trial": 71,
+      "val_f1": 0.7034917765599258,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_71",
+        "graph_layers": 3,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.0029639885606457693,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.08379075285378774,
+        "batch_size": 64,
+        "lr": 0.0010478456141974576,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7294871794871794,
+        "prec_target": 0.706707027540361,
+        "recall_target": 0.7294871794871794,
+        "f1_target": 0.7034917765599258,
+        "mcc_target": 0.2806601890679733,
+        "spec_target": 0.33047210300429186,
+        "macro_f1": 0.7034917765599258,
+        "auc_target": 0.6022392919631858
+      }
+    },
+    {
+      "trial": 77,
+      "val_f1": 0.695175782768835,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_77",
+        "graph_layers": 4,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.48359552986509485,
+        "graph_norm": true,
+        "pred_layers": 3,
+        "pred_hidden_channels": 32,
+        "pred_dropouts": 0.13684786316935948,
+        "batch_size": 128,
+        "lr": 0.005012672950463252,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7269230769230769,
+        "prec_target": 0.702224600889407,
+        "recall_target": 0.7269230769230769,
+        "f1_target": 0.695175782768835,
+        "mcc_target": 0.26384158963050525,
+        "spec_target": 0.296137339055794,
+        "macro_f1": 0.695175782768835,
+        "auc_target": 0.5901954476622387
+      }
+    },
+    {
+      "trial": 83,
+      "val_f1": 0.6881675977516734,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_83",
+        "graph_layers": 4,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.12510630861440147,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.4740182617842368,
+        "batch_size": 64,
+        "lr": 0.001215775162286196,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.6833333333333333,
+        "prec_target": 0.6472317206536974,
+        "recall_target": 0.6833333333333333,
+        "f1_target": 0.6537613066837814,
+        "mcc_target": 0.14831033560330165,
+        "spec_target": 0.2575107296137339,
+        "macro_f1": 0.6537613066837814,
+        "auc_target": 0.5938439086393986
+      }
+    },
+    {
+      "trial": 93,
+      "val_f1": 0.6997095969443652,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_93",
+        "graph_layers": 5,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.025904241478207,
+        "graph_norm": true,
+        "pred_layers": 4,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.43968092685975035,
+        "batch_size": 32,
+        "lr": 0.0004955254659537057,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.708974358974359,
+        "prec_target": 0.6870935099899501,
+        "recall_target": 0.708974358974359,
+        "f1_target": 0.691687053281012,
+        "mcc_target": 0.24587539049735277,
+        "spec_target": 0.3605150214592275,
+        "macro_f1": 0.691687053281012,
+        "auc_target": 0.6104228291657186
+      }
+    },
+    {
+      "trial": 97,
+      "val_f1": 0.6950602630971748,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_97",
+        "graph_layers": 2,
+        "graph_hidden_channels": 256,
+        "graph_dropouts": 0.2641193987732943,
+        "graph_norm": false,
+        "pred_layers": 3,
+        "pred_hidden_channels": 256,
+        "pred_dropouts": 0.5990085068357698,
+        "batch_size": 16,
+        "lr": 0.0022748609422442094,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7217948717948718,
+        "prec_target": 0.6966713070879738,
+        "recall_target": 0.7217948717948718,
+        "f1_target": 0.6950602630971748,
+        "mcc_target": 0.2582487489089828,
+        "spec_target": 0.31759656652360513,
+        "macro_f1": 0.6950602630971748,
+        "auc_target": 0.6452048238146425
+      }
+    },
+    {
+      "trial": 98,
+      "val_f1": 0.6803409747937634,
+      "final_epoch": 10,
+      "config": {
+        "model_name": "GCN",
+        "config_name": "GCN_hyperband_trial_98",
+        "graph_layers": 2,
+        "graph_hidden_channels": 64,
+        "graph_dropouts": 0.1106857518801836,
+        "graph_norm": true,
+        "pred_layers": 2,
+        "pred_hidden_channels": 64,
+        "pred_dropouts": 0.17923534415326384,
+        "batch_size": 16,
+        "lr": 0.003355835781397604,
+        "subset_size": 0.1,
+        "loss": "crossentropy"
+      },
+      "all_metrics": {
+        "acc_target": 0.7051282051282052,
+        "prec_target": 0.6614616188409292,
+        "recall_target": 0.7051282051282052,
+        "f1_target": 0.6346363825727033,
+        "mcc_target": 0.13753892522310518,
+        "spec_target": 0.12446351931330472,
+        "macro_f1": 0.6346363825727033,
+        "auc_target": 0.6252991345693639
+      }
+    }
+  ]
+}

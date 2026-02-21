@@ -1,0 +1,1 @@
+{"model_name": "GCN", "graph_layers": 2, "graph_hidden_channels": 32, "graph_dropouts": 0.12268858483720935, "graph_norm": false, "config_name": "GCN_abc", "batch_size": 16, "epochs": 100, "lr": 0.007580294321041467, "loss": "crossentropy", "pred_layers": 2, "pred_hidden_channels": 32, "pred_dropouts": 0.4677157335506618, "subset_size": 1.0}

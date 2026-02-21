@@ -1,0 +1,130 @@
+================================================================================
+BAYESIAN OPTIMIZATION RESULTS - GraphSAGE
+================================================================================
+
+Optimization Study: GraphSAGE_bayesian
+Total Trials: 100
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Timestamp: 20260216_193648
+
+================================================================================
+*** BEST CONFIGURATION (VALIDATION) ***
+================================================================================
+Best Validation F1 Score: 0.8267
+
+Hyperparameters:
+  model_name                    : GraphSAGE
+  config_name                   : GraphSAGE_bayesian_trial_92
+  graph_layers                  : 5
+  graph_hidden_channels         : 32
+  graph_dropouts                : 0.06483513656258685
+  graph_norm                    : True
+  pred_layers                   : 4
+  pred_hidden_channels          : 64
+  pred_dropouts                 : 0.45323172447779597
+  batch_size                    : 32
+  lr                            : 0.001652318749514476
+  epochs                        : 10
+  subset_size                   : 0.1
+  loss                          : crossentropy
+
+================================================================================
+*** TEST SET PERFORMANCE ***
+================================================================================
+  acc_target                    : 0.7326
+  prec_target                   : 0.7302
+  recall_target                 : 0.7326
+  f1_target                     : 0.7225
+  mcc_target                    : 0.4215
+  spec_target                   : 0.5230
+  macro_f1                      : 0.7225
+  auc_target                    : 0.7622
+
+================================================================================
+TOP 10 TRIALS
+================================================================================
+
+Rank 1: Trial 92
+  Validation F1: 0.8267
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.001652
+    batch_size: 32
+
+Rank 2: Trial 84
+  Validation F1: 0.8258
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.001206
+    batch_size: 32
+
+Rank 3: Trial 50
+  Validation F1: 0.8217
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.001158
+    batch_size: 32
+
+Rank 4: Trial 45
+  Validation F1: 0.8200
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.001773
+    batch_size: 32
+
+Rank 5: Trial 49
+  Validation F1: 0.8186
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.001290
+    batch_size: 32
+
+Rank 6: Trial 52
+  Validation F1: 0.8170
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.001297
+    batch_size: 32
+
+Rank 7: Trial 94
+  Validation F1: 0.8136
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.001369
+    batch_size: 32
+
+Rank 8: Trial 70
+  Validation F1: 0.8135
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.000740
+    batch_size: 32
+
+Rank 9: Trial 58
+  Validation F1: 0.8102
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.002601
+    batch_size: 32
+
+Rank 10: Trial 39
+  Validation F1: 0.8096
+  Key hyperparameters:
+    graph_layers: 5
+    graph_hidden_channels: 32
+    learning_rate: 0.002067
+    batch_size: 32
+
+================================================================================
+Optimization completed successfully!
+================================================================================

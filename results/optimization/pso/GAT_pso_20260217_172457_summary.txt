@@ -1,0 +1,107 @@
+================================================================================
+PARTICLE SWARM OPTIMIZATION RESULTS - GAT
+================================================================================
+
+Optimization Study: GAT_pso
+Swarm Size: 20
+Iterations: 30
+Total Evaluations: 620
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Inertia Weight: 0.9 -> 0.4
+c1 (cognitive): 2.0
+c2 (social): 2.0
+Timestamp: 20260217_172457
+
+================================================================================
+*** BEST CONFIGURATION ***
+================================================================================
+Global Best Fitness: 0.8623
+
+Hyperparameters:
+  model_name                    : GAT
+  config_name                   : GAT_pso_particle_0
+  loss                          : crossentropy
+  subset_size                   : 0.1
+  epochs                        : 10
+  graph_layers                  : 2
+  graph_hidden_channels         : 64
+  graph_dropouts                : 0.0
+  graph_norm                    : True
+  pred_layers                   : 3
+  pred_hidden_channels          : 128
+  pred_dropouts                 : 0.3143802535195847
+  batch_size                    : 32
+  lr                            : 0.003627903552590721
+  attention_heads               : 4
+  attention_dropouts            : 0.0
+
+================================================================================
+*** TEST SET PERFORMANCE ***
+================================================================================
+  acc_target                    : 0.7545
+  prec_target                   : 0.7523
+  recall_target                 : 0.7545
+  f1_target                     : 0.7477
+  mcc_target                    : 0.4717
+  spec_target                   : 0.5789
+  macro_f1                      : 0.7477
+  auc_target                    : 0.7975
+
+================================================================================
+CONVERGENCE PROGRESS (Last 10 iterations)
+================================================================================
+
+Iteration 21:
+  Global best: 0.8623
+  Swarm avg:   0.8126
+  Inertia:     0.550
+
+Iteration 22:
+  Global best: 0.8623
+  Swarm avg:   0.8180
+  Inertia:     0.533
+
+Iteration 23:
+  Global best: 0.8623
+  Swarm avg:   0.8122
+  Inertia:     0.517
+
+Iteration 24:
+  Global best: 0.8623
+  Swarm avg:   0.8177
+  Inertia:     0.500
+
+Iteration 25:
+  Global best: 0.8623
+  Swarm avg:   0.8139
+  Inertia:     0.483
+
+Iteration 26:
+  Global best: 0.8623
+  Swarm avg:   0.8128
+  Inertia:     0.467
+
+Iteration 27:
+  Global best: 0.8623
+  Swarm avg:   0.8143
+  Inertia:     0.450
+
+Iteration 28:
+  Global best: 0.8623
+  Swarm avg:   0.8157
+  Inertia:     0.433
+
+Iteration 29:
+  Global best: 0.8623
+  Swarm avg:   0.8181
+  Inertia:     0.417
+
+Iteration 30:
+  Global best: 0.8623
+  Swarm avg:   0.8175
+  Inertia:     0.400
+
+================================================================================
+Optimization completed successfully!
+================================================================================
