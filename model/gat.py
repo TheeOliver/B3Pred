@@ -94,7 +94,7 @@ class GAT(GraphStack):
 
     @classmethod
     def from_config(cls, config: Dict[str, Any], graph_info: Dict[str, Any]) -> 'GAT':
-        params = {k: config[k] for k in GATConfig.hyperparameters.keys()}
+        params = {k: config.get(k, v) for k, v in GATConfig.hyperparameters.items()}
         params['node_dim'] = graph_info['node_dim']
         params['edge_dim'] = graph_info.get('edge_dim', EDGE_FEATURE_DIM)
         return cls(**params)

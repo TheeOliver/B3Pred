@@ -43,7 +43,7 @@ class BatchOptimizationRunner:
         self.evaluate_test = evaluate_test
         self.results_dir = Path(results_dir)
         self.results_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Optimization strategy parameters
         self.subset_size = subset_size
         self.opt_epochs = opt_epochs
@@ -80,7 +80,7 @@ class BatchOptimizationRunner:
             '--seed', str(seed),
             '--subset_size', str(self.subset_size),
         ]
-        
+
         # Method-specific arguments
         if method == 'bayesian':
             cmd = base_cmd + [
@@ -148,18 +148,35 @@ class BatchOptimizationRunner:
             cmd.append('--auto_retrain')
 
         # Run optimization
+        # Resolve the project root as the directory containing this script,
+        # so relative paths like 'optimizations/bayesian_optimization.py' resolve
+        # correctly regardless of what directory the parent process was launched from.
+        project_root = Path(__file__).parent.resolve()
+
         try:
             print(f"Running command: {' '.join(cmd)}")
+            print(f"Working directory: {project_root}")
+
             # Set environment variables for CUDA
             env = os.environ.copy()
             env['CUDA_VISIBLE_DEVICES'] = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
             env['PYTHONUNBUFFERED'] = '1'
-            
-            result = subprocess.run(cmd, check=True, env=env)
+
+            # cwd=project_root ensures the subprocess can find optimizations/*.py
+            # and that relative imports inside those scripts resolve correctly.
+            # stdout/stderr are inherited (not captured) so all output goes
+            # directly to the SLURM log file in real time.
+            result = subprocess.run(cmd, check=True, env=env, cwd=project_root)
             return result.returncode
         except subprocess.CalledProcessError as e:
-            print(f"Error running {method} for {model}: {e}")
-            return e.returncode
+            # Print the full error including returncode so it appears in the
+            # SLURM .out log rather than disappearing silently.
+            print(f"\n{'=' * 80}")
+            print(f"ERROR: {method} optimization for {model} failed with exit code {e.returncode}")
+            print(f"Command: {' '.join(cmd)}")
+            print(f"{'=' * 80}\n")
+            # Re-raise so run_all() can decide whether to continue or abort.
+            raise
 
     def run_all(self):
         """Run all optimization methods for all models"""
@@ -169,7 +186,7 @@ class BatchOptimizationRunner:
         print(f"Methods: {', '.join(self.methods)}")
         print(f"Models: {', '.join(self.models)}")
         print(f"Trials/Iterations: {self.n_trials}")
-        print(f"Optimization Data Subset: {self.subset_size*100:.1f}%")
+        print(f"Optimization Data Subset: {self.subset_size * 100:.1f}%")
         print(f"Optimization Epochs: {self.opt_epochs}")
         print(f"Top-K to Retrain: {self.top_k}")
         print(f"Full Training Epochs: {self.full_epochs}")
@@ -183,12 +200,20 @@ class BatchOptimizationRunner:
 
         total_runs = len(self.methods) * len(self.models)
         current_run = 0
+        failed_runs = []
 
         for method in self.methods:
             for model in self.models:
                 current_run += 1
                 print(f"\nProgress: {current_run}/{total_runs}")
-                self.run_optimization(method, model)
+                try:
+                    self.run_optimization(method, model)
+                except subprocess.CalledProcessError:
+                    failed_runs.append(f"{method}/{model}")
+                    print(f"Skipping {method}/{model} after failure — continuing with remaining runs.")
+
+        if failed_runs:
+            print(f"\nWARNING: The following runs failed: {', '.join(failed_runs)}")
 
         print(f"\n{'=' * 80}")
         print(f"ALL OPTIMIZATIONS COMPLETE!")
@@ -206,7 +231,7 @@ class BatchOptimizationRunner:
                 continue
 
             # Find all detailed JSON files
-            for json_file in method_dir.glob("*_detailed_graph_features.json"):
+            for json_file in method_dir.glob("*_detailed.json"):
                 try:
                     with open(json_file, 'r') as f:
                         data = json.load(f)
@@ -214,7 +239,7 @@ class BatchOptimizationRunner:
                     result_entry = {
                         'method': method,
                         'model': data['model_name'],
-                        'study_name': json_file.stem.replace('_detailed_graph_features', ''),
+                        'study_name': json_file.stem.replace('_detailed', ''),
                         'best_val_f1': data['best_score'],
                         'opt_subset_size': data.get('opt_subset_size', 0.1),
                         'opt_epochs': data.get('opt_epochs', 10),
@@ -227,7 +252,7 @@ class BatchOptimizationRunner:
                         result_entry['test_f1'] = test_res.get('macro_f1', None)
                         result_entry['test_auc'] = test_res.get('auc_target', None)
                         result_entry['test_mcc'] = test_res.get('mcc_target', None)
-                    
+
                     # Add final test results from retraining if available
                     if data.get('final_test_results'):
                         final_res = data['final_test_results']
@@ -276,7 +301,7 @@ class BatchOptimizationRunner:
             f.write("=" * 80 + "\n\n")
             f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write(f"Total Optimization Runs: {len(df)}\n")
-            f.write(f"Optimization Data Subset: {self.subset_size*100:.1f}%\n")
+            f.write(f"Optimization Data Subset: {self.subset_size * 100:.1f}%\n")
             f.write(f"Optimization Epochs: {self.opt_epochs}\n")
             f.write(f"Top-K Retrained: {self.top_k}\n")
             f.write(f"Full Training Epochs: {self.full_epochs}\n")
@@ -291,7 +316,7 @@ class BatchOptimizationRunner:
             if 'best_val_f1' in df.columns:
                 if len(df) == 0 or df['best_val_f1'].isna().all():
                     print("No valid results found to compare.")
-                    return                
+                    return
                 best_val_idx = df['best_val_f1'].idxmax()
                 best_val = df.loc[best_val_idx]
                 f.write("BEST VALIDATION F1 (during optimization):\n")
@@ -518,7 +543,7 @@ Examples:
                         help='Directory to save results')
     parser.add_argument('--compare_only', action='store_true',
                         help='Only generate comparison report from existing results')
-    
+
     # New arguments for optimization strategy
     parser.add_argument('--subset_size', type=float, default=0.1,
                         help='Fraction of training data to use during optimization (default: 0.1)')

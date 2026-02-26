@@ -83,7 +83,7 @@ class GraphSAGE(GraphStack):
 
     @classmethod
     def from_config(cls, config: Dict[str, Any], graph_info: Dict[str, Any]) -> 'GraphSAGE':
-        params = {k: config[k] for k in SAGEConfig.hyperparameters.keys()}
+        params = {k: config.get(k, v) for k, v in SAGEConfig.hyperparameters.items()}
         params['node_dim'] = graph_info['node_dim']
         params['edge_dim'] = graph_info.get('edge_dim', EDGE_FEATURE_DIM)
         return cls(**params)

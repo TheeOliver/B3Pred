@@ -117,7 +117,11 @@ class GINE(GraphStack):
 
     @classmethod
     def from_config(cls, config: Dict[str, Any], graph_info: Dict[str, Any]) -> 'GINE':
-        params = {k: config[k] for k in GINEConfig.hyperparameters.keys()}
+        # Use .get() with the hyperparameter default as fallback so keys that
+        # are not tuned by optimizers (edge_dim, use_graph_attr, graph_attr_dim)
+        # don't cause a KeyError when they're absent from the trial config.
+        params = {k: config.get(k, v) for k, v in GINEConfig.hyperparameters.items()}
         params['node_dim'] = graph_info['node_dim']
+        # Always derive edge_dim from actual data, not the config default
         params['edge_dim'] = graph_info.get('edge_dim', EDGE_FEATURE_DIM)
         return cls(**params)
