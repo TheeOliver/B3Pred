@@ -24,6 +24,8 @@ from scripts.train import train_model
 from scripts.evaluate import test_model
 from graph.featurizer import MoleculeDataset, compute_feature_stats, normalize_dataset
 from configs.predictor_config import GraphConfig
+from model.predictor import Predictor
+from configs.graph_configs import EDGE_FEATURE_DIM, GRAPH_DESC_DIM
 
 
 class CMAESOptimizer:
@@ -55,7 +57,7 @@ class CMAESOptimizer:
         self.results_dir = results_dir or settings.EXPERIMENTS_FOLDER / "cmaes_optimization"
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self.seed = seed
-        
+
         # Optimization strategy parameters
         self.opt_subset_size = opt_subset_size
         self.opt_epochs = opt_epochs
@@ -95,7 +97,11 @@ class CMAESOptimizer:
             self.train_subset = self.train_dataset
             print("Using full training dataset for optimization")
 
-        self.graph_info = {'node_dim': self.train_dataset[0].x.shape[1]}
+        sample = self.train_dataset[0]
+        self.graph_info = {
+            'node_dim': sample.x.shape[1],
+            'edge_dim': sample.edge_attr.shape[1] if sample.edge_attr is not None else EDGE_FEATURE_DIM,
+        }
 
         print(f"Train: {len(self.train_dataset)} | Val: {len(self.val_dataset)} | Test: {len(self.test_dataset)}")
 
@@ -212,6 +218,8 @@ class CMAESOptimizer:
             'model_name': self.model_name,
             'config_name': f"{self.study_name}_eval_{self.evaluation_count}",
             'loss': 'crossentropy',
+            'use_graph_attr': True,
+            'graph_attr_dim': GRAPH_DESC_DIM,
             'subset_size': self.opt_subset_size,  # Set fixed subset size
             'epochs': self.opt_epochs,  # Set fixed optimization epochs
         }
@@ -283,8 +291,7 @@ class CMAESOptimizer:
             )
 
             # Build model
-            model_class = GraphConfig.models[self.model_name]['model']
-            model = model_class.from_config(config, self.graph_info)
+            model = Predictor.from_config(config, self.graph_info)
 
             # Train model
             res, trained_model = train_model(
@@ -401,6 +408,8 @@ class CMAESOptimizer:
             'graph_hidden_channels': 128,
             'graph_dropouts': 0.3,
             'graph_norm': True,
+            'use_graph_attr': True,
+            'graph_attr_dim': GRAPH_DESC_DIM,
             'pred_layers': 2,
             'pred_hidden_channels': 64,
             'pred_dropouts': 0.3,
@@ -419,11 +428,11 @@ class CMAESOptimizer:
     def retrain_top_k(self, k=None, full_epochs=None):
         """
         Retrain top-k configurations on full dataset and pick the best.
-        
+
         Args:
             k: Number of top configurations to retrain (default: self.top_k)
             full_epochs: Number of epochs for full training (default: self.full_epochs)
-        
+
         Returns:
             Test results for the best model
         """
@@ -431,7 +440,7 @@ class CMAESOptimizer:
             k = self.top_k
         if full_epochs is None:
             full_epochs = self.full_epochs
-            
+
         if not hasattr(self, 'all_results') or not self.all_results:
             print("No results available to retrain. Run optimization first.")
             return None
@@ -444,7 +453,7 @@ class CMAESOptimizer:
         print(f"RETRAINING TOP {k} CONFIGURATIONS ON FULL DATASET")
         print(f"Full training epochs: {full_epochs}")
         print(f"{'='*70}\n")
-        
+
         best_val_f1 = -float('inf')
         best_config = None
         best_model = None
@@ -453,11 +462,11 @@ class CMAESOptimizer:
 
         for i, config in enumerate(top_configs):
             print(f"\n[{i+1}/{k}] Retraining configuration...")
-            
+
             # Override epochs to use full training epochs
             config['epochs'] = full_epochs
             config['subset_size'] = 1.0  # Use full data
-            
+
             # Create data loaders with full dataset
             train_loader = DataLoader(
                 self.train_dataset,  # Use full training set
@@ -475,8 +484,7 @@ class CMAESOptimizer:
             )
 
             # Build model
-            model_class = GraphConfig.models[self.model_name]['model']
-            model = model_class.from_config(config, self.graph_info)
+            model = Predictor.from_config(config, self.graph_info)
 
             # Train on full dataset
             print(f"  Training for {full_epochs} epochs...")
@@ -492,10 +500,10 @@ class CMAESOptimizer:
                 log=False,
                 save_to=None
             )
-            
+
             val_f1 = res['macro_f1']
             print(f"  Validation F1 after full training: {val_f1:.4f}")
-            
+
             # Store retraining result
             retrain_result = {
                 'original_evaluation': config.get('config_name', f'eval_{i}'),
@@ -516,14 +524,14 @@ class CMAESOptimizer:
         print(f"\n{'='*70}")
         print(f"Evaluating best model on test set")
         print(f"{'='*70}")
-        
+
         test_loader = DataLoader(
             self.test_dataset,
             batch_size=best_config['batch_size'],
             shuffle=False,
             num_workers=0
         )
-        
+
         test_results = test_model(
             test_loader,
             best_model,
@@ -539,7 +547,7 @@ class CMAESOptimizer:
         # Update global best with the retrained model
         self.global_best_config = best_config
         self.global_best_fitness = best_val_f1
-        
+
         # Store retraining results
         self.retrain_results = retrain_results
         self.final_test_results = test_results
@@ -571,8 +579,7 @@ class CMAESOptimizer:
         )
 
         # Build and train model with best config
-        model_class = GraphConfig.models[self.model_name]['model']
-        model = model_class.from_config(self.best_config, self.graph_info)
+        model = Predictor.from_config(self.best_config, self.graph_info)
 
         # Train on full training set
         _, trained_model = train_model(

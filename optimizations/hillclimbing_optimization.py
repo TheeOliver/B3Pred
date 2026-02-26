@@ -33,6 +33,8 @@ from scripts.train import train_model
 from scripts.evaluate import test_model
 from graph.featurizer import MoleculeDataset, compute_feature_stats, normalize_dataset
 from configs.predictor_config import GraphConfig
+from model.predictor import Predictor
+from configs.graph_configs import EDGE_FEATURE_DIM, GRAPH_DESC_DIM
 
 
 class HillClimbingOptimizer:
@@ -135,8 +137,7 @@ class HillClimbingOptimizer:
         sample = self.train_dataset[0]
         self.graph_info = {
             'node_dim': sample.x.shape[1],
-            'edge_dim': sample.edge_attr.shape[1] if hasattr(sample,
-                                                             'edge_attr') and sample.edge_attr is not None else 4
+            'edge_dim': sample.edge_attr.shape[1] if sample.edge_attr is not None else EDGE_FEATURE_DIM,
         }
 
         print(f"Train: {len(self.train_dataset)} | Val: {len(self.val_dataset)} | Test: {len(self.test_dataset)}")
@@ -180,6 +181,8 @@ class HillClimbingOptimizer:
             'model_name': self.model_name,
             'config_name': f"{self.study_name}_eval_{self.evaluation_count}",
             'loss': 'crossentropy',
+            'use_graph_attr': True,
+            'graph_attr_dim': GRAPH_DESC_DIM,
             'subset_size': self.opt_subset_size,
             'epochs': self.opt_epochs,
         }
@@ -307,8 +310,7 @@ class HillClimbingOptimizer:
             )
 
             # Build model
-            model_class = GraphConfig.models[self.model_name]['model']
-            model = model_class.from_config(config, self.graph_info)
+            model = Predictor.from_config(config, self.graph_info)
 
             # Train model
             res, trained_model = train_model(
@@ -494,11 +496,11 @@ class HillClimbingOptimizer:
     def retrain_top_k(self, k=None, full_epochs=None):
         """
         Retrain top-k configurations on full dataset and pick the best.
-        
+
         Args:
             k: Number of top configurations to retrain (default: self.top_k)
             full_epochs: Number of epochs for full training (default: self.full_epochs)
-        
+
         Returns:
             Test results for the best model
         """
@@ -506,17 +508,17 @@ class HillClimbingOptimizer:
             k = self.top_k
         if full_epochs is None:
             full_epochs = self.full_epochs
-            
+
         # Collect all evaluated configurations from restart history and global best
         all_configs = []
-        
+
         # Add restart history best configs
         for entry in self.restart_history:
             all_configs.append({
                 'config': entry['best_config'],
                 'val_f1': entry['best_fitness']
             })
-        
+
         # Add global best if not already included
         if self.global_best_config and self.global_best_config not in [c['config'] for c in all_configs]:
             all_configs.append({
@@ -536,7 +538,7 @@ class HillClimbingOptimizer:
         print(f"RETRAINING TOP {k} CONFIGURATIONS ON FULL DATASET")
         print(f"Full training epochs: {full_epochs}")
         print(f"{'='*70}\n")
-        
+
         best_val_f1 = -float('inf')
         best_config = None
         best_model = None
@@ -545,11 +547,11 @@ class HillClimbingOptimizer:
 
         for i, config in enumerate(top_configs):
             print(f"\n[{i+1}/{k}] Retraining configuration...")
-            
+
             # Override epochs to use full training epochs
             config['epochs'] = full_epochs
             config['subset_size'] = 1.0  # Use full data
-            
+
             # Create data loaders with full dataset
             train_loader = DataLoader(
                 self.train_dataset,
@@ -567,8 +569,7 @@ class HillClimbingOptimizer:
             )
 
             # Build model
-            model_class = GraphConfig.models[self.model_name]['model']
-            model = model_class.from_config(config, self.graph_info)
+            model = Predictor.from_config(config, self.graph_info)
 
             # Train on full dataset
             print(f"  Training for {full_epochs} epochs...")
@@ -584,10 +585,10 @@ class HillClimbingOptimizer:
                 log=False,
                 save_to=None
             )
-            
+
             val_f1 = res['macro_f1']
             print(f"  Validation F1 after full training: {val_f1:.4f}")
-            
+
             # Store retraining result
             retrain_result = {
                 'original_config': config.get('config_name', f'config_{i}'),
@@ -608,14 +609,14 @@ class HillClimbingOptimizer:
         print(f"\n{'='*70}")
         print(f"Evaluating best model on test set")
         print(f"{'='*70}")
-        
+
         test_loader = DataLoader(
             self.test_dataset,
             batch_size=best_config['batch_size'],
             shuffle=False,
             num_workers=0
         )
-        
+
         test_results = test_model(
             test_loader,
             best_model,
@@ -631,7 +632,7 @@ class HillClimbingOptimizer:
         # Update global best with the retrained model
         self.global_best_config = best_config
         self.global_best_fitness = best_val_f1
-        
+
         # Store retraining results
         self.retrain_results = retrain_results
         self.final_test_results = test_results
@@ -665,8 +666,7 @@ class HillClimbingOptimizer:
         )
 
         # Build and train model
-        model_class = GraphConfig.models[self.model_name]['model']
-        model = model_class.from_config(config, self.graph_info)
+        model = Predictor.from_config(config, self.graph_info)
 
         _, trained_model = train_model(
             model,

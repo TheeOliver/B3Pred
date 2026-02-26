@@ -1,8 +1,8 @@
 """
 Graph Convolutional Network (GCN) Model
 
-GCN uses spectral graph convolutions based on Chebyshev polynomials.
-This implementation includes edge weighting via a learned MLP.
+Edge features are transformed into scalar edge weights via a learned MLP,
+then used to modulate GCN message passing.
 
 Reference:
     Kipf & Welling "Semi-Supervised Classification with Graph Convolutional Networks" ICLR 2017
@@ -10,9 +10,10 @@ Reference:
 
 from typing import Any, Dict
 import torch
-from torch.nn import ModuleList, Sequential, Linear, Sigmoid
+from torch.nn import ModuleList, Sequential, Linear, Sigmoid, ReLU
 from torch_geometric.nn import GCNConv
-from configs.graph_configs import GCNConfig
+
+from configs.graph_configs import GCNConfig, EDGE_FEATURE_DIM, GRAPH_DESC_DIM
 from model.graph_stack import GraphStack
 
 
@@ -20,96 +21,61 @@ class GCN(GraphStack):
     """
     Graph Convolutional Network with edge weighting.
 
-    Edge features are transformed into edge weights via an MLP,
-    then used in the GCN message passing.
+    Edge features → scalar edge weights (via MLP) → GCN with edge_weight.
+    Outputs a pooled embedding; final projection lives in Predictor.
     """
 
     def __init__(
             self,
-            node_dim: int = 9,
-            edge_dim: int = 4,
+            node_dim: int,
+            edge_dim: int = EDGE_FEATURE_DIM,
             graph_layers: int = 3,
             graph_hidden_channels: int = 64,
             graph_dropouts: float = 0.5,
             graph_norm: bool = True,
-            model_name: str = 'GCN'
+            use_graph_attr: bool = True,
+            graph_attr_dim: int = GRAPH_DESC_DIM,
+            model_name: str = 'GCN',
     ):
-        """
-        Initialize GCN model.
-
-        Args:
-            node_dim: Size of input node features
-            edge_dim: Size of input edge features
-            graph_layers: Number of GCN layers
-            graph_hidden_channels: Hidden dimension size
-            graph_dropouts: Dropout rate
-            graph_norm: Use graph normalization
-            model_name: Model name
-        """
         super(GCN, self).__init__(
             model_name=model_name,
             graph_layers=graph_layers,
             graph_hidden_channels=graph_hidden_channels,
             graph_dropouts=graph_dropouts,
-            graph_norm=graph_norm
+            graph_norm=graph_norm,
+            use_graph_attr=use_graph_attr,
+            graph_attr_dim=graph_attr_dim,
         )
 
-        # Edge feature MLP: transforms edge features to scalar weights
+        # Projects edge features to a scalar weight in [0, 1]
         self.edge_mlp = Sequential(
             Linear(edge_dim, edge_dim * 2),
-            torch.nn.ReLU(),
+            ReLU(),
             Linear(edge_dim * 2, 1),
-            Sigmoid()  # Weights in [0, 1]
+            Sigmoid(),
         )
 
-        # Build GCN layers
         convs = [
             GCNConv(
                 in_channels=node_dim if layer == 0 else graph_hidden_channels,
                 out_channels=graph_hidden_channels,
-                improved=False,  # Use standard GCN
+                improved=False,
                 add_self_loops=True,
                 normalize=True,
             )
             for layer in range(graph_layers)
         ]
-
         self._convs = ModuleList(convs)
 
     def _apply_conv(self, layer: int, x, edge_index, edge_attr):
-        """
-        Apply GCN layer with edge weighting.
-
-        Args:
-            layer: Layer index
-            x: Node features
-            edge_index: Edge indices
-            edge_attr: Edge features (may be None)
-
-        Returns:
-            Updated node features
-        """
         if edge_attr is None:
-            # No edge features: standard GCN
             return self._convs[layer](x, edge_index)
-
-        # Transform edge features to weights
         edge_weight = self.edge_mlp(edge_attr).view(-1)
         return self._convs[layer](x, edge_index, edge_weight=edge_weight)
 
     @classmethod
-    def from_config(cls, config: Dict[str, Any], graph_info: Dict[str, Any]) -> torch.nn.Module:
-        """
-        Create GCN model from configuration.
-
-        Args:
-            config: Configuration dictionary
-            graph_info: Graph metadata (node dimensions, etc.)
-
-        Returns:
-            Initialized GCN model
-        """
+    def from_config(cls, config: Dict[str, Any], graph_info: Dict[str, Any]) -> 'GCN':
         params = {k: config[k] for k in GCNConfig.hyperparameters.keys()}
         params['node_dim'] = graph_info['node_dim']
-        params['edge_dim'] = graph_info.get('edge_dim', 4)  # Default to 4
+        params['edge_dim'] = graph_info.get('edge_dim', EDGE_FEATURE_DIM)
         return cls(**params)

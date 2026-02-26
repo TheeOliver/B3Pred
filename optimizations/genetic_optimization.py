@@ -32,15 +32,17 @@ from scripts.train import train_model
 from scripts.evaluate import test_model
 from graph.featurizer import MoleculeDataset, compute_feature_stats, normalize_dataset
 from configs.predictor_config import GraphConfig
+from model.predictor import Predictor
+from configs.graph_configs import EDGE_FEATURE_DIM, GRAPH_DESC_DIM
 
 
 class Individual:
     """Represents a single individual (hyperparameter configuration) in the population"""
-    
+
     def __init__(self, genes: dict, fitness: float = None):
         """
         Initialize an individual
-        
+
         Args:
             genes: Dictionary of hyperparameters
             fitness: Fitness score (validation F1)
@@ -48,14 +50,14 @@ class Individual:
         self.genes = genes
         self.fitness = fitness
         self.generation = 0
-    
+
     def __repr__(self):
         return f"Individual(fitness={self.fitness:.4f if self.fitness else 'None'})"
 
 
 class GeneticOptimizer:
     """Genetic Algorithm for GNN hyperparameter tuning"""
-    
+
     def __init__(
         self,
         model_name: str,
@@ -75,7 +77,7 @@ class GeneticOptimizer:
     ):
         """
         Initialize Genetic Algorithm Optimizer
-        
+
         Args:
             model_name: One of ['GAT', 'GCN', 'GraphSAGE', 'GIN', 'GINE']
             population_size: Number of individuals in population
@@ -103,35 +105,35 @@ class GeneticOptimizer:
         self.results_dir = results_dir or settings.EXPERIMENTS_FOLDER / "genetic_optimization"
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self.seed = seed
-        
+
         # Optimization strategy parameters
         self.opt_subset_size = opt_subset_size
         self.opt_epochs = opt_epochs
         self.top_k = top_k
         self.full_epochs = full_epochs
-        
+
         # Set random seeds
         torch.manual_seed(seed)
         np.random.seed(seed)
         random.seed(seed)
-        
+
         # Load datasets
         print("Loading datasets...")
         self.train_df = pd.read_csv(settings.TRAIN_DATA)
         self.val_df = pd.read_csv(settings.VAL_DATA)
         self.test_df = pd.read_csv(settings.TEST_DATA)
-        
+
         # Prepare datasets
         self.train_dataset = MoleculeDataset(data=self.train_df)
         self.stats = compute_feature_stats(self.train_dataset)
         normalize_dataset(self.train_dataset, self.stats)
-        
+
         self.val_dataset = MoleculeDataset(data=self.val_df)
         normalize_dataset(self.val_dataset, self.stats)
-        
+
         self.test_dataset = MoleculeDataset(data=self.test_df)
         normalize_dataset(self.test_dataset, self.stats)
-        
+
         # Create fixed random subset for optimization
         if self.opt_subset_size < 1.0:
             n_subset = int(len(self.train_dataset) * self.opt_subset_size)
@@ -142,27 +144,27 @@ class GeneticOptimizer:
         else:
             self.train_subset = self.train_dataset
             print("Using full training dataset for optimization")
-        
+
         # Get graph info
         sample = self.train_dataset[0]
         self.graph_info = {
             'node_dim': sample.x.shape[1],
-            'edge_dim': sample.edge_attr.shape[1] if hasattr(sample, 'edge_attr') and sample.edge_attr is not None else 4
+            'edge_dim': sample.edge_attr.shape[1] if sample.edge_attr is not None else EDGE_FEATURE_DIM,
         }
-        
+
         print(f"Train: {len(self.train_dataset)} | Val: {len(self.val_dataset)} | Test: {len(self.test_dataset)}")
         print(f"Node dim: {self.graph_info['node_dim']}, Edge dim: {self.graph_info['edge_dim']}")
-        
+
         # Results tracking
         self.population = []
         self.history = []
         self.best_individual = None
         self.best_score = -float('inf')
         self.evaluation_count = 0
-        
+
         # Define search space
         self.search_space = self._define_search_space()
-    
+
     def _define_search_space(self) -> dict:
         """Define the hyperparameter search space"""
         space = {
@@ -177,18 +179,18 @@ class GeneticOptimizer:
             'lr': {'type': 'log_float', 'min': 1e-5, 'max': 1e-2},
             # Removed: 'epochs': {'type': 'int', 'min': 20, 'max': 100},
         }
-        
+
         # Model-specific hyperparameters
         if self.model_name == 'GAT':
             space['attention_heads'] = {'type': 'categorical', 'values': [2, 4, 8]}
             space['attention_dropouts'] = {'type': 'float', 'min': 0.0, 'max': 0.6}
-        
+
         return space
-    
+
     def _random_gene_value(self, gene_name: str):
         """Generate a random value for a gene based on its type"""
         spec = self.search_space[gene_name]
-        
+
         if spec['type'] == 'int':
             return random.randint(spec['min'], spec['max'])
         elif spec['type'] == 'float':
@@ -201,41 +203,43 @@ class GeneticOptimizer:
             return random.choice(spec['values'])
         else:
             raise ValueError(f"Unknown gene type: {spec['type']}")
-    
+
     def _create_random_individual(self) -> Individual:
         """Create a random individual"""
         genes = {
             'model_name': self.model_name,
             'config_name': f"{self.study_name}_ind_{self.evaluation_count}",
             'loss': 'crossentropy',
+            'use_graph_attr': True,
+            'graph_attr_dim': GRAPH_DESC_DIM,
             'subset_size': self.opt_subset_size,
             'epochs': self.opt_epochs,
         }
-        
+
         # Generate random values for all genes
         for gene_name in self.search_space.keys():
             genes[gene_name] = self._random_gene_value(gene_name)
-        
+
         return Individual(genes)
-    
+
     def _initialize_population(self):
         """Initialize the population with random individuals"""
         print(f"\nInitializing population of size {self.population_size}...")
         self.population = [self._create_random_individual() for _ in range(self.population_size)]
-    
+
     def _evaluate_individual(self, individual: Individual) -> float:
         """
         Evaluate an individual's fitness
-        
+
         Args:
             individual: Individual to evaluate
-            
+
         Returns:
             Fitness score (validation F1)
         """
         try:
             config = individual.genes
-            
+
             # Create data loaders
             train_loader = DataLoader(
                 self.train_subset,
@@ -251,11 +255,10 @@ class GeneticOptimizer:
                 num_workers=4,
                 pin_memory=torch.cuda.is_available()
             )
-            
+
             # Build model
-            model_class = GraphConfig.models[self.model_name]['model']
-            model = model_class.from_config(config, self.graph_info)
-            
+            model = Predictor.from_config(config, self.graph_info)
+
             # Train model
             res, trained_model = train_model(
                 model,
@@ -269,11 +272,11 @@ class GeneticOptimizer:
                 log=False,
                 save_to=None
             )
-            
+
             fitness = res['macro_f1']
             individual.fitness = fitness
             self.evaluation_count += 1
-            
+
             # Update best individual
             if fitness > self.best_score:
                 self.best_score = fitness
@@ -281,16 +284,16 @@ class GeneticOptimizer:
                 print(f"\n{'='*70}")
                 print(f"NEW BEST SCORE: {fitness:.4f} (Generation {individual.generation})")
                 print(f"{'='*70}\n")
-            
+
             return fitness
-            
+
         except Exception as e:
             print(f"Evaluation failed: {e}")
             import traceback
             traceback.print_exc()
             individual.fitness = -1.0
             return -1.0
-    
+
     def _evaluate_population(self):
         """Evaluate fitness for all individuals in population"""
         for i, individual in enumerate(self.population):
@@ -298,38 +301,38 @@ class GeneticOptimizer:
                 print(f"Evaluating individual {i+1}/{len(self.population)}...", end=" ")
                 fitness = self._evaluate_individual(individual)
                 print(f"Fitness: {fitness:.4f}")
-    
+
     def _tournament_selection(self) -> Individual:
         """Select an individual using tournament selection"""
         tournament = random.sample(self.population, self.tournament_size)
         return max(tournament, key=lambda ind: ind.fitness if ind.fitness else -1.0)
-    
+
     def _crossover(self, parent1: Individual, parent2: Individual) -> tuple:
         """
         Perform crossover between two parents
-        
+
         Uses uniform crossover for categorical/discrete genes
         and arithmetic crossover for continuous genes
-        
+
         Args:
             parent1: First parent
             parent2: Second parent
-            
+
         Returns:
             Tuple of two offspring
         """
         if random.random() > self.crossover_rate:
             # No crossover, return copies of parents
             return copy.deepcopy(parent1), copy.deepcopy(parent2)
-        
+
         # Create offspring
         genes1 = copy.deepcopy(parent1.genes)
         genes2 = copy.deepcopy(parent2.genes)
-        
+
         # Perform crossover for each gene
         for gene_name in self.search_space.keys():
             spec = self.search_space[gene_name]
-            
+
             if spec['type'] == 'categorical' or spec['type'] == 'int':
                 # Uniform crossover
                 if random.random() < 0.5:
@@ -341,27 +344,27 @@ class GeneticOptimizer:
                 val2 = genes2[gene_name]
                 genes1[gene_name] = alpha * val1 + (1 - alpha) * val2
                 genes2[gene_name] = (1 - alpha) * val1 + alpha * val2
-        
+
         offspring1 = Individual(genes1)
         offspring2 = Individual(genes2)
-        
+
         return offspring1, offspring2
-    
+
     def _mutate(self, individual: Individual):
         """
         Mutate an individual's genes
-        
+
         Args:
             individual: Individual to mutate (modified in-place)
         """
         for gene_name in self.search_space.keys():
             if random.random() < self.mutation_rate:
                 spec = self.search_space[gene_name]
-                
+
                 if spec['type'] == 'categorical':
                     # Random replacement
                     individual.genes[gene_name] = random.choice(spec['values'])
-                
+
                 elif spec['type'] == 'int':
                     # Gaussian mutation with bounds
                     current = individual.genes[gene_name]
@@ -372,11 +375,11 @@ class GeneticOptimizer:
                         spec['max']
                     ))
                     individual.genes[gene_name] = new_val
-                
+
                 elif spec['type'] in ['float', 'log_float']:
                     # Gaussian mutation
                     current = individual.genes[gene_name]
-                    
+
                     if spec['type'] == 'log_float':
                         # Mutate in log space
                         log_current = np.log10(current)
@@ -394,23 +397,23 @@ class GeneticOptimizer:
                             spec['max']
                         )
                         individual.genes[gene_name] = new_val
-    
+
     def _evolve_generation(self, generation: int):
         """
         Evolve one generation
-        
+
         Args:
             generation: Current generation number
         """
         # Sort population by fitness
         self.population.sort(key=lambda ind: ind.fitness if ind.fitness else -1.0, reverse=True)
-        
+
         # Calculate statistics
         fitnesses = [ind.fitness for ind in self.population if ind.fitness is not None]
         avg_fitness = np.mean(fitnesses) if fitnesses else 0.0
         max_fitness = max(fitnesses) if fitnesses else 0.0
         min_fitness = min(fitnesses) if fitnesses else 0.0
-        
+
         print(f"\n{'='*70}")
         print(f"Generation {generation}")
         print(f"{'='*70}")
@@ -418,7 +421,7 @@ class GeneticOptimizer:
         print(f"Avg fitness:  {avg_fitness:.4f}")
         print(f"Min fitness:  {min_fitness:.4f}")
         print(f"{'='*70}\n")
-        
+
         # Record history
         self.history.append({
             'generation': generation,
@@ -427,37 +430,37 @@ class GeneticOptimizer:
             'min_fitness': float(min_fitness),
             'best_config': copy.deepcopy(self.population[0].genes) if self.population else None
         })
-        
+
         # Elitism: preserve top individuals
         n_elite = max(1, int(self.population_size * self.elitism_rate))
         elite = self.population[:n_elite]
-        
+
         # Generate new population
         new_population = elite.copy()
-        
+
         while len(new_population) < self.population_size:
             # Selection
             parent1 = self._tournament_selection()
             parent2 = self._tournament_selection()
-            
+
             # Crossover
             offspring1, offspring2 = self._crossover(parent1, parent2)
-            
+
             # Mutation
             self._mutate(offspring1)
             self._mutate(offspring2)
-            
+
             # Set generation
             offspring1.generation = generation
             offspring2.generation = generation
-            
+
             # Add to new population
             new_population.append(offspring1)
             if len(new_population) < self.population_size:
                 new_population.append(offspring2)
-        
+
         self.population = new_population[:self.population_size]
-    
+
     def run_optimization(self):
         """Run genetic algorithm optimization"""
         print(f"\n{'='*70}")
@@ -468,19 +471,19 @@ class GeneticOptimizer:
         print(f"Mutation rate: {self.mutation_rate}")
         print(f"Crossover rate: {self.crossover_rate}")
         print(f"{'='*70}\n")
-        
+
         # Initialize population
         self._initialize_population()
-        
+
         # Evaluate initial population
         print("Evaluating initial population...")
         self._evaluate_population()
-        
+
         # Evolution loop
         for generation in range(1, self.n_generations + 1):
             self._evolve_generation(generation)
             self._evaluate_population()
-        
+
         # Final statistics
         print(f"\n{'='*70}")
         print(f"OPTIMIZATION COMPLETE")
@@ -493,15 +496,15 @@ class GeneticOptimizer:
             if key not in ['model_name', 'config_name', 'loss', 'subset_size']:
                 print(f"  {key:30s}: {value}")
         print(f"{'='*70}\n")
-    
+
     def retrain_top_k(self, k=None, full_epochs=None):
         """
         Retrain top-k configurations on full dataset and pick the best.
-        
+
         Args:
             k: Number of top configurations to retrain (default: self.top_k)
             full_epochs: Number of epochs for full training (default: self.full_epochs)
-        
+
         Returns:
             Test results for the best model
         """
@@ -509,7 +512,7 @@ class GeneticOptimizer:
             k = self.top_k
         if full_epochs is None:
             full_epochs = self.full_epochs
-            
+
         # Collect all evaluated individuals from history
         all_individuals = []
         for entry in self.history:
@@ -519,7 +522,7 @@ class GeneticOptimizer:
                     'config': entry['best_config'],
                     'val_f1': entry['best_fitness']
                 })
-        
+
         # Also add current population
         for ind in self.population:
             if ind.fitness is not None:
@@ -527,7 +530,7 @@ class GeneticOptimizer:
                     'config': ind.genes,
                     'val_f1': ind.fitness
                 })
-        
+
         if not all_individuals:
             print("No results available to retrain. Run optimization first.")
             return None
@@ -540,7 +543,7 @@ class GeneticOptimizer:
         print(f"RETRAINING TOP {k} CONFIGURATIONS ON FULL DATASET")
         print(f"Full training epochs: {full_epochs}")
         print(f"{'='*70}\n")
-        
+
         best_val_f1 = -float('inf')
         best_config = None
         best_model = None
@@ -549,11 +552,11 @@ class GeneticOptimizer:
 
         for i, config in enumerate(top_configs):
             print(f"\n[{i+1}/{k}] Retraining configuration...")
-            
+
             # Override epochs to use full training epochs
             config['epochs'] = full_epochs
             config['subset_size'] = 1.0  # Use full data
-            
+
             # Create data loaders with full dataset
             train_loader = DataLoader(
                 self.train_dataset,
@@ -571,8 +574,7 @@ class GeneticOptimizer:
             )
 
             # Build model
-            model_class = GraphConfig.models[self.model_name]['model']
-            model = model_class.from_config(config, self.graph_info)
+            model = Predictor.from_config(config, self.graph_info)
 
             # Train on full dataset
             print(f"  Training for {full_epochs} epochs...")
@@ -588,10 +590,10 @@ class GeneticOptimizer:
                 log=False,
                 save_to=None
             )
-            
+
             val_f1 = res['macro_f1']
             print(f"  Validation F1 after full training: {val_f1:.4f}")
-            
+
             # Store retraining result
             retrain_result = {
                 'original_config': config.get('config_name', f'config_{i}'),
@@ -612,14 +614,14 @@ class GeneticOptimizer:
         print(f"\n{'='*70}")
         print(f"Evaluating best model on test set")
         print(f"{'='*70}")
-        
+
         test_loader = DataLoader(
             self.test_dataset,
             batch_size=best_config['batch_size'],
             shuffle=False,
             num_workers=0
         )
-        
+
         test_results = test_model(
             test_loader,
             best_model,
@@ -635,25 +637,25 @@ class GeneticOptimizer:
         # Update global best with the retrained model
         self.global_best_config = best_config
         self.global_best_fitness = best_val_f1
-        
+
         # Store retraining results
         self.retrain_results = retrain_results
         self.final_test_results = test_results
 
         return test_results
-    
+
     def evaluate_best_model(self):
         """Evaluate best model on test set"""
         if self.best_individual is None:
             print("No best individual found. Run optimization first.")
             return None
-        
+
         print(f"\n{'='*70}")
         print(f"EVALUATING BEST MODEL ON TEST SET")
         print(f"{'='*70}\n")
-        
+
         config = self.best_individual.genes
-        
+
         # Create data loaders
         train_loader = DataLoader(
             self.train_dataset,
@@ -667,10 +669,9 @@ class GeneticOptimizer:
             shuffle=False,
             num_workers=0
         )
-        
+
         # Build and train model
-        model_class = GraphConfig.models[self.model_name]['model']
-        model = model_class.from_config(config, self.graph_info)
+        model = Predictor.from_config(config, self.graph_info)
         
         _, trained_model = train_model(
             model,

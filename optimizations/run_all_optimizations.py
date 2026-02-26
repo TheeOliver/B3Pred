@@ -206,7 +206,7 @@ class BatchOptimizationRunner:
                 continue
 
             # Find all detailed JSON files
-            for json_file in method_dir.glob("*_detailed.json"):
+            for json_file in method_dir.glob("*_detailed_graph_features.json"):
                 try:
                     with open(json_file, 'r') as f:
                         data = json.load(f)
@@ -214,7 +214,7 @@ class BatchOptimizationRunner:
                     result_entry = {
                         'method': method,
                         'model': data['model_name'],
-                        'study_name': json_file.stem.replace('_detailed', ''),
+                        'study_name': json_file.stem.replace('_detailed_graph_features', ''),
                         'best_val_f1': data['best_score'],
                         'opt_subset_size': data.get('opt_subset_size', 0.1),
                         'opt_epochs': data.get('opt_epochs', 10),

@@ -26,6 +26,8 @@ from scripts.train import train_model
 from scripts.evaluate import test_model
 from graph.featurizer import MoleculeDataset, compute_feature_stats, normalize_dataset
 from configs.predictor_config import GraphConfig
+from model.predictor import Predictor
+from configs.graph_configs import EDGE_FEATURE_DIM, GRAPH_DESC_DIM
 
 # ---------------------------------------------------------------------------
 # Global device: use GPU if available, otherwise fall back to CPU
@@ -65,7 +67,7 @@ class HyperbandOptimizer:
         self.results_dir = results_dir or settings.EXPERIMENTS_FOLDER / "hyperband_optimization"
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self.seed = seed
-        
+
         # Optimization strategy parameters
         self.opt_subset_size = opt_subset_size
         self.top_k = top_k
@@ -104,7 +106,11 @@ class HyperbandOptimizer:
             self.train_subset = self.train_dataset
             print("Using full training dataset for optimization")
 
-        self.graph_info = {'node_dim': self.train_dataset[0].x.shape[1]}
+        sample = self.train_dataset[0]
+        self.graph_info = {
+            'node_dim': sample.x.shape[1],
+            'edge_dim': sample.edge_attr.shape[1] if sample.edge_attr is not None else EDGE_FEATURE_DIM,
+        }
 
         print(f"Train: {len(self.train_dataset)} | Val: {len(self.val_dataset)} | Test: {len(self.test_dataset)}")
 
@@ -184,11 +190,13 @@ class HyperbandOptimizer:
         # Training hyperparameters
         config['batch_size'] = trial.suggest_categorical('batch_size', [16, 32, 64, 128])
         config['lr'] = trial.suggest_float('lr', 1e-5, 1e-2, log=True)
-        
+
         # Set subset size (epochs will be managed by Hyperband)
         config['subset_size'] = self.opt_subset_size
-        
+
         config['loss'] = 'crossentropy'
+        config['use_graph_attr'] = True
+        config['graph_attr_dim'] = GRAPH_DESC_DIM
 
         # Model-specific hyperparameters
         if self.model_name == 'GAT':
@@ -228,9 +236,8 @@ class HyperbandOptimizer:
             )
 
             # Build model
-            model_class = GraphConfig.models[self.model_name]['model']
-            model = model_class.from_config(config, self.graph_info)
-            
+            model = Predictor.from_config(config, self.graph_info)
+
             # Move model to GPU
             model = model.to(DEVICE)
 
@@ -247,7 +254,7 @@ class HyperbandOptimizer:
                 losses = []
                 for data in train_loader:
                     data = data.to(DEVICE)
-                    
+
                     optimizer.zero_grad()
                     out = model(data)
                     loss = criterion(out, data.y.view(-1))
@@ -352,11 +359,11 @@ class HyperbandOptimizer:
     def retrain_top_k(self, k=None, full_epochs=None):
         """
         Retrain top-k configurations on full dataset and pick the best.
-        
+
         Args:
             k: Number of top configurations to retrain (default: self.top_k)
             full_epochs: Number of epochs for full training (default: self.full_epochs)
-        
+
         Returns:
             Test results for the best model
         """
@@ -364,7 +371,7 @@ class HyperbandOptimizer:
             k = self.top_k
         if full_epochs is None:
             full_epochs = self.full_epochs
-            
+
         if not hasattr(self, 'all_results') or not self.all_results:
             print("No results available to retrain. Run optimization first.")
             return None
@@ -377,7 +384,7 @@ class HyperbandOptimizer:
         print(f"RETRAINING TOP {k} CONFIGURATIONS ON FULL DATASET")
         print(f"Full training epochs: {full_epochs}")
         print(f"{'='*70}\n")
-        
+
         best_val_f1 = -float('inf')
         best_config = None
         best_model = None
@@ -386,11 +393,11 @@ class HyperbandOptimizer:
 
         for i, config in enumerate(top_configs):
             print(f"\n[{i+1}/{k}] Retraining configuration...")
-            
+
             # Override epochs to use full training epochs
             config['epochs'] = full_epochs
             config['subset_size'] = 1.0  # Use full data
-            
+
             # Create data loaders with full dataset
             train_loader = DataLoader(
                 self.train_dataset,  # Use full training set
@@ -408,8 +415,7 @@ class HyperbandOptimizer:
             )
 
             # Build model
-            model_class = GraphConfig.models[self.model_name]['model']
-            model = model_class.from_config(config, self.graph_info)
+            model = Predictor.from_config(config, self.graph_info)
 
             # Train on full dataset
             print(f"  Training for {full_epochs} epochs...")
@@ -425,10 +431,10 @@ class HyperbandOptimizer:
                 log=False,
                 save_to=None
             )
-            
+
             val_f1 = res['macro_f1']
             print(f"  Validation F1 after full training: {val_f1:.4f}")
-            
+
             # Store retraining result
             retrain_result = {
                 'original_trial': config.get('config_name', f'trial_{i}'),
@@ -449,13 +455,13 @@ class HyperbandOptimizer:
         print(f"\n{'='*70}")
         print(f"Evaluating best model on test set")
         print(f"{'='*70}")
-        
+
         test_loader = DataLoader(
             self.test_dataset,
             batch_size=best_config['batch_size'],
             shuffle=False
         )
-        
+
         test_results = test_model(
             test_loader,
             best_model,
@@ -471,7 +477,7 @@ class HyperbandOptimizer:
         # Update global best with the retrained model
         self.global_best_config = best_config
         self.global_best_fitness = best_val_f1
-        
+
         # Store retraining results
         self.retrain_results = retrain_results
         self.final_test_results = test_results
@@ -501,8 +507,7 @@ class HyperbandOptimizer:
         )
 
         # Build and train model with best config
-        model_class = GraphConfig.models[self.model_name]['model']
-        model = model_class.from_config(self.best_config, self.graph_info)
+        model = Predictor.from_config(self.best_config, self.graph_info)
 
         epochs = self.best_config.get('epochs', 10)
         _, trained_model = train_model(

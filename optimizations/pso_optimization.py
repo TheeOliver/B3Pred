@@ -32,15 +32,17 @@ from scripts.train import train_model
 from scripts.evaluate import test_model
 from graph.featurizer import MoleculeDataset, compute_feature_stats, normalize_dataset
 from configs.predictor_config import GraphConfig
+from model.predictor import Predictor
+from configs.graph_configs import EDGE_FEATURE_DIM, GRAPH_DESC_DIM
 
 
 class Particle:
     """Represents a single particle in the swarm"""
-    
+
     def __init__(self, position: dict, velocity: dict = None):
         """
         Initialize a particle
-        
+
         Args:
             position: Dictionary of hyperparameters (current position)
             velocity: Dictionary of velocities for each hyperparameter
@@ -50,14 +52,14 @@ class Particle:
         self.fitness = None
         self.best_position = copy.deepcopy(position)
         self.best_fitness = -float('inf')
-    
+
     def __repr__(self):
         return f"Particle(fitness={self.fitness:.4f if self.fitness else 'None'}, best={self.best_fitness:.4f})"
 
 
 class ParticleSwarmOptimizer:
     """Particle Swarm Optimization for GNN hyperparameter tuning"""
-    
+
     def __init__(
         self,
         model_name: str,
@@ -78,7 +80,7 @@ class ParticleSwarmOptimizer:
     ):
         """
         Initialize Particle Swarm Optimizer
-        
+
         Args:
             model_name: One of ['GAT', 'GCN', 'GraphSAGE', 'GIN', 'GINE']
             n_particles: Number of particles in swarm
@@ -108,35 +110,35 @@ class ParticleSwarmOptimizer:
         self.results_dir = results_dir or settings.EXPERIMENTS_FOLDER / "pso_optimization"
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self.seed = seed
-        
+
         # Optimization strategy parameters
         self.opt_subset_size = opt_subset_size
         self.opt_epochs = opt_epochs
         self.top_k = top_k
         self.full_epochs = full_epochs
-        
+
         # Set random seeds
         torch.manual_seed(seed)
         np.random.seed(seed)
         random.seed(seed)
-        
+
         # Load datasets
         print("Loading datasets...")
         self.train_df = pd.read_csv(settings.TRAIN_DATA)
         self.val_df = pd.read_csv(settings.VAL_DATA)
         self.test_df = pd.read_csv(settings.TEST_DATA)
-        
+
         # Prepare datasets
         self.train_dataset = MoleculeDataset(data=self.train_df)
         self.stats = compute_feature_stats(self.train_dataset)
         normalize_dataset(self.train_dataset, self.stats)
-        
+
         self.val_dataset = MoleculeDataset(data=self.val_df)
         normalize_dataset(self.val_dataset, self.stats)
-        
+
         self.test_dataset = MoleculeDataset(data=self.test_df)
         normalize_dataset(self.test_dataset, self.stats)
-        
+
         # Create fixed random subset for optimization
         if self.opt_subset_size < 1.0:
             n_subset = int(len(self.train_dataset) * self.opt_subset_size)
@@ -147,28 +149,28 @@ class ParticleSwarmOptimizer:
         else:
             self.train_subset = self.train_dataset
             print("Using full training dataset for optimization")
-        
+
         # Get graph info
         sample = self.train_dataset[0]
         self.graph_info = {
             'node_dim': sample.x.shape[1],
-            'edge_dim': sample.edge_attr.shape[1] if hasattr(sample, 'edge_attr') and sample.edge_attr is not None else 4
+            'edge_dim': sample.edge_attr.shape[1] if sample.edge_attr is not None else EDGE_FEATURE_DIM,
         }
-        
+
         print(f"Train: {len(self.train_dataset)} | Val: {len(self.val_dataset)} | Test: {len(self.test_dataset)}")
         print(f"Node dim: {self.graph_info['node_dim']}, Edge dim: {self.graph_info['edge_dim']}")
-        
+
         # Results tracking
         self.swarm = []
         self.global_best_position = None
         self.global_best_fitness = -float('inf')
         self.history = []
         self.evaluation_count = 0
-        
+
         # Define search space
         self.search_space = self._define_search_space()
         self.param_ranges = self._compute_param_ranges()
-    
+
     def _define_search_space(self) -> dict:
         """Define the hyperparameter search space"""
         space = {
@@ -183,14 +185,14 @@ class ParticleSwarmOptimizer:
             'lr': {'type': 'log_float', 'min': 1e-5, 'max': 1e-2},
             # Removed: 'epochs': {'type': 'int', 'min': 20, 'max': 100},
         }
-        
+
         # Model-specific hyperparameters
         if self.model_name == 'GAT':
             space['attention_heads'] = {'type': 'categorical', 'values': [2, 4, 8]}
             space['attention_dropouts'] = {'type': 'float', 'min': 0.0, 'max': 0.6}
-        
+
         return space
-    
+
     def _compute_param_ranges(self) -> dict:
         """Compute parameter ranges for velocity calculations"""
         ranges = {}
@@ -202,17 +204,19 @@ class ParticleSwarmOptimizer:
             elif spec['type'] == 'categorical':
                 ranges[param_name] = len(spec['values']) - 1
         return ranges
-    
+
     def _random_position(self) -> dict:
         """Generate a random position in search space"""
         position = {
             'model_name': self.model_name,
             'config_name': f"{self.study_name}_particle_{self.evaluation_count}",
             'loss': 'crossentropy',
+            'use_graph_attr': True,
+            'graph_attr_dim': GRAPH_DESC_DIM,
             'subset_size': self.opt_subset_size,
             'epochs': self.opt_epochs,
         }
-        
+
         for param_name, spec in self.search_space.items():
             if spec['type'] == 'int':
                 position[param_name] = random.randint(spec['min'], spec['max'])
@@ -224,43 +228,43 @@ class ParticleSwarmOptimizer:
                 position[param_name] = 10 ** random.uniform(log_min, log_max)
             elif spec['type'] == 'categorical':
                 position[param_name] = random.choice(spec['values'])
-        
+
         return position
-    
+
     def _initialize_velocity(self) -> dict:
         """Initialize random velocity for a particle"""
         velocity = {}
-        
+
         for param_name, param_range in self.param_ranges.items():
             v_max = param_range * self.v_max_fraction
             velocity[param_name] = random.uniform(-v_max, v_max)
-        
+
         return velocity
-    
+
     def _initialize_swarm(self):
         """Initialize the swarm with random particles"""
         print(f"\nInitializing swarm of {self.n_particles} particles...")
         self.swarm = []
-        
+
         for _ in range(self.n_particles):
             position = self._random_position()
             velocity = self._initialize_velocity()
             particle = Particle(position, velocity)
             self.swarm.append(particle)
-    
+
     def _evaluate_particle(self, particle: Particle) -> float:
         """
         Evaluate a particle's fitness
-        
+
         Args:
             particle: Particle to evaluate
-            
+
         Returns:
             Fitness score (validation F1)
         """
         try:
             config = particle.position
-            
+
             # Create data loaders
             train_loader = DataLoader(
                 self.train_subset,
@@ -276,11 +280,10 @@ class ParticleSwarmOptimizer:
                 num_workers=4,
                 pin_memory=torch.cuda.is_available()
             )
-            
+
             # Build model
-            model_class = GraphConfig.models[self.model_name]['model']
-            model = model_class.from_config(config, self.graph_info)
-            
+            model = Predictor.from_config(config, self.graph_info)
+
             # Train model
             res, trained_model = train_model(
                 model,
@@ -294,16 +297,16 @@ class ParticleSwarmOptimizer:
                 log=False,
                 save_to=None
             )
-            
+
             fitness = res['macro_f1']
             particle.fitness = fitness
             self.evaluation_count += 1
-            
+
             # Update particle's personal best
             if fitness > particle.best_fitness:
                 particle.best_fitness = fitness
                 particle.best_position = copy.deepcopy(particle.position)
-            
+
             # Update global best
             if fitness > self.global_best_fitness:
                 self.global_best_fitness = fitness
@@ -311,61 +314,61 @@ class ParticleSwarmOptimizer:
                 print(f"\n{'='*70}")
                 print(f"NEW GLOBAL BEST: {fitness:.4f}")
                 print(f"{'='*70}\n")
-            
+
             return fitness
-            
+
         except Exception as e:
             print(f"Evaluation failed: {e}")
             import traceback
             traceback.print_exc()
             particle.fitness = -1.0
             return -1.0
-    
+
     def _evaluate_swarm(self):
         """Evaluate fitness for all particles"""
         for i, particle in enumerate(self.swarm):
             print(f"Evaluating particle {i+1}/{len(self.swarm)}...", end=" ")
             fitness = self._evaluate_particle(particle)
             print(f"Fitness: {fitness:.4f}")
-    
+
     def _update_velocity(self, particle: Particle, w: float):
         """
         Update particle velocity using PSO equation
-        
+
         v = w*v + c1*r1*(pbest - x) + c2*r2*(gbest - x)
-        
+
         Args:
             particle: Particle to update
             w: Current inertia weight
         """
         new_velocity = {}
-        
+
         for param_name in self.param_ranges.keys():
             spec = self.search_space[param_name]
             current_vel = particle.velocity[param_name]
             current_pos = particle.position[param_name]
             personal_best = particle.best_position[param_name]
             global_best = self.global_best_position[param_name]
-            
+
             # Handle categorical parameters differently
             if spec['type'] == 'categorical':
                 # For categorical, use probability-based movement
                 r1, r2 = random.random(), random.random()
-                
+
                 # Discrete velocity update
                 if personal_best != current_pos:
                     personal_pull = self.c1 * r1
                 else:
                     personal_pull = 0.0
-                
+
                 if global_best != current_pos:
                     global_pull = self.c2 * r2
                 else:
                     global_pull = 0.0
-                
+
                 # Combine influences
                 total_pull = personal_pull + global_pull
-                
+
                 # Decide which value to move toward
                 if total_pull > random.random():
                     if personal_pull > global_pull:
@@ -374,45 +377,45 @@ class ParticleSwarmOptimizer:
                         new_velocity[param_name] = 1  # Will move to global best
                 else:
                     new_velocity[param_name] = current_vel
-            
+
             else:
                 # Continuous parameters
                 r1, r2 = random.random(), random.random()
-                
+
                 # Convert to appropriate space
                 if spec['type'] == 'log_float':
                     current_pos = np.log10(current_pos)
                     personal_best = np.log10(personal_best)
                     global_best = np.log10(global_best)
-                
+
                 # PSO velocity update
                 inertia = w * current_vel
                 cognitive = self.c1 * r1 * (personal_best - current_pos)
                 social = self.c2 * r2 * (global_best - current_pos)
-                
+
                 new_vel = inertia + cognitive + social
-                
+
                 # Clamp velocity
                 v_max = self.param_ranges[param_name] * self.v_max_fraction
                 new_vel = np.clip(new_vel, -v_max, v_max)
-                
+
                 new_velocity[param_name] = new_vel
-        
+
         particle.velocity = new_velocity
-    
+
     def _update_position(self, particle: Particle):
         """
         Update particle position based on velocity
-        
+
         Args:
             particle: Particle to update
         """
         new_position = copy.deepcopy(particle.position)
-        
+
         for param_name in self.param_ranges.keys():
             spec = self.search_space[param_name]
             velocity = particle.velocity[param_name]
-            
+
             if spec['type'] == 'categorical':
                 # Categorical movement
                 if velocity == 0:
@@ -420,19 +423,19 @@ class ParticleSwarmOptimizer:
                 elif velocity == 1:
                     new_position[param_name] = self.global_best_position[param_name]
                 # else keep current value
-            
+
             elif spec['type'] == 'int':
                 # Integer parameters
                 new_val = particle.position[param_name] + velocity
                 new_val = int(np.clip(np.round(new_val), spec['min'], spec['max']))
                 new_position[param_name] = new_val
-            
+
             elif spec['type'] == 'float':
                 # Float parameters
                 new_val = particle.position[param_name] + velocity
                 new_val = np.clip(new_val, spec['min'], spec['max'])
                 new_position[param_name] = float(new_val)
-            
+
             elif spec['type'] == 'log_float':
                 # Log-scale parameters
                 current_log = np.log10(particle.position[param_name])
@@ -441,30 +444,30 @@ class ParticleSwarmOptimizer:
                 log_max = np.log10(spec['max'])
                 new_log = np.clip(new_log, log_min, log_max)
                 new_position[param_name] = float(10 ** new_log)
-        
+
         particle.position = new_position
-    
+
     def _update_iteration(self, iteration: int):
         """
         Update all particles for one iteration
-        
+
         Args:
             iteration: Current iteration number
         """
         # Calculate inertia weight (linear decay)
         w = self.w_start - (self.w_start - self.w_end) * (iteration / self.n_iterations)
-        
+
         # Update velocities and positions
         for particle in self.swarm:
             self._update_velocity(particle, w)
             self._update_position(particle)
-        
+
         # Calculate statistics
         fitnesses = [p.fitness for p in self.swarm if p.fitness is not None]
         avg_fitness = np.mean(fitnesses) if fitnesses else 0.0
         max_fitness = max(fitnesses) if fitnesses else 0.0
         min_fitness = min(fitnesses) if fitnesses else 0.0
-        
+
         print(f"\n{'='*70}")
         print(f"Iteration {iteration}")
         print(f"{'='*70}")
@@ -474,7 +477,7 @@ class ParticleSwarmOptimizer:
         print(f"Swarm max:      {max_fitness:.4f}")
         print(f"Swarm min:      {min_fitness:.4f}")
         print(f"{'='*70}\n")
-        
+
         # Record history
         self.history.append({
             'iteration': iteration,
@@ -485,7 +488,7 @@ class ParticleSwarmOptimizer:
             'min_fitness': float(min_fitness),
             'best_config': copy.deepcopy(self.global_best_position)
         })
-    
+
     def run_optimization(self):
         """Run particle swarm optimization"""
         print(f"\n{'='*70}")
@@ -497,19 +500,19 @@ class ParticleSwarmOptimizer:
         print(f"c1 (cognitive): {self.c1}")
         print(f"c2 (social): {self.c2}")
         print(f"{'='*70}\n")
-        
+
         # Initialize swarm
         self._initialize_swarm()
-        
+
         # Evaluate initial swarm
         print("Evaluating initial swarm...")
         self._evaluate_swarm()
-        
+
         # Optimization loop
         for iteration in range(1, self.n_iterations + 1):
             self._update_iteration(iteration)
             self._evaluate_swarm()
-        
+
         # Final statistics
         print(f"\n{'='*70}")
         print(f"OPTIMIZATION COMPLETE")
@@ -521,15 +524,15 @@ class ParticleSwarmOptimizer:
             if key not in ['model_name', 'config_name', 'loss', 'subset_size']:
                 print(f"  {key:30s}: {value}")
         print(f"{'='*70}\n")
-    
+
     def retrain_top_k(self, k=None, full_epochs=None):
         """
         Retrain top-k configurations on full dataset and pick the best.
-        
+
         Args:
             k: Number of top configurations to retrain (default: self.top_k)
             full_epochs: Number of epochs for full training (default: self.full_epochs)
-        
+
         Returns:
             Test results for the best model
         """
@@ -537,10 +540,10 @@ class ParticleSwarmOptimizer:
             k = self.top_k
         if full_epochs is None:
             full_epochs = self.full_epochs
-            
+
         # Collect all evaluated configurations from history and current swarm
         all_configs = []
-        
+
         # Add history best configs
         for entry in self.history:
             if entry.get('best_config'):
@@ -548,7 +551,7 @@ class ParticleSwarmOptimizer:
                     'config': entry['best_config'],
                     'val_f1': entry['global_best']
                 })
-        
+
         # Add current swarm particles
         for particle in self.swarm:
             if particle.fitness is not None:
@@ -556,7 +559,7 @@ class ParticleSwarmOptimizer:
                     'config': particle.position,
                     'val_f1': particle.fitness
                 })
-        
+
         if not all_configs:
             print("No results available to retrain. Run optimization first.")
             return None
@@ -569,7 +572,7 @@ class ParticleSwarmOptimizer:
         print(f"RETRAINING TOP {k} CONFIGURATIONS ON FULL DATASET")
         print(f"Full training epochs: {full_epochs}")
         print(f"{'='*70}\n")
-        
+
         best_val_f1 = -float('inf')
         best_config = None
         best_model = None
@@ -578,11 +581,11 @@ class ParticleSwarmOptimizer:
 
         for i, config in enumerate(top_configs):
             print(f"\n[{i+1}/{k}] Retraining configuration...")
-            
+
             # Override epochs to use full training epochs
             config['epochs'] = full_epochs
             config['subset_size'] = 1.0  # Use full data
-            
+
             # Create data loaders with full dataset
             train_loader = DataLoader(
                 self.train_dataset,
@@ -600,8 +603,7 @@ class ParticleSwarmOptimizer:
             )
 
             # Build model
-            model_class = GraphConfig.models[self.model_name]['model']
-            model = model_class.from_config(config, self.graph_info)
+            model = Predictor.from_config(config, self.graph_info)
 
             # Train on full dataset
             print(f"  Training for {full_epochs} epochs...")
@@ -617,10 +619,10 @@ class ParticleSwarmOptimizer:
                 log=False,
                 save_to=None
             )
-            
+
             val_f1 = res['macro_f1']
             print(f"  Validation F1 after full training: {val_f1:.4f}")
-            
+
             # Store retraining result
             retrain_result = {
                 'original_config': config.get('config_name', f'config_{i}'),
@@ -641,14 +643,14 @@ class ParticleSwarmOptimizer:
         print(f"\n{'='*70}")
         print(f"Evaluating best model on test set")
         print(f"{'='*70}")
-        
+
         test_loader = DataLoader(
             self.test_dataset,
             batch_size=best_config['batch_size'],
             shuffle=False,
             num_workers=0
         )
-        
+
         test_results = test_model(
             test_loader,
             best_model,
@@ -664,25 +666,25 @@ class ParticleSwarmOptimizer:
         # Update global best with the retrained model
         self.global_best_position = best_config
         self.global_best_fitness = best_val_f1
-        
+
         # Store retraining results
         self.retrain_results = retrain_results
         self.final_test_results = test_results
 
         return test_results
-    
+
     def evaluate_best_model(self):
         """Evaluate best model on test set"""
         if self.global_best_position is None:
             print("No best position found. Run optimization first.")
             return None
-        
+
         print(f"\n{'='*70}")
         print(f"EVALUATING BEST MODEL ON TEST SET")
         print(f"{'='*70}\n")
-        
+
         config = self.global_best_position
-        
+
         # Create data loaders
         train_loader = DataLoader(
             self.train_dataset,
@@ -696,10 +698,9 @@ class ParticleSwarmOptimizer:
             shuffle=False,
             num_workers=0
         )
-        
+
         # Build and train model
-        model_class = GraphConfig.models[self.model_name]['model']
-        model = model_class.from_config(config, self.graph_info)
+        model = Predictor.from_config(config, self.graph_info)
         
         _, trained_model = train_model(
             model,
