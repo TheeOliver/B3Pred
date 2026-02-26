@@ -148,35 +148,18 @@ class BatchOptimizationRunner:
             cmd.append('--auto_retrain')
 
         # Run optimization
-        # Resolve the project root as the directory containing this script,
-        # so relative paths like 'optimizations/bayesian_optimization.py' resolve
-        # correctly regardless of what directory the parent process was launched from.
-        project_root = Path(__file__).parent.resolve()
-
         try:
             print(f"Running command: {' '.join(cmd)}")
-            print(f"Working directory: {project_root}")
-
             # Set environment variables for CUDA
             env = os.environ.copy()
             env['CUDA_VISIBLE_DEVICES'] = os.environ.get('CUDA_VISIBLE_DEVICES', '0')
             env['PYTHONUNBUFFERED'] = '1'
 
-            # cwd=project_root ensures the subprocess can find optimizations/*.py
-            # and that relative imports inside those scripts resolve correctly.
-            # stdout/stderr are inherited (not captured) so all output goes
-            # directly to the SLURM log file in real time.
-            result = subprocess.run(cmd, check=True, env=env, cwd=project_root)
+            result = subprocess.run(cmd, check=True, env=env)
             return result.returncode
         except subprocess.CalledProcessError as e:
-            # Print the full error including returncode so it appears in the
-            # SLURM .out log rather than disappearing silently.
-            print(f"\n{'=' * 80}")
-            print(f"ERROR: {method} optimization for {model} failed with exit code {e.returncode}")
-            print(f"Command: {' '.join(cmd)}")
-            print(f"{'=' * 80}\n")
-            # Re-raise so run_all() can decide whether to continue or abort.
-            raise
+            print(f"Error running {method} for {model}: {e}")
+            return e.returncode
 
     def run_all(self):
         """Run all optimization methods for all models"""
@@ -186,7 +169,7 @@ class BatchOptimizationRunner:
         print(f"Methods: {', '.join(self.methods)}")
         print(f"Models: {', '.join(self.models)}")
         print(f"Trials/Iterations: {self.n_trials}")
-        print(f"Optimization Data Subset: {self.subset_size * 100:.1f}%")
+        print(f"Optimization Data Subset: {self.subset_size*100:.1f}%")
         print(f"Optimization Epochs: {self.opt_epochs}")
         print(f"Top-K to Retrain: {self.top_k}")
         print(f"Full Training Epochs: {self.full_epochs}")
@@ -200,20 +183,12 @@ class BatchOptimizationRunner:
 
         total_runs = len(self.methods) * len(self.models)
         current_run = 0
-        failed_runs = []
 
         for method in self.methods:
             for model in self.models:
                 current_run += 1
                 print(f"\nProgress: {current_run}/{total_runs}")
-                try:
-                    self.run_optimization(method, model)
-                except subprocess.CalledProcessError:
-                    failed_runs.append(f"{method}/{model}")
-                    print(f"Skipping {method}/{model} after failure — continuing with remaining runs.")
-
-        if failed_runs:
-            print(f"\nWARNING: The following runs failed: {', '.join(failed_runs)}")
+                self.run_optimization(method, model)
 
         print(f"\n{'=' * 80}")
         print(f"ALL OPTIMIZATIONS COMPLETE!")
@@ -301,7 +276,7 @@ class BatchOptimizationRunner:
             f.write("=" * 80 + "\n\n")
             f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
             f.write(f"Total Optimization Runs: {len(df)}\n")
-            f.write(f"Optimization Data Subset: {self.subset_size * 100:.1f}%\n")
+            f.write(f"Optimization Data Subset: {self.subset_size*100:.1f}%\n")
             f.write(f"Optimization Epochs: {self.opt_epochs}\n")
             f.write(f"Top-K Retrained: {self.top_k}\n")
             f.write(f"Full Training Epochs: {self.full_epochs}\n")
