@@ -83,7 +83,7 @@ class GIN(GraphStack):
 
     @classmethod
     def from_config(cls, config: Dict[str, Any], graph_info: Dict[str, Any]) -> 'GIN':
-        params = {k: config[k] for k in GINConfig.hyperparameters.keys()}
+        params = {k: config.get(k, v) for k, v in GINConfig.hyperparameters.items()}
         params['node_dim'] = graph_info['node_dim']
         # GIN ignores edge_dim but **kwargs absorbs it safely
         return cls(**params)

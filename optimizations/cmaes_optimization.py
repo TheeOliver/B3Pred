@@ -220,6 +220,7 @@ class CMAESOptimizer:
             'loss': 'crossentropy',
             'use_graph_attr': True,
             'graph_attr_dim': GRAPH_DESC_DIM,
+            'edge_dim': self.graph_info.get('edge_dim', EDGE_FEATURE_DIM),
             'subset_size': self.opt_subset_size,  # Set fixed subset size
             'epochs': self.opt_epochs,  # Set fixed optimization epochs
         }
@@ -410,6 +411,7 @@ class CMAESOptimizer:
             'graph_norm': True,
             'use_graph_attr': True,
             'graph_attr_dim': GRAPH_DESC_DIM,
+            'edge_dim': self.graph_info.get('edge_dim', EDGE_FEATURE_DIM),
             'pred_layers': 2,
             'pred_hidden_channels': 64,
             'pred_dropouts': 0.3,

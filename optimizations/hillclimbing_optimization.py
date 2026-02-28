@@ -183,6 +183,7 @@ class HillClimbingOptimizer:
             'loss': 'crossentropy',
             'use_graph_attr': True,
             'graph_attr_dim': GRAPH_DESC_DIM,
+            'edge_dim': self.graph_info.get('edge_dim', EDGE_FEATURE_DIM),
             'subset_size': self.opt_subset_size,
             'epochs': self.opt_epochs,
         }

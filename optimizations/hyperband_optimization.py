@@ -197,6 +197,7 @@ class HyperbandOptimizer:
         config['loss'] = 'crossentropy'
         config['use_graph_attr'] = True
         config['graph_attr_dim'] = GRAPH_DESC_DIM
+        config['edge_dim'] = self.graph_info.get('edge_dim', EDGE_FEATURE_DIM)
 
         # Model-specific hyperparameters
         if self.model_name == 'GAT':
