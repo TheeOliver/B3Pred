@@ -18,7 +18,8 @@ import os
 class BatchOptimizationRunner:
     """Run multiple optimization methods and compare results"""
 
-    def __init__(self, methods=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'abc', 'hillclimbing'],
+    def __init__(self, methods=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'abc', 'hillclimbing',
+                               'grid_search', 'random_search', 'tabu_search', 'simulated_annealing'],
                  models=['GAT', 'GCN', 'GraphSAGE', 'GIN', 'GINE'],
                  n_trials=100, evaluate_test=True, results_dir='./optimization_results',
                  subset_size=0.1, opt_epochs=10, top_k=10, full_epochs=100, auto_retrain=True):
@@ -134,6 +135,42 @@ class BatchOptimizationRunner:
             cmd = base_cmd + [
                 '--n_iterations', str(max(20, self.n_trials // 3)),
                 '--n_restarts', '5',
+                '--opt_epochs', str(self.opt_epochs),
+                '--top_k', str(self.top_k),
+                '--full_epochs', str(self.full_epochs)
+            ]
+        elif method == 'grid_search':
+            cmd = base_cmd + [
+                '--max_configs', str(self.n_trials),
+                '--opt_epochs', str(self.opt_epochs),
+                '--top_k', str(self.top_k),
+                '--full_epochs', str(self.full_epochs)
+            ]
+        elif method == 'random_search':
+            cmd = base_cmd + [
+                '--n_trials', str(self.n_trials),
+                '--opt_epochs', str(self.opt_epochs),
+                '--top_k', str(self.top_k),
+                '--full_epochs', str(self.full_epochs)
+            ]
+        elif method == 'tabu_search':
+            n_iters = max(20, self.n_trials // 3)
+            cmd = base_cmd + [
+                '--n_iterations', str(n_iters),
+                '--n_restarts', '3',
+                '--tabu_tenure', '15',
+                '--n_neighbors', '10',
+                '--opt_epochs', str(self.opt_epochs),
+                '--top_k', str(self.top_k),
+                '--full_epochs', str(self.full_epochs)
+            ]
+        elif method == 'simulated_annealing':
+            cmd = base_cmd + [
+                '--n_iterations', str(max(20, self.n_trials // 3)),
+                '--n_restarts', '3',
+                '--initial_temperature', '2.0',
+                '--cooling_rate', '0.95',
+                '--min_temperature', '0.01',
                 '--opt_epochs', str(self.opt_epochs),
                 '--top_k', str(self.top_k),
                 '--full_epochs', str(self.full_epochs)
@@ -503,8 +540,10 @@ Examples:
     )
 
     parser.add_argument('--methods', nargs='+',
-                        choices=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'abc', 'hillclimbing'],
-                        default=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'abc', 'hillclimbing'],
+                        choices=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'abc', 'hillclimbing',
+                                 'grid_search', 'random_search', 'tabu_search', 'simulated_annealing'],
+                        default=['bayesian', 'hyperband', 'cmaes', 'genetic', 'pso', 'abc', 'hillclimbing',
+                                 'grid_search', 'random_search', 'tabu_search', 'simulated_annealing'],
                         help='Optimization methods to run')
     parser.add_argument('--models', nargs='+',
                         choices=['GAT', 'GCN', 'GraphSAGE', 'GIN', 'GINE'],

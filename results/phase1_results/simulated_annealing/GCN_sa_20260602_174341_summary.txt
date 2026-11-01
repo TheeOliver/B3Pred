@@ -1,0 +1,27 @@
+================================================================================
+SIMULATED ANNEALING RESULTS - GCN
+================================================================================
+
+Iterations per restart: 50
+Restarts: 3
+Initial temperature: 2.0
+Cooling rate: 0.95
+Min temperature: 0.01
+Total evaluations: 153
+Best Validation F1: 0.8403
+
+Best Configuration:
+  graph_layers                  : 5
+  graph_hidden_channels         : 128
+  graph_dropouts                : 0.2
+  graph_norm                    : False
+  pred_layers                   : 2
+  pred_hidden_channels          : 64
+  pred_dropouts                 : 0.2
+  batch_size                    : 16
+  lr                            : 0.0005
+  model_name                    : GCN
+  loss                          : crossentropy
+  epochs                        : 10
+  subset_size                   : 0.1
+  config_name                   : GCN_sa_eval_70

@@ -1,0 +1,54 @@
+================================================================================
+RANDOM SEARCH RESULTS - GCN
+================================================================================
+
+Trials: 100
+Best Validation F1: 0.8440
+
+Best Configuration:
+  model_name                    : GCN
+  loss                          : crossentropy
+  epochs                        : 10
+  subset_size                   : 0.1
+  graph_layers                  : 4
+  graph_hidden_channels         : 32
+  graph_dropouts                : 0.4996
+  graph_norm                    : False
+  pred_layers                   : 2
+  pred_hidden_channels          : 128
+  pred_dropouts                 : 0.1077
+  batch_size                    : 16
+  lr                            : 0.001330624320893905
+  config_name                   : GCN_randomsearch_trial_72
+
+Top 10 Trials:
+
+Rank 1: Trial 72 — Val F1: 0.8440
+  lr=0.001331, batch=16, g_layers=4, g_hidden=32
+
+Rank 2: Trial 42 — Val F1: 0.8341
+  lr=0.001443, batch=16, g_layers=3, g_hidden=128
+
+Rank 3: Trial 79 — Val F1: 0.8340
+  lr=0.001285, batch=64, g_layers=3, g_hidden=32
+
+Rank 4: Trial 43 — Val F1: 0.8310
+  lr=0.000038, batch=32, g_layers=4, g_hidden=512
+
+Rank 5: Trial 97 — Val F1: 0.8294
+  lr=0.000712, batch=16, g_layers=5, g_hidden=32
+
+Rank 6: Trial 47 — Val F1: 0.8285
+  lr=0.001429, batch=32, g_layers=3, g_hidden=32
+
+Rank 7: Trial 63 — Val F1: 0.8267
+  lr=0.000330, batch=16, g_layers=2, g_hidden=512
+
+Rank 8: Trial 4 — Val F1: 0.8244
+  lr=0.000014, batch=16, g_layers=2, g_hidden=256
+
+Rank 9: Trial 11 — Val F1: 0.8244
+  lr=0.000387, batch=128, g_layers=3, g_hidden=64
+
+Rank 10: Trial 17 — Val F1: 0.8244
+  lr=0.000012, batch=64, g_layers=5, g_hidden=128

@@ -1,0 +1,23 @@
+# Local Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local experiment outputs and model artifacts
+experiments/
+optimization_results/
+outputs/
+*.pth
+*.pt
+*.ckpt
+*.onnx
+wandb/
+runs/
+
+# Local logs and editor state
+*.log
+.idea/
+.vscode/
+.DS_Store

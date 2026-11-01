@@ -1,0 +1,26 @@
+================================================================================
+TABU SEARCH RESULTS - GCN
+================================================================================
+
+Iterations per restart: 50
+Restarts: 3
+Tabu tenure: 15
+Neighbors per iteration: 10
+Total evaluations: 1353
+Best Validation F1: 0.8499
+
+Best Configuration:
+  graph_layers                  : 5
+  graph_hidden_channels         : 256
+  graph_dropouts                : 0.1
+  graph_norm                    : False
+  pred_layers                   : 3
+  pred_hidden_channels          : 64
+  pred_dropouts                 : 0.6
+  batch_size                    : 16
+  lr                            : 0.0005
+  model_name                    : GCN
+  loss                          : crossentropy
+  epochs                        : 10
+  subset_size                   : 0.1
+  config_name                   : GCN_tabusearch_eval_601

@@ -1,0 +1,2 @@
+Task,Mean auc,Standard deviation auc,Fold 0 auc,Mean accuracy,Standard deviation accuracy,Fold 0 accuracy,Mean precision,Standard deviation precision,Fold 0 precision,Mean recall,Standard deviation recall,Fold 0 recall,Mean specificity,Standard deviation specificity,Fold 0 specificity
+target,0.9340509105041084,0.0,0.9340509105041084,0.8586118251928021,0.0,0.8586118251928021,0.8699186991869918,0.0,0.8699186991869918,0.9029535864978903,0.0,0.9029535864978903,0.7894736842105263,0.0,0.7894736842105263

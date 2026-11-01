@@ -1,0 +1,26 @@
+================================================================================
+TABU SEARCH RESULTS - GraphSAGE
+================================================================================
+
+Iterations per restart: 50
+Restarts: 3
+Tabu tenure: 15
+Neighbors per iteration: 10
+Total evaluations: 1348
+Best Validation F1: 0.8955
+
+Best Configuration:
+  graph_layers                  : 4
+  graph_hidden_channels         : 32
+  graph_dropouts                : 0.0
+  graph_norm                    : True
+  pred_layers                   : 3
+  pred_hidden_channels          : 128
+  pred_dropouts                 : 0.6
+  batch_size                    : 64
+  lr                            : 0.001
+  model_name                    : GraphSAGE
+  loss                          : crossentropy
+  epochs                        : 10
+  subset_size                   : 0.1
+  config_name                   : GraphSAGE_tabusearch_eval_1209

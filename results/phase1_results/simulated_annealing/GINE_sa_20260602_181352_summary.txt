@@ -1,0 +1,27 @@
+================================================================================
+SIMULATED ANNEALING RESULTS - GINE
+================================================================================
+
+Iterations per restart: 50
+Restarts: 3
+Initial temperature: 2.0
+Cooling rate: 0.95
+Min temperature: 0.01
+Total evaluations: 153
+Best Validation F1: 0.9159
+
+Best Configuration:
+  graph_layers                  : 5
+  graph_hidden_channels         : 32
+  graph_dropouts                : 0.1
+  graph_norm                    : False
+  pred_layers                   : 2
+  pred_hidden_channels          : 128
+  pred_dropouts                 : 0.0
+  batch_size                    : 32
+  lr                            : 0.001
+  model_name                    : GINE
+  loss                          : crossentropy
+  epochs                        : 10
+  subset_size                   : 0.1
+  config_name                   : GINE_sa_eval_53

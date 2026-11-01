@@ -1,0 +1,28 @@
+# BBB-Penetration-Prediction (RGCN, run_rgcn_external.py) — code/others/BBB-Penetration-Prediction
+# Produces images/bbb_rgcn.sif.
+#
+# torch / torchvision are pip-installed by the Dockerfile (torch==2.0.1, cu118 index)
+# before this file is processed — not listed here.
+#
+# PyG compiled extensions (torch-scatter / torch-sparse) via the matching prebuilt-wheel
+# index — same reasoning as bbb_prediction: avoids a from-source compile with no nvcc.
+-f https://data.pyg.org/whl/torch-2.0.1+cu118.html
+torch-scatter
+torch-sparse
+torch-geometric
+
+# numpy < 2.0 required by mordred 1.2.0 (`from numpy import product`).
+numpy==1.24.3
+pandas==2.0.3
+scikit-learn==1.3.0
+rdkit==2023.3.2
+mordred==1.2.0
+
+# RGCN training extras used by rgcn*.py / run_rgcn_external.py
+pytorch-metric-learning==2.3.0
+# PCGrad ("from pcgrad import PCGrad") is NOT installed here: "pcgrad-pytorch" is not
+# a real PyPI package (the .def's pin never resolved to anything). The Dockerfile
+# fetches the single-file implementation directly from its GitHub repo instead.
+
+tqdm==4.65.0
+matplotlib==3.7.2

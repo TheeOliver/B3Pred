@@ -29,17 +29,20 @@ class MoleculeDataset(InMemoryDataset):
             self,
             data: pd.DataFrame,
             transform: Optional[callable] = None,
-            pre_transform: Optional[callable] = None
+            pre_transform: Optional[callable] = None,
+            target_col: str = "target"
     ):
         """
         Initialize molecular dataset.
 
         Args:
-            data: DataFrame with 'SMILES' and 'target' columns
+            data: DataFrame with 'SMILES' and target columns
             transform: Optional transform to apply to each graph
             pre_transform: Optional pre-transform to apply to each graph
+            target_col: Name of the target label column (default: 'target')
         """
         self.df = data.reset_index(drop=True)
+        self.target_col = target_col
         super().__init__(None, transform, pre_transform)
         self.data, self.slices = self.collate(self._process())
 
@@ -57,7 +60,7 @@ class MoleculeDataset(InMemoryDataset):
 
         for i, row in self.df.iterrows():
             smiles = row["SMILES"]
-            target = row["target"]
+            target = row[self.target_col]
 
             # Convert SMILES to graph
             try:
@@ -146,7 +149,7 @@ def enrich_edge_features(graph, smiles: str):
 
         edge_attr.append(feat)
 
-    graph.edge_attr = torch.stack(edge_attr)
+    graph.edge_attr = torch.stack(edge_attr) if edge_attr else torch.zeros((0, 4), dtype=torch.float)
     return graph
 
 

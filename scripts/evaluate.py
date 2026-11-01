@@ -87,21 +87,44 @@ def test_model(
 
     # Standard classification metrics
     results[f'acc_{label}'] = accuracy_score(all_truths, all_preds)
-    results[f'prec_{label}'] = precision_score(
-        all_truths, all_preds,
-        average='weighted',
-        zero_division=0
-    )
-    results[f'recall_{label}'] = recall_score(
-        all_truths, all_preds,
-        average='weighted',
-        zero_division=0
-    )
-    results[f'f1_{label}'] = f1_score(
-        all_truths, all_preds,
-        average='weighted',
-        zero_division=0
-    )
+
+    # For binary classification, use binary metrics (pos_label=1)
+    # For multi-class, fall back to macro average
+    if len(np.unique(all_truths)) == 2:
+        # Binary classification - report metrics for positive class (BBB+)
+        results[f'prec_{label}'] = precision_score(
+            all_truths, all_preds,
+            pos_label=1,
+            zero_division=0
+        )
+        results[f'recall_{label}'] = recall_score(
+            all_truths, all_preds,
+            pos_label=1,
+            zero_division=0
+        )
+        results[f'f1_{label}'] = f1_score(
+            all_truths, all_preds,
+            pos_label=1,
+            zero_division=0
+        )
+    else:
+        # Multi-class - use macro average
+        results[f'prec_{label}'] = precision_score(
+            all_truths, all_preds,
+            average='macro',
+            zero_division=0
+        )
+        results[f'recall_{label}'] = recall_score(
+            all_truths, all_preds,
+            average='macro',
+            zero_division=0
+        )
+        results[f'f1_{label}'] = f1_score(
+            all_truths, all_preds,
+            average='macro',
+            zero_division=0
+        )
+
     results[f'mcc_{label}'] = matthews_corrcoef(all_truths, all_preds)
 
     # Specificity (correctly computed for binary classification)

@@ -1,0 +1,118 @@
+================================================================================
+HYPERPARAMETER OPTIMIZATION COMPARISON REPORT
+================================================================================
+
+Generated: 2026-02-18 16:16:39
+Total Optimization Runs: 4
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Top-K Retrained: 10
+Full Training Epochs: 100
+Methods Compared: abc
+Models Optimized: GAT, GraphSAGE, GINE, GCN
+
+================================================================================
+*** OVERALL BEST RESULTS ***
+================================================================================
+
+BEST VALIDATION F1 (during optimization):
+  Model: GINE
+  Method: abc
+  Validation F1: 0.8872
+
+BEST TEST F1 (direct evaluation):
+  Model: GINE
+  Method: abc
+  Test F1: 0.7977
+  Test Accuracy: 0.7969
+  Test AUC: 0.8719
+  Test MCC: 0.5774
+
+================================================================================
+RESULTS BY MODEL
+================================================================================
+
+
+GAT:
+----------------------------------------
+
+  Method: ABC
+    Validation F1: 0.8440
+    Test F1: 0.7217
+    Test Accuracy: 0.7404
+    Total Evaluations: 1280
+
+GCN:
+----------------------------------------
+
+  Method: ABC
+    Validation F1: 0.7576
+    Test F1: 0.6952
+    Test Accuracy: 0.7095
+    Total Evaluations: 1274
+
+GINE:
+----------------------------------------
+
+  Method: ABC
+    Validation F1: 0.8872
+    Test F1: 0.7977
+    Test Accuracy: 0.7969
+    Total Evaluations: 1266
+
+GraphSAGE:
+----------------------------------------
+
+  Method: ABC
+    Validation F1: 0.8383
+    Test F1: 0.7617
+    Test Accuracy: 0.7674
+    Total Evaluations: 1265
+
+================================================================================
+RESULTS BY METHOD
+================================================================================
+
+
+ABC:
+----------------------------------------
+  Average Validation F1: 0.8318 ± 0.0541
+  Average Test F1: 0.7441 ± 0.0450
+  Best Model: GINE
+  Best Validation F1: 0.8872
+
+================================================================================
+STATISTICAL SUMMARY
+================================================================================
+
+Validation F1 Statistics:
+  Overall Mean: 0.8318
+  Overall Std: 0.0541
+  Overall Min: 0.7576
+  Overall Max: 0.8872
+
+Test F1 Statistics:
+  Overall Mean: 0.7441
+  Overall Std: 0.0450
+  Overall Min: 0.6952
+  Overall Max: 0.7977
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. BEST OVERALL CONFIGURATION (based on validation F1):
+   Use GINE optimized with ABC
+   Expected Validation F1: 0.8872
+
+2. MOST RELIABLE METHOD (based on validation F1):
+   ABC achieved the best average results
+   Average Validation F1: 0.8318 ± 0.0541
+
+3. BEST MODEL ARCHITECTURE (based on validation F1):
+   GINE performed best on average
+   Average Validation F1: 0.8872 ± nan
+
+================================================================================
+End of Report
+================================================================================

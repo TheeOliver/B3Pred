@@ -1,0 +1,123 @@
+================================================================================
+HYPERPARAMETER OPTIMIZATION COMPARISON REPORT
+================================================================================
+
+Generated: 2026-02-18 05:10:07
+Total Optimization Runs: 6
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Top-K Retrained: 10
+Full Training Epochs: 100
+Methods Compared: abc
+Models Optimized: GAT, GraphSAGE, GCN
+
+================================================================================
+*** OVERALL BEST RESULTS ***
+================================================================================
+
+BEST VALIDATION F1 (during optimization):
+  Model: GAT
+  Method: abc
+  Validation F1: 0.8447
+
+BEST TEST F1 (direct evaluation):
+  Model: GraphSAGE
+  Method: abc
+  Test F1: 0.7617
+  Test Accuracy: 0.7674
+  Test AUC: 0.8166
+  Test MCC: 0.5006
+
+================================================================================
+RESULTS BY MODEL
+================================================================================
+
+
+GAT:
+----------------------------------------
+
+  Method: ABC
+    Validation F1: 0.8447
+    Test F1: 0.7166
+    Test Accuracy: 0.7198
+    Total Evaluations: 1276
+
+  Method: ABC
+    Validation F1: 0.8440
+    Test F1: 0.7217
+    Test Accuracy: 0.7404
+    Total Evaluations: 1280
+
+  Method: ABC
+    Validation F1: nan
+    Total Evaluations: 0
+
+  Method: ABC
+    Validation F1: nan
+    Total Evaluations: 0
+
+GCN:
+----------------------------------------
+
+  Method: ABC
+    Validation F1: 0.7576
+    Test F1: 0.6952
+    Test Accuracy: 0.7095
+    Total Evaluations: 1274
+
+GraphSAGE:
+----------------------------------------
+
+  Method: ABC
+    Validation F1: 0.8383
+    Test F1: 0.7617
+    Test Accuracy: 0.7674
+    Total Evaluations: 1265
+
+================================================================================
+RESULTS BY METHOD
+================================================================================
+
+
+ABC:
+----------------------------------------
+  Average Validation F1: 0.8212 ± 0.0425
+  Average Test F1: 0.7238 ± 0.0277
+  Best Model: GAT
+  Best Validation F1: 0.8447
+
+================================================================================
+STATISTICAL SUMMARY
+================================================================================
+
+Validation F1 Statistics:
+  Overall Mean: 0.8212
+  Overall Std: 0.0425
+  Overall Min: 0.7576
+  Overall Max: 0.8447
+
+Test F1 Statistics:
+  Overall Mean: 0.7238
+  Overall Std: 0.0277
+  Overall Min: 0.6952
+  Overall Max: 0.7617
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. BEST OVERALL CONFIGURATION (based on validation F1):
+   Use GAT optimized with ABC
+   Expected Validation F1: 0.8447
+
+2. MOST RELIABLE METHOD (based on validation F1):
+   ABC achieved the best average results
+   Average Validation F1: 0.8212 ± 0.0425
+
+3. BEST MODEL ARCHITECTURE (based on validation F1):
+   GAT performed best on average
+   Average Validation F1: 0.8444 ± 0.0005
+
+================================================================================
+End of Report
+================================================================================
