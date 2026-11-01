@@ -1,0 +1,10 @@
+{
+  "model_name": "GINE",
+  "n_trials": 100,
+  "opt_subset_size": 0.1,
+  "opt_epochs": 10,
+  "best_score": -Infinity,
+  "best_config": null,
+  "test_results": null,
+  "all_trials": []
+}

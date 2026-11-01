@@ -1,0 +1,31 @@
+# BBB-Models (Mordred descriptors + RFC/GBC/LogReg, run_bbm.py) — code/others/BBB-Models
+# Produces images/bbb_prediction.sif.
+#
+# torch / torchvision are pip-installed by the Dockerfile (torch==2.0.1, cu118 index)
+# before this file is processed — not listed here.
+#
+# The -f line points pip at PyTorch-Geometric's prebuilt-wheel index for exactly
+# torch 2.0.1 + cu118: torch-scatter / torch-sparse ship as compiled C++/CUDA
+# extensions, and without this index pip would try to compile them from source
+# (needs nvcc, which the runtime base image lacks) and fail.
+-f https://data.pyg.org/whl/torch-2.0.1+cu118.html
+torch-scatter
+torch-sparse
+torch-geometric
+
+# numpy pinned to 1.24.x: mordred 1.2.0 does `from numpy import product`, which numpy
+# 2.0 removed — so numpy MUST stay < 2.0 for the descriptor step in run_bbm.py to import.
+numpy==1.24.3
+pandas==2.0.3
+scikit-learn==1.3.0
+rdkit==2023.3.2
+mordred==1.2.0
+
+# hyperparameter search + logging used by run_bbm.py
+optuna==3.3.0
+cma==3.3.0
+wandb
+
+matplotlib==3.7.2
+seaborn==0.12.2
+tqdm

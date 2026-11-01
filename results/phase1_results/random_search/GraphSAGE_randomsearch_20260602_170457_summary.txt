@@ -1,0 +1,54 @@
+================================================================================
+RANDOM SEARCH RESULTS - GraphSAGE
+================================================================================
+
+Trials: 100
+Best Validation F1: 0.8715
+
+Best Configuration:
+  model_name                    : GraphSAGE
+  loss                          : crossentropy
+  epochs                        : 10
+  subset_size                   : 0.1
+  graph_layers                  : 5
+  graph_hidden_channels         : 128
+  graph_dropouts                : 0.1091
+  graph_norm                    : True
+  pred_layers                   : 3
+  pred_hidden_channels          : 128
+  pred_dropouts                 : 0.2042
+  batch_size                    : 64
+  lr                            : 0.000464914491818985
+  config_name                   : GraphSAGE_randomsearch_trial_67
+
+Top 10 Trials:
+
+Rank 1: Trial 67 — Val F1: 0.8715
+  lr=0.000465, batch=64, g_layers=5, g_hidden=128
+
+Rank 2: Trial 31 — Val F1: 0.8624
+  lr=0.001422, batch=32, g_layers=2, g_hidden=64
+
+Rank 3: Trial 59 — Val F1: 0.8593
+  lr=0.000731, batch=16, g_layers=4, g_hidden=64
+
+Rank 4: Trial 71 — Val F1: 0.8581
+  lr=0.001492, batch=64, g_layers=3, g_hidden=128
+
+Rank 5: Trial 47 — Val F1: 0.8574
+  lr=0.001429, batch=32, g_layers=3, g_hidden=32
+
+Rank 6: Trial 9 — Val F1: 0.8574
+  lr=0.004937, batch=128, g_layers=5, g_hidden=64
+
+Rank 7: Trial 51 — Val F1: 0.8564
+  lr=0.000759, batch=128, g_layers=5, g_hidden=256
+
+Rank 8: Trial 85 — Val F1: 0.8555
+  lr=0.000972, batch=64, g_layers=4, g_hidden=128
+
+Rank 9: Trial 81 — Val F1: 0.8549
+  lr=0.001164, batch=128, g_layers=4, g_hidden=64
+
+Rank 10: Trial 15 — Val F1: 0.8530
+  lr=0.002806, batch=128, g_layers=4, g_hidden=128

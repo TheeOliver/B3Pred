@@ -1,0 +1,16 @@
+================================================================================
+BAYESIAN OPTIMIZATION RESULTS - GINE
+================================================================================
+
+Optimization Study: GINE_bayesian
+Total Trials: 100
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Timestamp: 20260226_212457
+
+================================================================================
+*** BEST CONFIGURATION (VALIDATION) ***
+================================================================================
+Best Validation F1 Score: -inf
+
+Hyperparameters:

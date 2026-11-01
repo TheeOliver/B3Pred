@@ -1,0 +1,74 @@
+================================================================================
+HYPERPARAMETER OPTIMIZATION COMPARISON REPORT
+================================================================================
+
+Generated: 2026-02-18 19:48:33
+Total Optimization Runs: 1
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Top-K Retrained: 10
+Full Training Epochs: 100
+Methods Compared: hyperband
+Models Optimized: GAT
+
+================================================================================
+*** OVERALL BEST RESULTS ***
+================================================================================
+
+BEST VALIDATION F1 (during optimization):
+  Model: GAT
+  Method: hyperband
+  Validation F1: -inf
+
+================================================================================
+RESULTS BY MODEL
+================================================================================
+
+
+GAT:
+----------------------------------------
+
+  Method: HYPERBAND
+    Validation F1: -inf
+    Trials: 100 completed, 0 pruned
+
+================================================================================
+RESULTS BY METHOD
+================================================================================
+
+
+HYPERBAND:
+----------------------------------------
+  Average Validation F1: -inf ± nan
+  Best Model: GAT
+  Best Validation F1: -inf
+
+================================================================================
+STATISTICAL SUMMARY
+================================================================================
+
+Validation F1 Statistics:
+  Overall Mean: -inf
+  Overall Std: nan
+  Overall Min: -inf
+  Overall Max: -inf
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. BEST OVERALL CONFIGURATION (based on validation F1):
+   Use GAT optimized with HYPERBAND
+   Expected Validation F1: -inf
+
+2. MOST RELIABLE METHOD (based on validation F1):
+   HYPERBAND achieved the best average results
+   Average Validation F1: -inf ± nan
+
+3. BEST MODEL ARCHITECTURE (based on validation F1):
+   GAT performed best on average
+   Average Validation F1: -inf ± nan
+
+================================================================================
+End of Report
+================================================================================

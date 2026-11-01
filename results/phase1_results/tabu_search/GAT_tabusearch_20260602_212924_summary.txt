@@ -1,0 +1,28 @@
+================================================================================
+TABU SEARCH RESULTS - GAT
+================================================================================
+
+Iterations per restart: 50
+Restarts: 3
+Tabu tenure: 15
+Neighbors per iteration: 10
+Total evaluations: 1500
+Best Validation F1: 0.8769
+
+Best Configuration:
+  graph_layers                  : 4
+  graph_hidden_channels         : 32
+  graph_dropouts                : 0.2
+  graph_norm                    : False
+  pred_layers                   : 4
+  pred_hidden_channels          : 128
+  pred_dropouts                 : 0.1
+  batch_size                    : 16
+  lr                            : 0.001
+  attention_heads               : 2
+  attention_dropouts            : 0.1
+  model_name                    : GAT
+  loss                          : crossentropy
+  epochs                        : 10
+  subset_size                   : 0.1
+  config_name                   : GAT_tabusearch_eval_871

@@ -1,0 +1,26 @@
+================================================================================
+HYPERPARAMETER OPTIMIZATION COMPARISON REPORT
+================================================================================
+
+Generated: 2026-02-17 16:26:46
+Total Optimization Runs: 4
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Top-K Retrained: 10
+Full Training Epochs: 100
+Methods Compared: genetic
+Models Optimized: GAT, GraphSAGE, GINE, GCN
+
+================================================================================
+*** OVERALL BEST RESULTS ***
+================================================================================
+
+BEST VALIDATION F1 (during optimization):
+  Model: GINE
+  Method: genetic
+  Validation F1: 0.8723
+
+BEST TEST F1 (direct evaluation):
+  Model: GINE
+  Method: genetic
+  Test F1: 0.7428

@@ -1,0 +1,106 @@
+================================================================================
+HYPERPARAMETER OPTIMIZATION COMPARISON REPORT
+================================================================================
+
+Generated: 2026-02-18 21:11:11
+Total Optimization Runs: 5
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Top-K Retrained: 10
+Full Training Epochs: 100
+Methods Compared: hyperband
+Models Optimized: GraphSAGE, GAT, GCN, GINE
+
+================================================================================
+*** OVERALL BEST RESULTS ***
+================================================================================
+
+BEST VALIDATION F1 (during optimization):
+  Model: GINE
+  Method: hyperband
+  Validation F1: 0.8696
+
+BEST TEST F1 (direct evaluation):
+  Model: GINE
+  Method: hyperband
+  Test F1: 0.8088
+  Test Accuracy: 0.8123
+  Test AUC: 0.9087
+  Test MCC: 0.5997
+
+================================================================================
+RESULTS BY MODEL
+================================================================================
+
+
+GAT:
+----------------------------------------
+
+  Method: HYPERBAND
+    Validation F1: -inf
+    Trials: 100 completed, 0 pruned
+
+GCN:
+----------------------------------------
+
+  Method: HYPERBAND
+    Validation F1: -inf
+    Trials: 100 completed, 0 pruned
+
+GINE:
+----------------------------------------
+
+  Method: HYPERBAND
+    Validation F1: 0.8696
+    Test F1: 0.8088
+    Test Accuracy: 0.8123
+    Trials: 9 completed, 91 pruned
+
+  Method: HYPERBAND
+    Validation F1: -inf
+    Trials: 100 completed, 0 pruned
+
+GraphSAGE:
+----------------------------------------
+
+  Method: HYPERBAND
+    Validation F1: -inf
+    Trials: 100 completed, 0 pruned
+
+================================================================================
+RESULTS BY METHOD
+================================================================================
+
+
+HYPERBAND:
+----------------------------------------
+  Average Validation F1: -inf ± nan
+  Average Test F1: 0.8088 ± nan
+  Best Model: GINE
+  Best Validation F1: 0.8696
+
+================================================================================
+STATISTICAL SUMMARY
+================================================================================
+
+Validation F1 Statistics:
+  Overall Mean: -inf
+  Overall Std: nan
+  Overall Min: -inf
+  Overall Max: 0.8696
+
+Test F1 Statistics:
+  Overall Mean: 0.8088
+  Overall Std: nan
+  Overall Min: 0.8088
+  Overall Max: 0.8088
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. BEST OVERALL CONFIGURATION (based on validation F1):
+   Use GINE optimized with HYPERBAND
+   Expected Validation F1: 0.8696
+
+2. MOST RELIABLE METHOD (based on validation F1):

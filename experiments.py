@@ -71,7 +71,15 @@ def get_graph_info(example, hetero=False):
     return graph_info
 
 
-def run_training(config: Dict[str, Any], log: bool = False, save: bool = False, test: bool = False):
+def _get_data_paths(dataset: str):
+    """Return (train_path, val_path, test_path, target_col) for the given dataset name."""
+    if dataset == 'moleculenet':
+        return settings.MOLNET_TRAIN_DATA, settings.MOLNET_VAL_DATA, settings.MOLNET_TEST_DATA, 'target'
+    return settings.TRAIN_DATA, settings.VAL_DATA, settings.TEST_DATA, 'target'
+
+
+def run_training(config: Dict[str, Any], log: bool = False, save: bool = False, test: bool = False,
+                 dataset: str = 'b3db', test_data_path=None, test_target_col: str = 'target'):
     """
     Run model training with the given configuration.
 
@@ -80,6 +88,9 @@ def run_training(config: Dict[str, Any], log: bool = False, save: bool = False, 
         log (bool, optional): Enable W&B logging. Defaults to False.
         save (bool, optional): Save model checkpoint. Defaults to False.
         test (bool, optional): Run testing after training. Defaults to False.
+        dataset (str): Training dataset — 'b3db' or 'moleculenet'.
+        test_data_path: Override path for the test CSV (e.g. sdata).
+        test_target_col (str): Target column name in the test CSV.
 
     Returns:
         tuple: (results dict, trained model)
@@ -97,16 +108,18 @@ def run_training(config: Dict[str, Any], log: bool = False, save: bool = False, 
         with open(settings.get_model_folder(config['config_name']) / "config.json", "w") as f:
             json.dump(config, f)
 
+    train_path, val_path, default_test_path, train_target_col = _get_data_paths(dataset)
+
     # Load train and val data
     print("Loading datasets...")
-    train = pd.read_csv(settings.TRAIN_DATA)
-    val = pd.read_csv(settings.VAL_DATA)
+    train = pd.read_csv(train_path)
+    val = pd.read_csv(val_path)
 
-    train_dataset = MoleculeDataset(data=train)
+    train_dataset = MoleculeDataset(data=train, target_col=train_target_col)
     stats = compute_feature_stats(train_dataset)
     normalize_dataset(train_dataset, stats)
 
-    val_dataset = MoleculeDataset(data=val)
+    val_dataset = MoleculeDataset(data=val, target_col=train_target_col)
     normalize_dataset(val_dataset, stats)
 
     train_loader = DataLoader(train_dataset, batch_size=config['batch_size'], shuffle=True)
@@ -149,18 +162,23 @@ def run_training(config: Dict[str, Any], log: bool = False, save: bool = False, 
 
     # Test model
     if test:
-        res = run_testing(settings.get_model_folder(config['config_name']), log)
+        effective_test_path = test_data_path or default_test_path
+        res = run_testing(settings.get_model_folder(config['config_name']), log,
+                          test_data_path=effective_test_path, test_target_col=test_target_col)
 
     return res, model
 
 
-def run_testing(model_folder: Path, log: bool = False):
+def run_testing(model_folder: Path, log: bool = False,
+                test_data_path=None, test_target_col: str = 'target'):
     """
     Run model testing from saved checkpoint.
 
     Args:
         model_folder (Path): Folder containing model checkpoint
         log (bool, optional): Enable W&B logging. Defaults to False.
+        test_data_path: Override path for the test CSV (e.g. sdata).
+        test_target_col (str): Target column name in the test CSV.
 
     Returns:
         dict: Test results
@@ -171,8 +189,9 @@ def run_testing(model_folder: Path, log: bool = False):
         config = json.load(f)
 
     # Load test data
-    test = pd.read_csv(settings.TEST_DATA)
-    test_dataset = MoleculeDataset(data=test)
+    test_path = test_data_path if test_data_path is not None else settings.TEST_DATA
+    test = pd.read_csv(test_path)
+    test_dataset = MoleculeDataset(data=test, target_col=test_target_col)
     test_loader = DataLoader(test_dataset, batch_size=config['batch_size'], shuffle=True)
 
     # Get graph info
@@ -182,7 +201,9 @@ def run_testing(model_folder: Path, log: bool = False):
     from configs.predictor_config import GraphConfig
     model_class = GraphConfig.models[config['model_name']]['model']
     model = model_class.from_config(config, graph_info)
-    model.load_state_dict(torch.load(model_folder / 'model.pth'))
+    # FIX: Added map_location to load the state dict correctly on the current device
+    state_dict = torch.load(model_folder / 'model.pth', map_location=torch.device('cpu'))
+    model.load_state_dict(state_dict)
 
     # Test model
     res = test_model(test_loader, model, [settings.TEST_LABEL])
@@ -384,12 +405,26 @@ Examples:
     pred_group.add_argument('--pred_dropouts', type=float, default=0.3,
                             help='Dropout rate in predictor (default: 0.3)')
 
+    # Dataset options
+    data_group = parser.add_argument_group('Dataset Options')
+    data_group.add_argument('--dataset', type=str, default='b3db',
+                            choices=['b3db', 'moleculenet'],
+                            help='Training/validation/test dataset (default: b3db)')
+    data_group.add_argument('--test_data', type=str, default=None,
+                            help='Override test CSV path (e.g. for cross-dataset evaluation)')
+    data_group.add_argument('--test_target_col', type=str, default='target',
+                            help='Target column name in the test CSV (default: target)')
+
     # Logging and saving
     misc_group = parser.add_argument_group('Misc Options')
     misc_group.add_argument('--log', action='store_true', help='Enable W&B logging')
     misc_group.add_argument('--save', action='store_true', help='Save model checkpoint')
     misc_group.add_argument('--config_path', type=str, help='Path to custom JSON config file')
     misc_group.add_argument('--seed', type=int, default=42, help='Random seed (default: 42)')
+    misc_group.add_argument('--results_name', type=str, default='test_results',
+                            help='Filename stem (no extension) for the saved test-results JSON '
+                                 '(default: test_results). Use a distinct name per test dataset '
+                                 'when testing one checkpoint against multiple test sets.')
 
     args = parser.parse_args()
 
@@ -423,11 +458,23 @@ Examples:
         )
 
     elif args.train:
-        res, model = run_training(config, log=args.log, save=args.save, test=args.test)
+        res, model = run_training(config, log=args.log, save=args.save, test=args.test,
+                                  dataset=args.dataset,
+                                  test_data_path=args.test_data,
+                                  test_target_col=args.test_target_col)
+        if args.test:
+            res_to_save = {**res, "seed": args.seed}
+            with open(settings.get_model_folder(config['config_name']) / f"{args.results_name}.json", "w") as f:
+                json.dump(res_to_save, f, indent=2)
 
     elif args.test:
         model_folder = settings.get_model_folder(config['config_name'])
-        res = run_testing(model_folder, log=args.log)
+        res = run_testing(model_folder, log=args.log,
+                          test_data_path=args.test_data,
+                          test_target_col=args.test_target_col)
+        res_to_save = {**res, "seed": args.seed}
+        with open(model_folder / f"{args.results_name}.json", "w") as f:
+            json.dump(res_to_save, f, indent=2)
 
     else:
         parser.print_help()

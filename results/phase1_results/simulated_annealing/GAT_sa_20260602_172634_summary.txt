@@ -1,0 +1,29 @@
+================================================================================
+SIMULATED ANNEALING RESULTS - GAT
+================================================================================
+
+Iterations per restart: 50
+Restarts: 3
+Initial temperature: 2.0
+Cooling rate: 0.95
+Min temperature: 0.01
+Total evaluations: 153
+Best Validation F1: 0.8675
+
+Best Configuration:
+  graph_layers                  : 2
+  graph_hidden_channels         : 32
+  graph_dropouts                : 0.5
+  graph_norm                    : False
+  pred_layers                   : 2
+  pred_hidden_channels          : 64
+  pred_dropouts                 : 0.1
+  batch_size                    : 16
+  lr                            : 0.005
+  attention_heads               : 4
+  attention_dropouts            : 0.4
+  model_name                    : GAT
+  loss                          : crossentropy
+  epochs                        : 10
+  subset_size                   : 0.1
+  config_name                   : GAT_sa_eval_4

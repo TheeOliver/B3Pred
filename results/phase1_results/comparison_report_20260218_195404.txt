@@ -1,0 +1,78 @@
+================================================================================
+HYPERPARAMETER OPTIMIZATION COMPARISON REPORT
+================================================================================
+
+Generated: 2026-02-18 19:54:04
+Total Optimization Runs: 3
+Optimization Data Subset: 10.0%
+Optimization Epochs: 10
+Top-K Retrained: 10
+Full Training Epochs: 100
+Methods Compared: hyperband
+Models Optimized: GraphSAGE, GAT, GCN
+
+================================================================================
+*** OVERALL BEST RESULTS ***
+================================================================================
+
+BEST VALIDATION F1 (during optimization):
+  Model: GraphSAGE
+  Method: hyperband
+  Validation F1: -inf
+
+================================================================================
+RESULTS BY MODEL
+================================================================================
+
+
+GAT:
+----------------------------------------
+
+  Method: HYPERBAND
+    Validation F1: -inf
+    Trials: 100 completed, 0 pruned
+
+GCN:
+----------------------------------------
+
+  Method: HYPERBAND
+    Validation F1: -inf
+    Trials: 100 completed, 0 pruned
+
+GraphSAGE:
+----------------------------------------
+
+  Method: HYPERBAND
+    Validation F1: -inf
+    Trials: 100 completed, 0 pruned
+
+================================================================================
+RESULTS BY METHOD
+================================================================================
+
+
+HYPERBAND:
+----------------------------------------
+  Average Validation F1: -inf ± nan
+  Best Model: GraphSAGE
+  Best Validation F1: -inf
+
+================================================================================
+STATISTICAL SUMMARY
+================================================================================
+
+Validation F1 Statistics:
+  Overall Mean: -inf
+  Overall Std: nan
+  Overall Min: -inf
+  Overall Max: -inf
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. BEST OVERALL CONFIGURATION (based on validation F1):
+   Use GraphSAGE optimized with HYPERBAND
+   Expected Validation F1: -inf
+
+2. MOST RELIABLE METHOD (based on validation F1):

@@ -1,0 +1,2 @@
+method,model,study_name,best_val_f1,opt_subset_size,opt_epochs,n_trials,completed_trials,pruned_trials
+hyperband,GAT,GAT_hyperband_20260218_194832,-inf,0.1,10,100,100,0

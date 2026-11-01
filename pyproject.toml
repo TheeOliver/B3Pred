@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "Oliver Buteski"}
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -52,9 +52,9 @@ logging = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/B3Pred"
-Documentation = "https://github.com/yourusername/B3Pred"
-Repository = "https://github.com/yourusername/B3Pred"
+Homepage = "https://github.com/TheeOliver/B3Pred"
+Documentation = "https://github.com/TheeOliver/B3Pred#readme"
+Repository = "https://github.com/TheeOliver/B3Pred"
 
 [tool.setuptools.packages.find]
 where = ["."]

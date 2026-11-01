@@ -1,0 +1,21 @@
+================================================================================
+GRID SEARCH RESULTS - GINE
+================================================================================
+
+Total configurations evaluated: 100
+Best Validation F1: 0.9244
+
+Best Configuration:
+  graph_layers                  : 5
+  graph_hidden_channels         : 64
+  graph_dropouts                : 0.1
+  graph_norm                    : False
+  pred_layers                   : 2
+  pred_hidden_channels          : 64
+  pred_dropouts                 : 0.2
+  batch_size                    : 32
+  lr                            : 0.001
+  model_name                    : GINE
+  loss                          : crossentropy
+  epochs                        : 10
+  subset_size                   : 0.1

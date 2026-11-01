@@ -9,7 +9,10 @@ DATA_ROOT = Path(os.environ.get("B3PRED_DATA", "data"))
 
 # For experiments folder, check if we're running in cluster (/mnt/code) or locally
 # On cluster, results go to /mnt/results, locally to ./experiments
-if os.path.exists("/mnt/code"):
+# Override with B3PRED_EXPERIMENTS_ROOT to redirect a run's outputs (e.g. seed sweeps)
+if os.environ.get("B3PRED_EXPERIMENTS_ROOT"):
+    EXPERIMENTS_ROOT = Path(os.environ["B3PRED_EXPERIMENTS_ROOT"])
+elif os.path.exists("/mnt/code"):
     # Running on cluster
     EXPERIMENTS_ROOT = Path("/mnt/results/experiments")
 else:
@@ -18,11 +21,20 @@ else:
 
 
 class BaseSettings():
-    # Data paths - will use B3PRED_DATA environment variable
+    # B3DB data paths
     TRAIN_DATA = DATA_ROOT / "b3db_tanimoto_train.csv"
     TEST_DATA = DATA_ROOT / "b3db_tanimoto_test.csv"
     VAL_DATA = DATA_ROOT / "b3db_tanimoto_val.csv"
-    
+
+    # MoleculeNet data paths
+    MOLNET_TRAIN_DATA = DATA_ROOT / "moleculenet_tanimoto_train.csv"
+    MOLNET_TEST_DATA = DATA_ROOT / "moleculenet_tanimoto_test.csv"
+    MOLNET_VAL_DATA = DATA_ROOT / "moleculenet_tanimoto_val.csv"
+
+    # SData (cross-dataset test)
+    SDATA_TEST_DATA = DATA_ROOT / "sdata.csv"
+    SDATA_TARGET_COL: str = "BBB"
+
     TARGET_LABEL: str = 'target'
     TEST_LABEL: str = 'target'
     PROJECT_NAME: str = "b3db-graph-models"

@@ -1,0 +1,54 @@
+================================================================================
+RANDOM SEARCH RESULTS - GINE
+================================================================================
+
+Trials: 100
+Best Validation F1: 0.9162
+
+Best Configuration:
+  model_name                    : GINE
+  loss                          : crossentropy
+  epochs                        : 10
+  subset_size                   : 0.1
+  graph_layers                  : 3
+  graph_hidden_channels         : 256
+  graph_dropouts                : 0.197
+  graph_norm                    : True
+  pred_layers                   : 3
+  pred_hidden_channels          : 128
+  pred_dropouts                 : 0.3849
+  batch_size                    : 128
+  lr                            : 0.0010928343947215606
+  config_name                   : GINE_randomsearch_trial_39
+
+Top 10 Trials:
+
+Rank 1: Trial 39 — Val F1: 0.9162
+  lr=0.001093, batch=128, g_layers=3, g_hidden=256
+
+Rank 2: Trial 52 — Val F1: 0.9147
+  lr=0.000026, batch=16, g_layers=4, g_hidden=256
+
+Rank 3: Trial 43 — Val F1: 0.9056
+  lr=0.000038, batch=32, g_layers=4, g_hidden=512
+
+Rank 4: Trial 19 — Val F1: 0.9040
+  lr=0.000054, batch=128, g_layers=2, g_hidden=512
+
+Rank 5: Trial 63 — Val F1: 0.9029
+  lr=0.000330, batch=16, g_layers=2, g_hidden=512
+
+Rank 6: Trial 42 — Val F1: 0.8993
+  lr=0.001443, batch=16, g_layers=3, g_hidden=128
+
+Rank 7: Trial 84 — Val F1: 0.8989
+  lr=0.000111, batch=128, g_layers=5, g_hidden=128
+
+Rank 8: Trial 92 — Val F1: 0.8980
+  lr=0.003943, batch=128, g_layers=5, g_hidden=128
+
+Rank 9: Trial 81 — Val F1: 0.8979
+  lr=0.001164, batch=128, g_layers=4, g_hidden=64
+
+Rank 10: Trial 45 — Val F1: 0.8976
+  lr=0.000947, batch=32, g_layers=4, g_hidden=256

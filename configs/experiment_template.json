@@ -1,0 +1,16 @@
+{
+  "config_name": "my_gine_experiment",
+  "model_name": "GINE",
+  "graph_layers": 3,
+  "graph_hidden_channels": 64,
+  "graph_dropouts": 0.3,
+  "graph_norm": true,
+  "pred_layers": 2,
+  "pred_hidden_channels": 64,
+  "pred_dropouts": 0.3,
+  "batch_size": 64,
+  "epochs": 100,
+  "lr": 0.001,
+  "loss": "crossentropy",
+  "subset_size": 1.0
+}

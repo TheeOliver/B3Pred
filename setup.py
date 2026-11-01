@@ -14,12 +14,11 @@ if readme_path.exists():
 setup(
     name="b3pred",
     version="1.0.0",
-    author="Your Name",  # Update this
-    author_email="your.email@example.com",  # Update this
+    author="Oliver Buteski",
     description="Graph Neural Network models for Blood-Brain Barrier permeability prediction",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/B3Pred",  # Update this
+    url="https://github.com/TheeOliver/B3Pred",
     packages=find_packages(where='.', exclude=['tests', 'experiments', 'data']),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -62,12 +61,6 @@ setup(
         ],
         "logging": [
             "wandb>=0.12.0",
-        ],
-    },
-    entry_points={
-        'console_scripts': [
-            'b3pred-train=scripts.train:main',
-            'b3pred-optimize=optimizations.bayesian_optimization:main',
         ],
     },
     include_package_data=True,
